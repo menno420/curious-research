@@ -1,10 +1,10 @@
 # curious-research · status
-updated: 2026-07-13T02:05Z
-phase: NIGHT PROGRAM COMPLETE — ahead of the ~06:00Z morning line. All four workstreams merged to main: PR #2 idea ritual (tolerance-test-coin → build · filament-drybox-logger → think-more · lithophane-night-light → build), PR #3 guide what-can-claude-see (animated photo-in → diagnosis-out, 3 real examples), PR #4 guide retraction-vs-stringing (animated cutaway, ends in the stringing-tower experiment), PR #5 research/possibility-dossier.md (485 lines, every claim marked verified/experiment/known-wall).
+updated: 2026-07-13T10:05Z
+phase: ORDER 001 served — thorough night report (window 2026-07-12T22:30Z→10:05Z) posted; full manager-addressed report in control/outbox.md (REPORT 001, new file — dedicated-outbox convention chosen there), this file stays the heartbeat.
 health: green — `python3 bootstrap.py check --strict` exit 0 on this tree at stamp time.
 kit: v1.15.0 · check: green · engaged: yes
-last-shipped: #5 — research/possibility-dossier.md, the honest cited capability map (closes the night program's fourth and final workstream).
-blockers: none — previous ⚑ (ruleset required-check name) FIXED by owner ~01:35Z; seed PR #1 merged (main ff35b69) and PRs #2–#5 all landed on top.
-orders: acked= done=
+last-shipped: #6 — heartbeat night-complete (d847874); since then the manager's #7 landed ORDER 001 (d96beb9), and this report rides a fresh control-only PR (branch claude/night-report-001).
+blockers: none
+orders: acked=001 done=001
 ⚑ needs-owner: none
-notes: coordinator, night-program close-out stamp. Not blocking, no ⚑: (1) PR #4 asks which slicer the owner uses so a follow-up can add exact menu clicks; (2) the dossier names four candidate next guides — temperature-tower and arm-envelope-explained are already listed there alongside the two shipped tonight. Routines: failsafe cron armed (next fire ~02:20Z). This file has ONE writer (this repo's sessions) — overwritten whole per control/README.md.
+notes: coordinator's pen, morning stamp. Night shipped PRs #1–#6, all merged: seed ff35b69 · idea ritual 1f2453b (coin=build, drybox=think-more, lithophane=build) · what-can-claude-see 152abec · retraction-vs-stringing 793db0f · possibility dossier 0c19ee9 · heartbeat d847874; plus 3 telemetry rescue branches, no PRs (aafc612, 9c3d9f9, e31dd13/2e38895). ORDER 001 arrived as PR #7 and auto-merged green (substrate-gate ✅) at 09:15:58Z before this wake, so the report could not land on #7 itself. Asks pending on the owner (not ⚑-blocking): slicer name (asked in PR #4) + go/no-go on the gift-polish trio — details in the outbox. Wake-chain: failsafe cron `20 */2 * * *` healthy (first fire 29 min late at 02:49Z, on time since); pacemaker send_later consumed after night close, intentionally not re-armed. Next-3: gift-polish trio · slicer retraction follow-up · dossier guides (temperature-tower, arm-envelope) / idea-ritual batch 2. This file has ONE writer (this repo's sessions) — overwritten whole per control/README.md.
