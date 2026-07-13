@@ -53,6 +53,12 @@
     "last_mined": null
   },
   "review_log": [],
+  "session_anchor": {
+    "branch": "main",
+    "epoch": 1783910817.518991,
+    "head": "d8478749925779192f21c8322f3fc27c566327d7",
+    "ts": "2026-07-13T02:46:57+00:00"
+  },
   "session_count": 0,
   "slot_values": {
     "architecture_layers": {
