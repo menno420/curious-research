@@ -1,0 +1,1 @@
+- `claude/ritual-sound-lamp` · **idea ritual** — grow the sound-reactive-desk-lamp one-liner to a cited verdict, fix truncated H1 · `ideas/sound-reactive-desk-lamp.md` · 2026-07-13
