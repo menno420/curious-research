@@ -1,1 +1,0 @@
-- `claude/ritual-arm-pen-plotter` · **scope: ideas/arm-pen-plotter.md** — grow the arm pen-plotter idea via the ritual · ideas/arm-pen-plotter.md · 2026-07-13
