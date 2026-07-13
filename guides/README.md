@@ -27,5 +27,6 @@ with captions under every step and a "what you just watched" recap at the end. P
 | [`what-can-claude-see/`](./what-can-claude-see/) | What Claude can do with a photo, an error, or a screenshot — something goes in, a plain-language diagnosis comes out (with three real maker examples). |
 | [`retraction-vs-stringing/`](./retraction-vs-stringing/) | Why prints grow fine hairs (stringing) and how retraction stops it — animated cutaway of the hot end, ending in a "print this tower and read it" experiment. |
 | [`how-print-clearance-works/`](./how-print-clearance-works/) | What "clearance" is — the air gap that makes two printed parts fit — why it counts per side (so it doubles), the press→snug→sliding→loose ladder, and how elephant's foot skews the bottom. Pairs with the `projects/tolerance-test-coin/` build. |
+| [`temperature-tower/`](./temperature-tower/) | How one tall test print sweeps the nozzle temperature from hot to cool to reveal the cleanest setting — reading stringing, sagging bridges, and layer adhesion band by band. |
 
 *(New guides are added by the PR that creates them — an unindexed guide is a lost guide.)*

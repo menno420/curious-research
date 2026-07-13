@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temperature tower — one print that finds your best nozzle heat</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --edge:#d1d5db; --accent:#7c3aed;
+    --hot:#dc2626; --cold:#2563eb; --good:#16a34a; --band:#e5e7eb;
+    --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+            --edge:#374151; --accent:#a78bfa;
+            --hot:#f87171; --cold:#60a5fa; --good:#4ade80; --band:#374151;
+            --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:40em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:780px; }
+  svg { width:100%; height:auto; display:block; }
+
+  .band { stroke:var(--edge); stroke-width:1.5; transition:opacity .4s ease, filter .4s ease; }
+  .band.dim { opacity:.18; }
+  .temp { font:700 15px system-ui,sans-serif; fill:var(--ink); opacity:0; transition:opacity .4s ease; }
+  .temp.show { opacity:1; }
+  .band-note { font:12px system-ui,sans-serif; fill:var(--muted); }
+
+  .ring { fill:none; stroke:var(--accent); stroke-width:3.5; rx:6;
+          opacity:0; transition:opacity .35s ease, y .5s ease; }
+  .ring.show { opacity:1; }
+
+  .fx { opacity:0; transition:opacity .5s ease; }
+  .fx.show { opacity:1; }
+
+  .string { stroke:var(--hot); stroke-width:2; fill:none; stroke-linecap:round; }
+  .blob { fill:var(--hot); }
+  .fxlabel { font:600 13px system-ui,sans-serif; }
+  .fxlabel.hot { fill:var(--hot); }
+  .fxlabel.cold { fill:var(--cold); }
+  .fxlabel.good { fill:var(--good); }
+  .fxsub { font:12px system-ui,sans-serif; fill:var(--muted); }
+
+  .crack { stroke:var(--cold); stroke-width:2; stroke-linecap:round; }
+  .layerline { stroke:var(--edge); stroke-width:1.5; }
+  .rough { stroke:var(--cold); stroke-width:2; fill:none; }
+
+  .post { fill:var(--edge); }
+  .bridge-sag { stroke:var(--cold); stroke-width:4; fill:none; stroke-linecap:round; }
+  .bridge-flat { stroke:var(--good); stroke-width:4; fill:none; stroke-linecap:round; }
+
+  .winner-glow { fill:none; stroke:var(--good); stroke-width:4; rx:6; opacity:0;
+                 transition:opacity .4s ease; }
+  .winner-glow.show { opacity:1; animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ stroke-width:4; opacity:.9; } 50%{ stroke-width:7; opacity:1; } }
+
+  .nozzle { fill:var(--muted); }
+
+  .caption { min-height:6.4em; margin:14px auto 0; max-width:660px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption .gloss { display:block; margin-top:.5em; font-size:.9rem; color:var(--muted); }
+  .caption .gloss em { font-style:normal; font-weight:700; color:var(--ink); }
+  .stepnum { display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+             width:1.6em; height:1.6em; line-height:1.6em; font-weight:700; margin-right:.45em;
+             text-align:center; }
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  button { font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+           border:1.5px solid var(--edge); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .recap { max-width:660px; margin-top:26px; background:var(--card); border-radius:14px;
+           box-shadow:var(--shadow); padding:16px 20px; }
+  .recap h2 { font-size:1.02rem; margin:.1em 0 .4em; }
+  .recap p { margin:.5em 0; color:var(--muted); }
+  .recap b { color:var(--ink); }
+  .recap .honest { margin-top:.8em; padding-top:.7em; border-top:1px solid var(--edge); font-size:.94rem; }
+  code { background:rgba(124,58,237,.12); padding:.05em .35em; border-radius:5px; font-size:.9em; }
+
+  /* Reduced motion: kill every transition/animation, land on stage 1, step by hand. */
+  .reduced *, .reduced *::before, .reduced *::after { transition:none !important; animation:none !important; }
+</style>
+</head>
+<body>
+<h1>The temperature tower: one print that finds your best nozzle heat</h1>
+<p class="sub">A temperature tower is a single tall test print split into stacked bands, each
+printed at a different <b>nozzle</b> heat. You read the bands afterwards and pick the one that
+came out cleanest. Watch it, band by band.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 780 360" aria-label="Animated diagram of a temperature tower">
+    <!-- nozzle at the top, for flavour -->
+    <g class="nozzle">
+      <rect x="132" y="8" width="16" height="18" rx="2"/>
+      <path d="M 132 26 L 148 26 L 143 36 L 137 36 Z"/>
+    </g>
+
+    <!-- the tower: 6 bands, top (coolest) to bottom (hottest) -->
+    <!-- band0 = 195 (top) ... band5 = 220 (bottom, hottest) -->
+    <rect id="band0" class="band" x="70" y="44"  width="150" height="46" fill="var(--band)"/>
+    <rect id="band1" class="band" x="70" y="90"  width="150" height="46" fill="var(--band)"/>
+    <rect id="band2" class="band" x="70" y="136" width="150" height="46" fill="var(--band)"/>
+    <rect id="band3" class="band" x="70" y="182" width="150" height="46" fill="var(--band)"/>
+    <rect id="band4" class="band" x="70" y="228" width="150" height="46" fill="var(--band)"/>
+    <rect id="band5" class="band" x="70" y="274" width="150" height="46" fill="var(--band)"/>
+    <!-- base plate -->
+    <rect x="52" y="320" width="186" height="8" rx="2" fill="var(--muted)"/>
+
+    <!-- temperature labels (appear at stage 2) -->
+    <text id="temp0" class="temp" x="145" y="73"  text-anchor="middle">195 °C</text>
+    <text id="temp1" class="temp" x="145" y="119" text-anchor="middle">200 °C</text>
+    <text id="temp2" class="temp" x="145" y="165" text-anchor="middle">205 °C</text>
+    <text id="temp3" class="temp" x="145" y="211" text-anchor="middle">210 °C</text>
+    <text id="temp4" class="temp" x="145" y="257" text-anchor="middle">215 °C</text>
+    <text id="temp5" class="temp" x="145" y="303" text-anchor="middle">220 °C</text>
+
+    <!-- cooler / hotter arrows -->
+    <text id="topnote"    class="band-note" x="30" y="70"  text-anchor="middle" transform="rotate(-90 30 70)">cooler ↑</text>
+    <text id="botnote"    class="band-note" x="30" y="300" text-anchor="middle" transform="rotate(-90 30 300)">hotter ↓</text>
+
+    <!-- moving highlight ring -->
+    <rect id="ring" class="ring" x="64" y="274" width="162" height="46"/>
+
+    <!-- winner glow (on band2 = 205) -->
+    <rect id="winnerGlow" class="winner-glow" x="66" y="134" width="158" height="50"/>
+
+    <!-- STAGE 0/1 caption art: "one print, many heats" -->
+    <g id="fxIntro" class="fx">
+      <text class="fxlabel" style="fill:var(--muted)" x="300" y="150">One test print,</text>
+      <text class="fxlabel" style="fill:var(--muted)" x="300" y="174">six different heats.</text>
+      <text class="fxsub" x="300" y="200">Print it once. Read it once. Done.</text>
+    </g>
+
+    <!-- STAGE 2: too hot — strings + blobs (near hottest band, band5) -->
+    <g id="fxHot" class="fx">
+      <text class="fxlabel hot" x="300" y="270">Too hot</text>
+      <text class="fxsub" x="300" y="292">whisker strings + little blobs</text>
+      <path class="string" d="M 224 288 q 20 -6 40 4"/>
+      <path class="string" d="M 224 300 q 24 8 46 -2"/>
+      <path class="string" d="M 224 310 q 18 10 38 2"/>
+      <circle class="blob" cx="268" cy="292" r="4"/>
+      <circle class="blob" cx="274" cy="308" r="3.2"/>
+      <circle class="blob" cx="232" cy="316" r="3"/>
+    </g>
+
+    <!-- STAGE 3: too cold — weak layers, gaps, rough surface (near coolest band, band0) -->
+    <g id="fxCold" class="fx">
+      <text class="fxlabel cold" x="300" y="60">Too cold</text>
+      <text class="fxsub" x="300" y="82">layers don't fuse · gaps · rough</text>
+      <!-- separated layer lines with a visible gap -->
+      <line class="layerline" x1="240" y1="52" x2="300" y2="52"/>
+      <line class="layerline" x1="240" y1="62" x2="286" y2="62"/>
+      <line class="layerline" x1="240" y1="72" x2="300" y2="72"/>
+      <path class="crack" d="M 244 90 L 244 68"/>
+      <path class="rough" d="M 240 100 q 10 -6 20 0 t 20 0 t 20 0"/>
+    </g>
+
+    <!-- STAGE 4: bridges tell the truth -->
+    <g id="fxBridge" class="fx">
+      <text class="fxlabel" style="fill:var(--muted)" x="300" y="44">Bridges tell the truth</text>
+      <!-- cold: sagging bridge -->
+      <text class="fxlabel cold" x="300" y="90">cold band</text>
+      <rect class="post" x="300" y="100" width="12" height="40"/>
+      <rect class="post" x="392" y="100" width="12" height="40"/>
+      <path class="bridge-sag" d="M 306 104 Q 352 150 398 104"/>
+      <text class="fxsub" x="312" y="162">sags — plastic droops across the gap</text>
+      <!-- good: flat bridge -->
+      <text class="fxlabel good" x="300" y="210">good band</text>
+      <rect class="post" x="300" y="220" width="12" height="40"/>
+      <rect class="post" x="392" y="220" width="12" height="40"/>
+      <path class="bridge-flat" d="M 306 224 L 398 224"/>
+      <text class="fxsub" x="312" y="282">stays flat — spans the gap clean</text>
+    </g>
+
+    <!-- STAGE 5: the winner -->
+    <g id="fxWin" class="fx">
+      <text class="fxlabel good" x="300" y="150">The winner</text>
+      <text class="fxsub" x="300" y="174">clean bridges · no strings · solid layers</text>
+      <text class="fxsub" x="300" y="196">→ this band's number is your temperature</text>
+      <path class="bridge-flat" d="M 300 216 L 372 216" style="stroke-width:3"/>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="controls">
+    <button id="prev">◀ Back</button>
+    <button id="next" class="primary">Next step ▶</button>
+    <button id="play">▶ Play all</button>
+    <button id="replay">↻ Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p>A <b>temperature tower</b> is one tall print sliced into stacked bands, each printed a few
+  degrees cooler than the one below it. Too <b>hot</b> and the plastic oozes — you get fine
+  strings and blobs. Too <b>cold</b> and it won't fuse — weak layers, gaps, sagging bridges.
+  Somewhere in the middle is a band that came out clean: solid layers, flat bridges, no hairs.
+  <b>That band's temperature is the one to use</b> for that spool of filament — found in a
+  single print instead of guessing.</p>
+  <p class="honest"><b>Honest note — this is stylized.</b> Real towers look different for every
+  filament and every printer, and the numbers above (195–220&nbsp;°C) are just an example range,
+  not a recommendation — read the number on <b>your</b> spool. Temperature is not the only cause
+  of stringing: retraction matters too — see the <code>retraction-vs-stringing/</code> guide.
+  And "good" temperatures vary by filament brand, so always trust what <b>your</b> tower shows
+  you over any number you read online, including these.</p>
+</div>
+
+<script>
+  const stages = [
+    { cap:'<span class="stepnum">1</span><b>What a temperature tower is.</b> One tall test print, ' +
+      'split into stacked bands. Same model, same spool — but each band is printed at a different ' +
+      'heat. Print it once, then read it.',
+      ring:-1, temps:false, fx:'fxIntro', win:false, dim:-1 },
+
+    { cap:'<span class="stepnum">2</span><b>Each band is a different heat.</b> As the tower rises, ' +
+      'the <b>nozzle</b> temperature steps <b>down</b> — hottest at the bottom, coolest at the top.' +
+      '<span class="gloss"><em>nozzle</em> = the brass tip the melted plastic comes out of. ' +
+      'These numbers are just an example — your real range depends on your filament.</span>',
+      ring:-1, temps:true, fx:null, win:false, dim:-1 },
+
+    { cap:'<span class="stepnum">3</span><b>Too hot: stringing &amp; blobs.</b> On the hottest band ' +
+      'the plastic is runny, so it oozes — you get thin hairs and little bumps between features.' +
+      '<span class="gloss"><em>stringing</em> = thin plastic hairs left behind as the nozzle ' +
+      'travels from one spot to the next.</span>',
+      ring:5, temps:true, fx:'fxHot', win:false, dim:5 },
+
+    { cap:'<span class="stepnum">4</span><b>Too cold: weak layers &amp; gaps.</b> On the coolest band ' +
+      'the plastic barely melts, so layers don\'t stick and the surface comes out rough and gappy.' +
+      '<span class="gloss"><em>layer adhesion</em> = how well each layer fuses to the one below. ' +
+      '<em>under-extrusion</em> = not enough plastic coming out, leaving gaps.</span>',
+      ring:0, temps:true, fx:'fxCold', win:false, dim:0 },
+
+    { cap:'<span class="stepnum">5</span><b>Bridges tell the truth.</b> A little bridge across a gap ' +
+      '<b>sags</b> on a too-cold band and stays <b>flat</b> on a good one — the clearest tell of all.' +
+      '<span class="gloss"><em>bridging</em> = plastic printed straight across open space with ' +
+      'nothing underneath to hold it up.</span>',
+      ring:-1, temps:true, fx:'fxBridge', win:false, dim:-1 },
+
+    { cap:'<span class="stepnum">6</span><b>The winner.</b> One band in the middle came out clean — ' +
+      'flat bridges, no strings, solid layers. <b>This band\'s number is the temperature you\'ll ' +
+      'use</b> for this spool from now on.',
+      ring:2, temps:true, fx:'fxWin', win:true, dim:-1 },
+
+    { cap:'<span class="stepnum">✓</span><b>That\'s the whole method.</b> Print one tower, read it ' +
+      'band by band, pick the cleanest, write its temperature on the spool. Scroll down for the ' +
+      '"what you just watched" recap and the honest fine print.',
+      ring:2, temps:true, fx:null, win:true, dim:-1 },
+  ];
+
+  const bands = [0,1,2,3,4,5].map(i => document.getElementById('band'+i));
+  const temps = [0,1,2,3,4,5].map(i => document.getElementById('temp'+i));
+  const bandY = [44,90,136,182,228,274];
+  const ring = document.getElementById('ring');
+  const winnerGlow = document.getElementById('winnerGlow');
+  const fxIds = ['fxIntro','fxHot','fxCold','fxBridge','fxWin'];
+  const fxEls = {}; fxIds.forEach(id => fxEls[id] = document.getElementById(id));
+  const caption = document.getElementById('caption');
+  const nextBtn = document.getElementById('next');
+  const prevBtn = document.getElementById('prev');
+
+  let step = -1, timer = null, litTimers = [];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) document.body.classList.add('reduced');
+
+  function clearLit() { litTimers.forEach(t => clearTimeout(t)); litTimers = []; }
+
+  function render(s, animate) {
+    step = s;
+    const st = stages[s];
+    caption.innerHTML = st.cap;
+
+    // Stage 1 special: light the bands up bottom-to-top when playing forward.
+    clearLit();
+    if (s === 0 && animate && !reduced) {
+      bands.forEach(b => b.classList.add('dim'));
+      // bottom (index 5) first, up to top (index 0)
+      [5,4,3,2,1,0].forEach((idx, k) => {
+        litTimers.push(setTimeout(() => bands[idx].classList.remove('dim'), 180 * k));
+      });
+    } else {
+      // dim everything except the focused band when a band is under the ring;
+      // otherwise show the whole tower fully lit.
+      bands.forEach((b, i) => b.classList.toggle('dim', st.dim >= 0 && i !== st.dim));
+    }
+
+    // temperature numbers
+    temps.forEach(t => t.classList.toggle('show', st.temps));
+
+    // highlight ring
+    if (st.ring >= 0) { ring.setAttribute('y', bandY[st.ring]); ring.classList.add('show'); }
+    else ring.classList.remove('show');
+
+    // winner glow
+    winnerGlow.classList.toggle('show', st.win);
+
+    // effect groups — only the current stage's group is shown
+    fxIds.forEach(id => fxEls[id].classList.toggle('show', st.fx === id));
+
+    prevBtn.disabled = s <= 0;
+    nextBtn.disabled = s >= stages.length - 1;
+  }
+
+  function playAll() {
+    stopPlay();
+    render(0, true);
+    let i = 1;
+    timer = setInterval(() => { render(i, true); if (++i >= stages.length) stopPlay(); },
+                        reduced ? 3000 : 2600);
+  }
+  function stopPlay() { if (timer) { clearInterval(timer); timer = null; } }
+
+  nextBtn.onclick = () => { stopPlay(); render(Math.min(step + 1, stages.length - 1), true); };
+  prevBtn.onclick = () => { stopPlay(); render(Math.max(step - 1, 0), false); };
+  document.getElementById('replay').onclick = playAll;
+  document.getElementById('play').onclick = playAll;
+
+  // Reduced motion: land on stage 1 and let the reader step through — no autoplay.
+  render(0, false);
+  if (!reduced) setTimeout(playAll, 600);
+</script>
+</body>
+</html>
