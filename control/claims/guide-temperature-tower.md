@@ -1,0 +1,1 @@
+- `claude/guide-temperature-tower` · **guides/temperature-tower** — animated temperature-tower explainer + step-by-step guide.md + README index line · guides/temperature-tower/, guides/README.md · 2026-07-13
