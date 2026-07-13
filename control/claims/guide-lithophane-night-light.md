@@ -1,1 +1,0 @@
-- `guide-lithophane-night-light` · **scope: guides/lithophane-night-light** — animated lithophane explainer + step-by-step build guide (BUILD verdict from ideas/lithophane-night-light.md) · guides/lithophane-night-light/ · 2026-07-13
