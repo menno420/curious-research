@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a lithophane glows — thickness makes the picture</title>
+<style>
+  :root{
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --accent:#7c3aed; --ok:#16a34a; --warm:#f59e0b; --plastic:#cbb994;
+    --shadow:0 2px 10px rgba(0,0,0,.08); --edge:#d1d5db;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+           --accent:#a78bfa; --ok:#4ade80; --warm:#fcd34d; --plastic:#8a7a5c;
+           --shadow:0 2px 10px rgba(0,0,0,.5); --edge:#374151; }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font:16px/1.55 system-ui,sans-serif; background:var(--bg); color:var(--ink);
+       display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px;}
+  h1{font-size:1.35rem; margin:.2em 0 .1em; text-align:center;}
+  .sub{color:var(--muted); margin:0 0 18px; text-align:center; max-width:41em;}
+  .stage-box{background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+             padding:18px; width:100%; max-width:780px;}
+  svg{width:100%; height:auto; display:block;}
+  .label{font:600 13px system-ui,sans-serif; fill:var(--ink);}
+  .small{font:12px system-ui,sans-serif; fill:var(--muted);}
+  .block{fill:var(--plastic); stroke:var(--edge); stroke-width:1;}
+  .beam{fill:var(--warm); opacity:0; transition:opacity .5s;}
+  .glow{fill:var(--warm); opacity:0; transition:opacity .6s ease, r .6s ease;}
+  #lampbar{fill:var(--warm); opacity:.12; transition:opacity .5s;}
+  #sceneA.lit #lampbar{opacity:.9;}
+  #thumb{opacity:0; transition:opacity .5s;}
+  .scene{transition:opacity .4s;}
+  .swatch-band{transition:opacity .45s;}
+  .caption{min-height:5.6em; margin:14px auto 0; max-width:660px; text-align:center;}
+  .caption b{color:var(--accent);}
+  .stepnum{display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+           width:1.6em; height:1.6em; line-height:1.6em; font-weight:700; margin-right:.45em;}
+  .controls{display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap;}
+  button{font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+         border:1.5px solid var(--edge); background:var(--card); color:var(--ink); cursor:pointer;}
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+  button:disabled{opacity:.4; cursor:default;}
+  .recap{max-width:660px; margin-top:26px; background:var(--card); border-radius:14px;
+         box-shadow:var(--shadow); padding:16px 20px;}
+  .recap h2{font-size:1.02rem; margin:.1em 0 .4em;}
+  .recap p{margin:.45em 0; color:var(--muted);}
+  .recap b{color:var(--ink);}
+</style>
+</head>
+<body>
+<h1>Why a lithophane glows — thickness makes the picture</h1>
+<p class="sub">A <b>lithophane</b> is a thin plastic panel whose thickness changes across a
+picture. Put a light behind it and the photo appears — made of shadow. Watch how it works,
+then why you print it standing upright.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 760 300" aria-label="Animated lithophane explainer">
+    <defs>
+      <radialGradient id="orb" cx="50%" cy="42%" r="60%">
+        <stop offset="0%" stop-color="var(--warm)" stop-opacity="0.95"/>
+        <stop offset="55%" stop-color="var(--warm)" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="var(--warm)" stop-opacity="0.04"/>
+      </radialGradient>
+      <linearGradient id="smooth" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="var(--plastic)" stop-opacity="0.25"/>
+        <stop offset="50%" stop-color="var(--warm)" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="var(--plastic)" stop-opacity="0.25"/>
+      </linearGradient>
+    </defs>
+
+    <!-- SCENE A: thickness -> brightness -->
+    <g id="sceneA" class="scene">
+      <text class="small" x="30" y="26">edge-on view: light climbs up through the plastic</text>
+      <g id="cols"></g>
+      <rect id="lampbar" x="66" y="256" width="628" height="12" rx="6"/>
+      <text class="label" x="66" y="288">a small LED behind the panel</text>
+      <!-- front-view thumbnail: what your eye sees -->
+      <g id="thumb">
+        <rect x="600" y="18" width="132" height="96" rx="10" fill="var(--bg)" stroke="var(--edge)"/>
+        <ellipse cx="666" cy="66" rx="52" ry="38" fill="url(#orb)"/>
+        <text class="small" x="606" y="108">what your eye sees</text>
+      </g>
+    </g>
+
+    <!-- SCENE B: flat vs vertical -->
+    <g id="sceneB" class="scene" opacity="0">
+      <!-- FLAT: banded -->
+      <g id="flatG">
+        <text class="label" x="70" y="40">Printed FLAT (lying down)</text>
+        <g id="flatBands"></g>
+        <text class="small" x="70" y="250">tone climbs layer-by-layer</text>
+        <text class="small" x="70" y="268">&#8594; coarse steps you can see</text>
+      </g>
+      <!-- VERTICAL: smooth -->
+      <g id="vertG">
+        <text class="label" x="430" y="40">Printed UPRIGHT (standing)</text>
+        <rect id="vertSwatch" x="430" y="60" width="150" height="160" rx="6"
+              fill="url(#smooth)" stroke="var(--edge)" opacity="0"
+              style="transition:opacity .5s"/>
+        <g id="vertLines" opacity="0" style="transition:opacity .5s"></g>
+        <text class="small" x="430" y="250">tone varies inside each layer</text>
+        <text class="small" x="430" y="268">&#8594; smooth, where your printer is finest</text>
+        <g id="vcheck" opacity="0" style="transition:opacity .5s">
+          <circle cx="600" cy="70" r="15" fill="none" stroke="var(--ok)" stroke-width="3.5"/>
+          <path d="M 592 70 l 6 6 l 11 -12" fill="none" stroke="var(--ok)"
+                stroke-width="4" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="controls">
+    <button id="prev">&#9664; Back</button>
+    <button id="next" class="primary">Next step &#9654;</button>
+    <button id="play">&#9654; Play all</button>
+    <button id="replay">&#8635; Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p><b>1.</b> A lithophane is a picture stored as <b>thickness</b>. Thick plastic blocks the
+  light (dark); thin plastic lets it through (bright). Thickness in, brightness out.</p>
+  <p><b>2.</b> Because only thickness varies, a plain lithophane is <b>grayscale by nature</b> —
+  light and dark, not color. (True color needs the HueForge filament-stacking trick — see the
+  guide's "full-color stretch" section, and the honest costs that come with it.)</p>
+  <p><b>3.</b> <b>Print it upright.</b> A printer's side-to-side detail is far finer than its
+  layer-to-layer detail, so standing the panel up turns the tones smooth instead of stair-stepped.</p>
+  <p>Simplification note: a real lithophane has thousands of thickness values across the
+  picture, not the 9 columns shown here, and the brightness shown is illustrative — a teaching
+  cartoon of how light falls off through plastic, not a physics-exact curve.</p>
+</div>
+
+<script>
+  var cols = [70,64,52,36,22,36,52,64,70];
+  var maxH = 82, baseY = 250, glowY = 74, x0 = 110, dx = 66, halfW = 22;
+  var colsG = document.getElementById('cols');
+  var glows = [], upperBeams = [], lowerBeams = [];
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function mk(tag, attrs){ var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  for (var i=0; i<cols.length; i++){
+    var h = cols[i], cx = x0 + i*dx, topY = baseY - h;
+    var b = 0.12 + 0.88 * (1 - h/maxH);
+    var lower = mk('rect', {x:cx-4, y:topY, width:8, height:baseY-topY, fill:'var(--warm)'});
+    lower.setAttribute('class','beam'); colsG.appendChild(lower); lowerBeams.push(lower);
+    var upper = mk('rect', {x:cx-4, y:glowY, width:8, height:topY-glowY, fill:'var(--warm)'});
+    upper.setAttribute('class','beam'); upper.dataset.b = b; colsG.appendChild(upper); upperBeams.push(upper);
+    var block = mk('rect', {x:cx-halfW, y:topY, width:halfW*2, height:h, rx:3});
+    block.setAttribute('class','block'); colsG.appendChild(block);
+    var g = mk('circle', {cx:cx, cy:glowY, r:8 + b*13, fill:'var(--warm)'});
+    g.setAttribute('class','glow'); g.dataset.b = b; colsG.appendChild(g); glows.push(g);
+  }
+  // flat bands (discrete = banding)
+  var flatBands = document.getElementById('flatBands');
+  var bandShades = [0.14,0.30,0.48,0.66,0.82,0.94];
+  for (var j=0; j<bandShades.length; j++){
+    var r = mk('rect', {x:110, y:64 + j*26, width:150, height:26,
+      fill:'var(--warm)', 'fill-opacity':bandShades[j], stroke:'var(--bg)', 'stroke-width':2});
+    r.setAttribute('class','swatch-band'); r.style.opacity = 0;
+    r.style.transitionDelay = (j*0.12)+'s'; flatBands.appendChild(r);
+  }
+  // vertical fine lines (many thin = fine detail)
+  var vertLines = document.getElementById('vertLines');
+  for (var k=0; k<24; k++){
+    var lx = 432 + k*6.1;
+    vertLines.appendChild(mk('line', {x1:lx, y1:62, x2:lx, y2:218,
+      stroke:'var(--bg)', 'stroke-width':0.7, 'stroke-opacity':0.5}));
+  }
+
+  var sceneA = document.getElementById('sceneA');
+  var sceneB = document.getElementById('sceneB');
+  var thumb = document.getElementById('thumb');
+  var vertSwatch = document.getElementById('vertSwatch');
+  var vlinesG = document.getElementById('vertLines');
+  var vcheck = document.getElementById('vcheck');
+  var flatG = document.getElementById('flatG');
+  var caption = document.getElementById('caption');
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var steps = [
+    '<span class="stepnum">1</span>This is a lithophane seen edge-on: a thin plastic panel ' +
+      'whose <b>thickness</b> changes across the picture. The nine columns stand in for the ' +
+      'thousands of tiny thickness values in a real one. Light off, it is just a pale slab.',
+    '<span class="stepnum">2</span>Switch on a light behind it. In a night-light that is a ' +
+      'little <b>LED</b> or a battery tealight &#8212; never anything hot or mains-powered ' +
+      'pressed against the plastic.',
+    '<span class="stepnum">3</span><b>Thickness is the whole trick.</b> Light climbs up ' +
+      'through the plastic. A THICK column blocks most of it &#8594; that spot looks DARK. A ' +
+      'THIN column lets light through &#8594; that spot looks BRIGHT.',
+    '<span class="stepnum">4</span>Do that across the whole panel and the bright/dark pattern ' +
+      '<b>is your photo</b> &#8212; a picture made of shadow. Thin plastic = the highlights, ' +
+      'thick plastic = the shadows.',
+    '<span class="stepnum">5</span>Now: which way up do you print it? Lay it <b>FLAT</b> and ' +
+      'every tone must be built by stacking whole layers &#8212; so the picture climbs in ' +
+      'coarse steps you can actually see as bands.',
+    '<span class="stepnum">6</span>Stand it <b>UPRIGHT</b> and each layer becomes a thin ' +
+      'vertical stripe; the tones vary side-to-side, where your printer is far finer. Same ' +
+      'photo, far smoother. That is why lithophanes print vertical.'
+  ];
+
+  var step = -1, timer = null;
+  function render(s){
+    step = s;
+    caption.innerHTML = steps[s];
+    var inA = s <= 3;
+    sceneA.style.opacity = inA ? 1 : 0;
+    sceneB.style.opacity = inA ? 0 : 1;
+    // scene A state
+    sceneA.classList.toggle('lit', s >= 1 && inA);
+    var raysOn = s >= 2 && inA;
+    for (var i=0;i<glows.length;i++){
+      var b = parseFloat(glows[i].dataset.b);
+      glows[i].style.opacity = raysOn ? b : 0;
+      upperBeams[i].style.opacity = raysOn ? (b*0.7) : 0;
+      lowerBeams[i].style.opacity = (s>=1 && inA) ? 0.4 : 0;
+    }
+    thumb.style.opacity = (s >= 3 && inA) ? 1 : 0;
+    // scene B state
+    var bands = document.querySelectorAll('.swatch-band');
+    var flatBuilt = s >= 4;
+    for (var j=0;j<bands.length;j++) bands[j].style.opacity = flatBuilt ? 1 : 0;
+    flatG.style.opacity = (s>=4) ? 1 : 0.25;
+    flatG.style.transition = 'opacity .4s';
+    var vertBuilt = s >= 5;
+    vertSwatch.style.opacity = vertBuilt ? 1 : 0;
+    vlinesG.style.opacity = vertBuilt ? 1 : 0;
+    vcheck.style.opacity = vertBuilt ? 1 : 0;
+    document.getElementById('prev').disabled = s <= 0;
+    document.getElementById('next').disabled = s >= steps.length - 1;
+  }
+  function play(){
+    stop(); render(0);
+    var i = 1;
+    timer = setInterval(function(){ render(i); if (++i >= steps.length) stop(); },
+                        reduced ? 3000 : 2100);
+  }
+  function stop(){ if (timer){ clearInterval(timer); timer = null; } }
+  document.getElementById('next').onclick = function(){ stop(); render(Math.min(step+1, steps.length-1)); };
+  document.getElementById('prev').onclick = function(){ stop(); render(Math.max(step-1, 0)); };
+  document.getElementById('replay').onclick = play;
+  document.getElementById('play').onclick = play;
+  render(0);
+  if (!reduced) setTimeout(play, 700);
+</script>
+</body>
+</html>

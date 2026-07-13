@@ -1,6 +1,6 @@
 # Lithophane night-light — the color printer's show-off print
 
-> **State:** grown via the ritual (2026-07-13) → verdict: **build** (start single-color; treat full-color as the stretch)
+> **State:** grown via the ritual (2026-07-13) → verdict: **build** (start single-color; treat full-color as the stretch) → built as `guides/lithophane-night-light/` (2026-07-13)
 
 A backlit photo-in-plastic night-light: a free web tool turns a photo into a printable model, plus a repeatable workflow doc so it comes out great every time.
 
