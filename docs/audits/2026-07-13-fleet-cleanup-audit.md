@@ -1,5 +1,7 @@
 # curious-research — fleet cleanup audit, 2026-07-13 (EAP final night)
 
+> **Status:** `audit`
+>
 > **Type:** independent read-mostly audit pass, requested by the fleet manager as a
 > complement to (not a redispatch of) tonight's owner-driven work. This is a new document;
 > it does not edit `control/status.md`, `control/inbox.md`, `docs/current-state.md`, or any
