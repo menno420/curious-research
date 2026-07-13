@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The first layer — the foundation everything else is built on</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --edge:#d1d5db; --accent:#7c3aed;
+    --hot:#dc2626; --cold:#2563eb; --good:#16a34a; --band:#e5e7eb;
+    --plate:#9ca3af; --plastic:#a78bfa;
+    --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+            --edge:#374151; --accent:#a78bfa;
+            --hot:#f87171; --cold:#60a5fa; --good:#4ade80; --band:#374151;
+            --plate:#4b5563; --plastic:#7c3aed;
+            --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:40em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:780px; }
+  svg { width:100%; height:auto; display:block; }
+
+  /* persistent scene */
+  .plate-fill { fill:var(--plate); }
+  .plate-top { stroke:var(--good); stroke-width:2.5; opacity:.55; }
+  .nozzle { fill:var(--muted); }
+  .nozzle-edge { fill:none; stroke:var(--ink); stroke-width:1; opacity:.25; }
+
+  /* effect groups toggled by .show */
+  .fx { opacity:0; transition:opacity .5s ease; }
+  .fx.show { opacity:1; }
+
+  .noodle { fill:var(--plastic); stroke:var(--hot); stroke-width:1.5; }
+  .flatline { fill:var(--plastic); }
+  .weld { fill:var(--good); opacity:.9; }
+  .torn { fill:none; stroke:var(--cold); stroke-width:2; stroke-dasharray:4 3; stroke-linecap:round; }
+  .foot { fill:var(--cold); opacity:.85; }
+  .thinline { fill:none; stroke:var(--hot); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:10 7; }
+  .fullline { fill:var(--good); }
+
+  .gapline { stroke:var(--accent); stroke-width:1.5; stroke-dasharray:3 3; }
+  .gaparrow { stroke:var(--accent); stroke-width:1.5; fill:none; }
+  .gaplabel { font:600 12px system-ui,sans-serif; fill:var(--accent); }
+
+  .fxlabel { font:600 14px system-ui,sans-serif; }
+  .fxlabel.hot { fill:var(--hot); }
+  .fxlabel.cold { fill:var(--cold); }
+  .fxlabel.good { fill:var(--good); }
+  .fxlabel.mute { fill:var(--muted); }
+  .fxsub { font:12px system-ui,sans-serif; fill:var(--muted); }
+  .miniplate { fill:var(--plate); }
+
+  /* the moving nozzle in the speed stage */
+  .racer { transform:translateX(0); }
+  .nz-fast { animation:race 1.1s linear infinite; }
+  .nz-slow { animation:race 3.4s linear infinite; }
+  @keyframes race { 0%{ transform:translateX(0); } 100%{ transform:translateX(150px); } }
+
+  .caption { min-height:6.4em; margin:14px auto 0; max-width:660px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption .gloss { display:block; margin-top:.5em; font-size:.9rem; color:var(--muted); }
+  .caption .gloss em { font-style:normal; font-weight:700; color:var(--ink); }
+  .stepnum { display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+             width:1.6em; height:1.6em; line-height:1.6em; font-weight:700; margin-right:.45em;
+             text-align:center; }
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  button { font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+           border:1.5px solid var(--edge); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .recap { max-width:660px; margin-top:26px; background:var(--card); border-radius:14px;
+           box-shadow:var(--shadow); padding:16px 20px; }
+  .recap h2 { font-size:1.02rem; margin:.1em 0 .4em; }
+  .recap p { margin:.5em 0; color:var(--muted); }
+  .recap b { color:var(--ink); }
+  .recap .honest { margin-top:.8em; padding-top:.7em; border-top:1px solid var(--edge); font-size:.94rem; }
+  code { background:rgba(124,58,237,.12); padding:.05em .35em; border-radius:5px; font-size:.9em; }
+
+  /* Reduced motion: kill every transition/animation, land on stage 0, step by hand. */
+  .reduced *, .reduced *::before, .reduced *::after { transition:none !important; animation:none !important; }
+</style>
+</head>
+<body>
+<h1>The first layer: the foundation everything else is built on</h1>
+<p class="sub">The first layer is the layer of glue every other layer stands on. Get the
+<b>nozzle-to-bed gap</b> and the <b>speed</b> right and most beginner print failures simply
+vanish. Watch it, in side-view cross-section.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 780 360" aria-label="Animated side-view cross-section of a 3D printer first layer">
+
+    <!-- persistent scene: the build plate (bed). Hidden on the speed & compare stages. -->
+    <g id="scene">
+      <rect class="plate-fill" x="70" y="280" width="470" height="30" rx="2"/>
+      <line class="plate-top" x1="70" y1="280" x2="540" y2="280"/>
+      <text class="fxsub" x="75" y="326">the bed (build plate) — seen edge-on</text>
+    </g>
+
+    <!-- STAGE 0: intro — nozzle poised above the bed, first line about to be laid -->
+    <g id="fxIntro" class="fx">
+      <g class="nozzle">
+        <rect x="289" y="196" width="22" height="36" rx="2"/>
+        <path d="M 289 232 L 311 232 L 300 254 Z"/>
+      </g>
+      <path class="nozzle-edge" d="M 289 196 h 22 v 36 l -11 22 l -11 -22 Z"/>
+      <text class="fxlabel mute" x="335" y="214">nozzle</text>
+      <text class="fxsub" x="335" y="232">the tip the melted plastic comes out of</text>
+      <circle class="noodle" cx="300" cy="270" r="6"/>
+      <text class="fxlabel mute" x="360" y="272">first line, about to be laid down</text>
+    </g>
+
+    <!-- STAGE 1: gap TOO FAR — round un-pressed noodle, gaps, a curling corner -->
+    <g id="fxFar" class="fx">
+      <g class="nozzle">
+        <rect x="289" y="170" width="22" height="36" rx="2"/>
+        <path d="M 289 206 L 311 206 L 300 228 Z"/>
+      </g>
+      <!-- gap indicator: big gap -->
+      <line class="gapline" x1="300" y1="228" x2="300" y2="280"/>
+      <path class="gaparrow" d="M 322 232 v 44 M 318 236 l 4 -4 l 4 4 M 318 272 l 4 4 l 4 -4"/>
+      <text class="gaplabel" x="330" y="258">big gap</text>
+      <!-- round un-pressed noodles barely touching, with gaps between them -->
+      <circle class="noodle" cx="150" cy="271" r="8"/>
+      <circle class="noodle" cx="184" cy="271" r="8"/>
+      <circle class="noodle" cx="218" cy="271" r="8"/>
+      <circle class="noodle" cx="252" cy="271" r="8"/>
+      <!-- curling corner: one bead lifted off the bed -->
+      <circle class="noodle" cx="120" cy="258" r="8" transform="rotate(-18 120 258)"/>
+      <path class="torn" d="M 112 266 q 6 8 16 6"/>
+      <text class="fxlabel hot" x="360" y="180">Gap too far</text>
+      <text class="fxsub" x="360" y="200">round, un-pressed lines — barely touch the bed</text>
+      <text class="fxsub" x="360" y="218">gaps between lines · a corner curls up</text>
+      <text class="fxsub" x="360" y="236">no squish → poor grip → pops off mid-print</text>
+    </g>
+
+    <!-- STAGE 2: gap TOO CLOSE — torn translucent ridges, under-extrusion, elephant's foot -->
+    <g id="fxClose" class="fx">
+      <g class="nozzle">
+        <rect x="289" y="222" width="22" height="36" rx="2"/>
+        <path d="M 289 258 L 311 258 L 300 278 Z"/>
+      </g>
+      <line class="gapline" x1="300" y1="278" x2="300" y2="280"/>
+      <text class="gaplabel" x="316" y="276">almost scraping</text>
+      <!-- torn, starved flat ridges -->
+      <path class="torn" d="M 130 278 h 26 M 164 278 h 18 M 190 278 h 24 M 222 278 h 14"/>
+      <ellipse class="flatline" cx="150" cy="277" rx="9" ry="2.2"/>
+      <ellipse class="flatline" cx="196" cy="277" rx="9" ry="2.2"/>
+      <!-- elephant's foot: a squeezed-out bulge at the edge -->
+      <path class="foot" d="M 236 280 q 22 -2 24 0 q 2 6 -6 6 q -14 0 -18 -6 Z"/>
+      <text class="fxlabel cold" x="360" y="200">Gap too close</text>
+      <text class="fxsub" x="360" y="220">squished to torn ridges · starved of plastic</text>
+      <text class="fxsub" x="360" y="238">edges bulge into "elephant's foot"</text>
+      <text class="fxsub" x="360" y="256">too little plastic can escape (under-extrusion)</text>
+    </g>
+
+    <!-- STAGE 3: gap JUST RIGHT — slight squish, lines merged into one welded sheet -->
+    <g id="fxRight" class="fx">
+      <g class="nozzle">
+        <rect x="289" y="196" width="22" height="36" rx="2"/>
+        <path d="M 289 232 L 311 232 L 300 252 Z"/>
+      </g>
+      <line class="gapline" x1="300" y1="252" x2="300" y2="280"/>
+      <path class="gaparrow" d="M 322 254 v 24 M 318 258 l 4 -4 l 4 4 M 318 274 l 4 4 l 4 -4"/>
+      <text class="gaplabel" x="330" y="270">slight gap</text>
+      <!-- flattened beads (~75% height, a touch wider) merged into a continuous sheet -->
+      <ellipse class="flatline" cx="146" cy="274" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="164" cy="274" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="182" cy="274" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="200" cy="274" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="218" cy="274" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="236" cy="274" rx="11" ry="6"/>
+      <rect class="weld" x="135" y="278" width="112" height="3" rx="1.5"/>
+      <text class="fxlabel good" x="360" y="200">Gap just right</text>
+      <text class="fxsub" x="360" y="220">a slight squish — pressed to ~75% height, a bit wider</text>
+      <text class="fxsub" x="360" y="238">neighbouring lines merge into one solid sheet</text>
+      <text class="fxsub" x="360" y="256">welded to the bed → sticks hard. This is the goal.</text>
+    </g>
+
+    <!-- STAGE 4: SPEED — fast (thin, dragged, weak) vs slow (pressed, bonded) -->
+    <g id="fxSpeed" class="fx">
+      <text class="fxlabel mute" x="300" y="24" text-anchor="middle">Same gap — the difference is speed</text>
+
+      <!-- FAST lane (top) -->
+      <text class="fxlabel hot" x="70" y="70">Fast</text>
+      <rect class="miniplate" x="70" y="120" width="360" height="14" rx="2"/>
+      <path class="thinline" d="M 78 118 h 190"/>
+      <g class="racer nz-fast">
+        <g class="nozzle" transform="translate(78 0)">
+          <rect x="185" y="78" width="20" height="30" rx="2"/>
+          <path d="M 185 108 L 205 108 L 195 122 Z"/>
+        </g>
+      </g>
+      <text class="fxsub" x="240" y="92">nozzle races → line stretched thin, drags loose → weak bond</text>
+
+      <!-- SLOW lane (bottom) -->
+      <text class="fxlabel good" x="70" y="200">Slow</text>
+      <rect class="miniplate" x="70" y="250" width="360" height="14" rx="2"/>
+      <rect class="fullline" x="78" y="240" width="190" height="10" rx="4"/>
+      <rect class="weld" x="78" y="248" width="190" height="3" rx="1.5"/>
+      <g class="racer nz-slow">
+        <g class="nozzle" transform="translate(78 0)">
+          <rect x="185" y="210" width="20" height="30" rx="2"/>
+          <path d="M 185 240 L 205 240 L 195 252 Z"/>
+        </g>
+      </g>
+      <text class="fxsub" x="240" y="224">nozzle ambles → line has time to press &amp; bond → strong grip</text>
+
+      <text class="fxlabel mute" x="70" y="300">The one-value experiment: slow the first layer down.</text>
+    </g>
+
+    <!-- STAGE 5: three cross-sections side by side to match against your own bed -->
+    <g id="fxCompare" class="fx">
+      <text class="fxlabel mute" x="390" y="30" text-anchor="middle">Match what you see on your own bed</text>
+
+      <!-- too far -->
+      <rect class="miniplate" x="70" y="230" width="180" height="16" rx="2"/>
+      <circle class="noodle" cx="110" cy="221" r="8"/>
+      <circle class="noodle" cx="146" cy="221" r="8"/>
+      <circle class="noodle" cx="182" cy="221" r="8"/>
+      <path class="torn" d="M 118 229 h 20 M 154 229 h 20" />
+      <text class="fxlabel hot" x="160" y="272" text-anchor="middle">Too far</text>
+      <text class="fxsub" x="160" y="292" text-anchor="middle">round beads · gap underneath</text>
+
+      <!-- too close -->
+      <rect class="miniplate" x="300" y="230" width="180" height="16" rx="2"/>
+      <path class="torn" d="M 316 228 h 26 M 350 228 h 18 M 376 228 h 24"/>
+      <ellipse class="flatline" cx="340" cy="227" rx="10" ry="2.2"/>
+      <path class="foot" d="M 452 230 q 20 -2 22 0 q 2 6 -6 6 q -12 0 -16 -6 Z"/>
+      <text class="fxlabel cold" x="390" y="272" text-anchor="middle">Too close</text>
+      <text class="fxsub" x="390" y="292" text-anchor="middle">flat, torn sliver · foot at the edge</text>
+
+      <!-- just right -->
+      <rect class="miniplate" x="530" y="230" width="180" height="16" rx="2"/>
+      <ellipse class="flatline" cx="560" cy="224" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="580" cy="224" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="600" cy="224" rx="11" ry="6"/>
+      <ellipse class="flatline" cx="620" cy="224" rx="11" ry="6"/>
+      <rect class="weld" x="549" y="228" width="82" height="3" rx="1.5"/>
+      <text class="fxlabel good" x="620" y="272" text-anchor="middle">Just right</text>
+      <text class="fxsub" x="620" y="292" text-anchor="middle">flattened bead · welded down</text>
+    </g>
+
+    <!-- STAGE 6: closing pointer -->
+    <g id="fxDone" class="fx">
+      <text class="fxlabel good" x="390" y="150" text-anchor="middle">Two dials: the gap, and the speed.</text>
+      <text class="fxsub" x="390" y="176" text-anchor="middle">Slight squish + a slow first layer = a foundation that sticks.</text>
+      <text class="fxsub" x="390" y="198" text-anchor="middle">Scroll down for the recap and the honest fine print.</text>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="controls">
+    <button id="prev">◀ Back</button>
+    <button id="next" class="primary">Next step ▶</button>
+    <button id="play">▶ Play all</button>
+    <button id="replay">↻ Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p>A first layer sticks or fails on two things. First, the <b>nozzle-to-bed gap</b>: too
+  <b>far</b> and the plastic lands as round, un-pressed lines that barely touch — gaps open up
+  and a corner curls off the bed mid-print; too <b>close</b> and it's crushed into torn, starved
+  ridges with an <b>elephant's foot</b> bulge; <b>just right</b> is a slight squish that flattens
+  each line and welds neighbours into one solid sheet. Second, the <b>speed</b>: a fast first
+  layer drags a thin, weakly-bonded line, while a <b>slow</b> first layer gives the plastic time
+  to press down and grip. Nail those two and roughly nine out of ten beginner print failures
+  disappear — because every other layer is standing on this one.</p>
+  <p class="honest"><b>Honest note — this is stylized.</b> This is an exaggerated side view: the
+  real squish on a good first layer is a fraction of a millimetre, and the colours and scale here
+  are pushed way up so you can see what's going on. Every printer's "just right" gap is a little
+  different — the picture on <b>your</b> bed is the one that matters, so trust what you see there
+  over any drawing, including this one.</p>
+</div>
+
+<script>
+  const stages = [
+    { cap:'<span class="stepnum">1</span><b>The first layer is the foundation.</b> It is the ' +
+      'layer of glue every other layer stands on. Get it right and most print failures vanish. ' +
+      'Here the <b>nozzle</b> is poised above the <b>bed</b>, about to lay the very first line.' +
+      '<span class="gloss"><em>nozzle</em> = the tip the melted plastic comes out of. ' +
+      '<em>bed</em> = the flat plate the print is built on, shown here edge-on.</span>',
+      fx:'fxIntro', scene:true },
+
+    { cap:'<span class="stepnum">2</span><b>Gap too far.</b> The nozzle sits too high, so plastic ' +
+      'exits as a round, un-pressed noodle that barely touches the bed — gaps open between lines ' +
+      'and a corner curls up.' +
+      '<span class="gloss"><em>squish</em> = the gentle flattening as the nozzle presses a line ' +
+      'onto the bed. No squish → poor <em>adhesion</em> (grip) → the print pops off mid-way.</span>',
+      fx:'fxFar', scene:true },
+
+    { cap:'<span class="stepnum">3</span><b>Gap too close.</b> The nozzle almost scrapes the bed, ' +
+      'so the plastic is crushed to torn ridges and little can get out, and the edges bulge.' +
+      '<span class="gloss"><em>elephant\'s foot</em> = the squashed-out bulge at the very bottom ' +
+      'edge when the first layer is pressed too hard. <em>under-extrusion</em> = not enough ' +
+      'plastic escaping, leaving gaps.</span>',
+      fx:'fxClose', scene:true },
+
+    { cap:'<span class="stepnum">4</span><b>Gap just right.</b> A slight squish flattens each round ' +
+      'line to about three-quarters of its height and a touch wider, so neighbours merge into one ' +
+      'solid sheet welded to the bed. <b>This is the goal.</b>' +
+      '<span class="gloss"><em>welded</em> = fused down so firmly it behaves like one piece with ' +
+      'the plate. A slight squish is what you are aiming for.</span>',
+      fx:'fxRight', scene:true },
+
+    { cap:'<span class="stepnum">5</span><b>Speed matters too.</b> Same gap, different speed: race ' +
+      'the nozzle and the line is stretched thin and drags loose (weak bond); slow it down and the ' +
+      'line has time to press and bond.' +
+      '<span class="gloss">The easiest single experiment on this whole page: <em>slow the first ' +
+      'layer down</em> — often to about half your normal speed.</span>',
+      fx:'fxSpeed', scene:false },
+
+    { cap:'<span class="stepnum">6</span><b>Match it to your own bed.</b> Three cross-sections side ' +
+      'by side — round beads with a gap under them (too far), a flat torn sliver with a foot (too ' +
+      'close), and a neat flattened bead welded down (just right). Hold your own first layer up to ' +
+      'these.',
+      fx:'fxCompare', scene:false },
+
+    { cap:'<span class="stepnum">✓</span><b>That\'s the whole idea.</b> Two dials — the ' +
+      '<b>gap</b> (slight squish) and the <b>speed</b> (slow it down) — and a clean bed underneath. ' +
+      'Scroll down for the "what you just watched" recap and the honest fine print.',
+      fx:'fxDone', scene:false },
+  ];
+
+  const fxIds = ['fxIntro','fxFar','fxClose','fxRight','fxSpeed','fxCompare','fxDone'];
+  const fxEls = {}; fxIds.forEach(id => fxEls[id] = document.getElementById(id));
+  const scene = document.getElementById('scene');
+  const caption = document.getElementById('caption');
+  const nextBtn = document.getElementById('next');
+  const prevBtn = document.getElementById('prev');
+
+  let step = -1, timer = null;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) document.body.classList.add('reduced');
+
+  function render(s, animate) {
+    step = s;
+    const st = stages[s];
+    caption.innerHTML = st.cap;
+
+    // show/hide the persistent bed scene
+    scene.style.opacity = st.scene ? '1' : '0';
+
+    // only the current stage's effect group is shown
+    fxIds.forEach(id => fxEls[id].classList.toggle('show', st.fx === id));
+
+    prevBtn.disabled = s <= 0;
+    nextBtn.disabled = s >= stages.length - 1;
+  }
+
+  function playAll() {
+    stopPlay();
+    render(0, true);
+    let i = 1;
+    timer = setInterval(() => { render(i, true); if (++i >= stages.length) stopPlay(); },
+                        reduced ? 3200 : 2800);
+  }
+  function stopPlay() { if (timer) { clearInterval(timer); timer = null; } }
+
+  nextBtn.onclick = () => { stopPlay(); render(Math.min(step + 1, stages.length - 1), true); };
+  prevBtn.onclick = () => { stopPlay(); render(Math.max(step - 1, 0), false); };
+  document.getElementById('replay').onclick = playAll;
+  document.getElementById('play').onclick = playAll;
+
+  // Reduced motion: land on stage 0 and let the reader step through — no autoplay.
+  render(0, false);
+  if (!reduced) setTimeout(playAll, 600);
+</script>
+</body>
+</html>
