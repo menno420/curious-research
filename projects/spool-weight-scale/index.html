@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a load cell + HX711 turn a spool's weight into "grams of filament left"</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --plate:#e7ebef; --metal:#9aa3ad; --metal2:#c3cad2; --mount:#5b6570;
+    --accent:#0ea5e9; --accent2:#6366f1; --line:#d1d5db;
+    --fil:#0ea5e9; --filfill:rgba(14,165,233,.18);
+    --spoolseg:#94a3b8; --spoolfill:rgba(148,163,184,.20);
+    --gauge:#f59e0b; --good:#16a34a; --goodfill:rgba(22,163,74,.14);
+    --chip:#1f2937; --chiptxt:#f1f5f9; --warn:#b45309;
+    --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --plate:#2a323c; --metal:#6b7480; --metal2:#8a94a0; --mount:#3a434e;
+      --accent:#38bdf8; --accent2:#818cf8; --line:#374151;
+      --fil:#38bdf8; --filfill:rgba(56,189,248,.22);
+      --spoolseg:#64748b; --spoolfill:rgba(100,116,139,.28);
+      --gauge:#fbbf24; --good:#4ade80; --goodfill:rgba(74,222,128,.16);
+      --chip:#0b1220; --chiptxt:#e2e8f0; --warn:#fbbf24;
+      --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; max-width:36em; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:44em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:800px; }
+  svg { width:100%; height:auto; display:block; }
+
+  /* scenes stack on the same canvas; only the active one is visible */
+  .scene { opacity:0; transition:opacity .5s ease; }
+  .scene.active { opacity:1; }
+
+  .lbl  { font:600 13px system-ui,sans-serif; fill:var(--muted); }
+  .lbl.s{ font:600 11px system-ui,sans-serif; fill:var(--muted); }
+  .tag  { font:700 13px system-ui,sans-serif; fill:var(--ink); }
+  .mono { font:700 15px ui-monospace,monospace; fill:var(--ink); }
+  .mono.big { font:700 26px ui-monospace,monospace; fill:var(--accent); }
+  .good { fill:var(--good); }
+  .accent { fill:var(--accent); }
+
+  .plate { fill:var(--plate); }
+  .mount { fill:var(--mount); }
+  .hatch { stroke:var(--metal2); stroke-width:2; opacity:.6; }
+  #bar   { fill:none; stroke:var(--metal); stroke-width:22; stroke-linecap:round; }
+  #gauge polyline { fill:none; stroke:var(--gauge); stroke-width:2.4; }
+  .flange { fill:var(--metal2); stroke:var(--metal); stroke-width:2; }
+  .coil   { fill:none; stroke:var(--fil); stroke-width:5; opacity:.9; }
+  .hub    { fill:var(--mount); }
+
+  .box   { fill:var(--card); stroke:var(--line); stroke-width:1.6; }
+  .box.hl{ stroke:var(--accent); stroke-width:2; }
+  .chipbox { fill:var(--chip); }
+  .chiptxt { fill:var(--chiptxt); }
+  .pin { stroke:var(--metal); stroke-width:3; stroke-linecap:round; }
+  .flow { stroke:var(--accent); stroke-width:2.4; fill:none; marker-end:url(#arrow); }
+  .fade { opacity:0; transition:opacity .45s ease; }
+  .fade.on { opacity:1; }
+
+  .segFil   { fill:var(--filfill);   stroke:var(--fil);      stroke-width:2; }
+  .segSpool { fill:var(--spoolfill); stroke:var(--spoolseg); stroke-width:2; stroke-dasharray:6 5; }
+
+  .caption { min-height:6.2em; margin:14px auto 0; max-width:680px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption code { font:600 13px ui-monospace,monospace; background:var(--bg);
+                  padding:1px 5px; border-radius:5px; }
+  .stepnum { display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+             width:1.6em; height:1.6em; line-height:1.6em; font-weight:700; margin-right:.45em;
+             text-align:center; }
+  .dots { display:flex; gap:8px; justify-content:center; margin-top:12px; }
+  .dots span { width:9px; height:9px; border-radius:999px; background:var(--line); }
+  .dots span.on { background:var(--accent); }
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
+  button { font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+           border:1.5px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .recap { max-width:680px; margin-top:26px; background:var(--card); border-radius:14px;
+           box-shadow:var(--shadow); padding:16px 20px; }
+  .recap h2 { font-size:1.02rem; margin:.6em 0 .4em; }
+  .recap h2:first-child { margin-top:.2em; }
+  .recap p { margin:.4em 0; color:var(--muted); }
+  .recap b { color:var(--ink); }
+  .recap code { font:600 13px ui-monospace,monospace; background:var(--bg);
+                padding:1px 5px; border-radius:5px; color:var(--ink); }
+  .warnnote { color:var(--warn); font-weight:600; }
+
+  /* If the reader prefers no motion, kill transitions; JS also jumps to end states. */
+  @media (prefers-reduced-motion: reduce) {
+    .scene, .fade { transition:none; }
+    * { animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<h1>How a load cell + HX711 turn a spool's weight into "grams of filament left"</h1>
+<p class="sub">Set a spool on the platform and it tells you roughly how much filament is
+left. Watch the four things that have to happen in a row: the bar <b>feels</b> the weight,
+a chip turns that into a <b>number</b>, calibration turns the number into <b>grams</b>, and
+subtracting the empty spool gives <b>grams remaining</b>.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 720 340" aria-label="Animated four-scene explainer: a load-cell bar bending under a spool, an HX711 chip producing a raw number, calibration mapping the raw number to grams with a known 500 gram weight, and taring the empty spool weight to get grams of filament remaining">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+      </marker>
+    </defs>
+
+    <!-- ================= SCENE 1 : the bar flexes ================= -->
+    <g id="scene1" class="scene active">
+      <!-- fixed mount block at the left -->
+      <rect class="mount" x="60" y="120" width="52" height="120" rx="4"/>
+      <line class="hatch" x1="66"  y1="128" x2="106" y2="168"/>
+      <line class="hatch" x1="66"  y1="152" x2="106" y2="192"/>
+      <line class="hatch" x1="66"  y1="176" x2="106" y2="216"/>
+      <line class="hatch" x1="66"  y1="200" x2="106" y2="232"/>
+      <text class="lbl s" x="60" y="256">fixed end</text>
+
+      <!-- the load-cell bar (a path we bend) -->
+      <path id="bar" d="M112 180 Q330 180 540 180"/>
+      <text class="lbl" x="300" y="132">load cell — a metal bar</text>
+      <text class="lbl s" x="470" y="252">free end (load here)</text>
+
+      <!-- strain gauge: a foil zig-zag glued near the fixed end -->
+      <g id="gauge">
+        <rect x="150" y="150" width="70" height="20" rx="3" fill="var(--card)" stroke="var(--gauge)" stroke-width="1.4" opacity=".55"/>
+        <polyline points="156,166 166,154 176,166 186,154 196,166 206,154 214,166"/>
+      </g>
+      <text id="gaugeLbl" class="lbl s" x="150" y="146" fill="var(--gauge)">strain gauge</text>
+
+      <!-- the spool (side view: two flanges + a filament coil + hub) -->
+      <g id="spool" transform="translate(0,-160)">
+        <circle class="flange" cx="470" cy="118" r="40"/>
+        <circle class="coil"   cx="470" cy="118" r="30"/>
+        <circle class="coil"   cx="470" cy="118" r="22" opacity=".55"/>
+        <circle class="hub"    cx="470" cy="118" r="9"/>
+      </g>
+    </g>
+
+    <!-- ================= SCENE 2 : HX711 makes a number ================= -->
+    <g id="scene2" class="scene">
+      <!-- strain gauge symbol on the left -->
+      <g transform="translate(40,150)">
+        <rect x="0" y="-16" width="76" height="34" rx="4" fill="var(--card)" stroke="var(--gauge)" stroke-width="1.4"/>
+        <polyline points="8,10 18,-8 28,10 38,-8 48,10 58,-8 68,10" fill="none" stroke="var(--gauge)" stroke-width="2.4"/>
+        <text class="lbl s" x="0" y="34" fill="var(--gauge)">strain gauge</text>
+        <text class="lbl s" x="0" y="-24">a tiny voltage change</text>
+      </g>
+
+      <!-- wiggle traveling into the chip -->
+      <path id="wiggle" class="fade" d="M120 150 q10 -12 20 0 t20 0 t20 0" fill="none" stroke="var(--gauge)" stroke-width="2"/>
+      <path class="flow" d="M118 150 L232 150"/>
+
+      <!-- HX711 chip -->
+      <g transform="translate(232,108)">
+        <line class="pin" x1="-8" y1="16" x2="0" y2="16"/>
+        <line class="pin" x1="-8" y1="42" x2="0" y2="42"/>
+        <line class="pin" x1="-8" y1="68" x2="0" y2="68"/>
+        <rect class="chipbox" x="0" y="0" width="150" height="84" rx="8"/>
+        <text class="chiptxt" x="75" y="34" text-anchor="middle" style="font:700 20px ui-monospace,monospace">HX711</text>
+        <text class="chiptxt" x="75" y="56" text-anchor="middle" style="font:600 11px system-ui,sans-serif" opacity=".8">amplifier + ADC</text>
+        <line class="pin" x1="150" y1="42" x2="158" y2="42"/>
+      </g>
+      <path class="flow" d="M392 150 L470 150"/>
+
+      <!-- raw-number readout -->
+      <g transform="translate(470,116)">
+        <rect class="box hl" x="0" y="0" width="188" height="70" rx="10"/>
+        <text class="lbl s" x="16" y="24">raw count from the ADC</text>
+        <text id="rawNum" class="mono big" x="16" y="54">0</text>
+      </g>
+      <text class="lbl s" x="470" y="208" fill="var(--warn)">this is NOT grams yet</text>
+    </g>
+
+    <!-- ================= SCENE 3 : calibration maps raw -> grams ================= -->
+    <g id="scene3" class="scene">
+      <!-- platform + load cell hint -->
+      <rect class="plate" x="70" y="176" width="150" height="16" rx="4"/>
+      <line class="pin" x1="90" y1="192" x2="90" y2="214" stroke="var(--metal)"/>
+      <line class="pin" x1="200" y1="192" x2="200" y2="214" stroke="var(--metal)"/>
+      <line x1="70" y1="214" x2="220" y2="214" stroke="var(--metal)" stroke-width="4" stroke-linecap="round"/>
+      <!-- the known weight -->
+      <g id="knownWt" transform="translate(0,-150)">
+        <rect x="112" y="112" width="66" height="64" rx="6" fill="var(--metal2)" stroke="var(--metal)" stroke-width="2"/>
+        <text x="145" y="150" text-anchor="middle" class="tag">500 g</text>
+        <text x="145" y="106" text-anchor="middle" class="lbl s">known weight</text>
+      </g>
+
+      <!-- the mapping -->
+      <path class="flow" d="M232 150 L300 150"/>
+      <g id="calRaw" class="fade" transform="translate(300,120)">
+        <rect class="box" x="0" y="0" width="150" height="60" rx="9"/>
+        <text class="lbl s" x="14" y="22">raw count</text>
+        <text class="mono" x="14" y="46">421,600</text>
+      </g>
+
+      <g id="calDiv" class="fade" transform="translate(300,196)">
+        <text class="mono" x="0" y="16" fill="var(--muted)">&#247; 843.2 counts/g</text>
+        <text class="lbl s" x="0" y="38">the calibration factor</text>
+      </g>
+
+      <path id="calArrow" class="flow fade" d="M460 150 L520 150"/>
+      <g id="calOut" class="fade" transform="translate(520,116)">
+        <rect class="box" x="0" y="0" width="150" height="66" rx="10" stroke="var(--good)" stroke-width="2"/>
+        <text class="lbl s" x="16" y="24">real grams</text>
+        <text class="mono big" x="16" y="52" fill="var(--good)">500 g</text>
+      </g>
+    </g>
+
+    <!-- ================= SCENE 4 : tare -> grams remaining ================= -->
+    <g id="scene4" class="scene">
+      <text class="lbl" x="90" y="96">the scale reads TOTAL weight</text>
+      <text id="totalLbl" class="mono" x="560" y="96" text-anchor="end" fill="var(--accent)">total 640 g</text>
+
+      <!-- the total bar, split into filament + empty spool -->
+      <!-- filament segment: x 90..461 (440 g) ; spool segment: x 461..630 (200 g) -->
+      <g>
+        <rect id="segFil" class="segFil" x="90" y="118" width="371" height="52" rx="4"/>
+        <text id="filLbl" class="tag" x="275" y="150" text-anchor="middle">filament 440 g</text>
+      </g>
+      <g id="spoolSeg" class="fade on">
+        <rect class="segSpool" x="461" y="118" width="169" height="52" rx="4"/>
+        <text class="lbl s" x="545" y="144" text-anchor="middle" fill="var(--spoolseg)">empty spool</text>
+        <text class="lbl s" x="545" y="160" text-anchor="middle" fill="var(--spoolseg)">200 g</text>
+      </g>
+
+      <!-- the subtraction line -->
+      <text class="mono" x="90" y="222" fill="var(--muted)">total 640 g</text>
+      <text class="mono" x="230" y="222" fill="var(--spoolseg)">&#8722; empty spool 200 g</text>
+      <text id="tareEq" class="mono big fade" x="430" y="226" fill="var(--good)">= ~440 g filament left</text>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="dots" id="dots">
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <div class="controls">
+    <button id="replay" class="primary">&#8635; Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p>A spool's weight bends a little metal bar (the <b>load cell</b>) a hair; a <b>strain
+  gauge</b> — a foil zig-zag on the bar — changes its resistance as it stretches, so the bar
+  "feels" the weight. That change is microscopic, so the <b>HX711</b> chip amplifies it and
+  its <b>ADC</b> (analog-to-digital converter) turns it into a big <b>raw number</b>. That
+  number isn't grams until you <b>calibrate</b>: once, you set a known weight on it and the
+  sketch works out the counts-per-gram (the <b>calibration factor</b>) — after that, every
+  raw count becomes real grams. Finally, the scale only ever reads the <b>total</b> weight,
+  so <code>filament left = total &minus; the empty spool's own weight</code>, which you weigh
+  once and save. That's the whole chain: <b>bend &rarr; number &rarr; grams &rarr; grams
+  remaining</b>.</p>
+
+  <h2>What this animation exaggerates or leaves out</h2>
+  <p>The bar's bend is <b>hugely exaggerated</b> — a real load cell deflects only <b>microns</b>,
+  far too little to see. The raw numbers (<code>843,217</code>, <code>421,600</code>,
+  <code>843.2</code>) are <b>illustrative</b>, not read off a real cell — yours will differ,
+  which is exactly why you calibrate with your own known weight. And empty spools vary a
+  <b>lot</b> — roughly <b>80&ndash;306 g</b> depending on cardboard vs plastic and brand — so
+  always use <b>your own measured tare</b>, never a guessed number.</p>
+
+  <p class="warnnote">Honest about what it is: this is an <b>on-demand spot-check</b>, not an
+  always-on live display. A cheap load cell drifts a few grams with temperature and time, so
+  re-zero it each time you use it and trust it for "do I have enough to start this print?" —
+  not for milligram precision.</p>
+</div>
+
+<script>
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var scenes  = [ document.getElementById('scene1'),
+                  document.getElementById('scene2'),
+                  document.getElementById('scene3'),
+                  document.getElementById('scene4') ];
+  var caption = document.getElementById('caption');
+  var dots    = document.getElementById('dots').children;
+
+  var timers = [];
+  function clearTimers(){ for (var i=0;i<timers.length;i++) clearTimeout(timers[i]); timers = []; }
+  function later(fn, ms){ if (reduced) { fn(); } else { timers.push(setTimeout(fn, ms)); } }
+
+  var raf = null;
+  function cancelRaf(){ if (raf) cancelAnimationFrame(raf); raf = null; }
+  function ease(k){ return k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2,2)/2; }
+
+  // generic tween: calls upd(0..1); if reduced, jumps straight to the end
+  function tween(dur, upd, done){
+    cancelRaf();
+    if (reduced){ upd(1); if (done) done(); return; }
+    var t0 = performance.now();
+    function run(now){
+      var k = Math.min((now - t0) / dur, 1);
+      upd(ease(k));
+      if (k < 1) { raf = requestAnimationFrame(run); }
+      else if (done) done();
+    }
+    raf = requestAnimationFrame(run);
+  }
+
+  // ---- SCENE 1 : the bar flexes ---------------------------------------
+  var bar    = document.getElementById('bar');
+  var spool  = document.getElementById('spool');
+  var gauge  = document.getElementById('gauge');
+  var gaugeLbl = document.getElementById('gaugeLbl');
+  function setBend(b){ bar.setAttribute('d', 'M112 180 Q330 180 540 ' + (180 + b)); }
+  function setGauge(k){
+    // stretch the foil zig-zag horizontally a touch, and warm its colour
+    gauge.setAttribute('transform', 'translate(185 0) scale(' + (1 + 0.28*k) + ' 1) translate(-185 0)');
+    gaugeLbl.textContent = k > 0.5 ? 'strain gauge — stretching' : 'strain gauge';
+  }
+  function runBar(){
+    cancelRaf();
+    setBend(0); setGauge(0);
+    spool.setAttribute('transform','translate(0,-160)');
+    // phase 1: the spool lowers onto the free end
+    tween(700, function(k){ spool.setAttribute('transform','translate(0,' + (-160 + 160*k) + ')'); },
+      function(){
+        // phase 2: the bar bends a (exaggerated) hair and the gauge stretches with it
+        tween(800, function(k){
+          setBend(30*k); setGauge(k);
+          spool.setAttribute('transform','translate(0,' + (30*k) + ')');
+        });
+      });
+  }
+
+  // ---- SCENE 2 : HX711 makes a number ---------------------------------
+  var rawNum = document.getElementById('rawNum');
+  var wiggle = document.getElementById('wiggle');
+  function runHX711(){
+    cancelRaf();
+    rawNum.textContent = '0';
+    wiggle.classList.remove('on');
+    later(function(){ wiggle.classList.add('on'); }, 150);
+    later(function(){
+      tween(1200, function(k){
+        rawNum.textContent = Math.round(843217 * k).toLocaleString('en-US');
+      });
+    }, 500);
+  }
+
+  // ---- SCENE 3 : calibration maps raw -> grams ------------------------
+  var knownWt = document.getElementById('knownWt');
+  var calRaw  = document.getElementById('calRaw');
+  var calDiv  = document.getElementById('calDiv');
+  var calArrow= document.getElementById('calArrow');
+  var calOut  = document.getElementById('calOut');
+  function runCal(){
+    cancelRaf();
+    calRaw.classList.remove('on'); calDiv.classList.remove('on');
+    calArrow.classList.remove('on'); calOut.classList.remove('on');
+    knownWt.setAttribute('transform','translate(0,-150)');
+    // the known weight settles onto the platform
+    tween(650, function(k){ knownWt.setAttribute('transform','translate(0,' + (-150 + 150*k) + ')'); },
+      function(){
+        later(function(){ calRaw.classList.add('on'); }, 250);
+        later(function(){ calDiv.classList.add('on'); }, 700);
+        later(function(){ calArrow.classList.add('on'); calOut.classList.add('on'); }, 1200);
+      });
+  }
+
+  // ---- SCENE 4 : tare -> grams remaining ------------------------------
+  var spoolSeg = document.getElementById('spoolSeg');
+  var segFil   = document.getElementById('segFil');
+  var filLbl   = document.getElementById('filLbl');
+  var tareEq   = document.getElementById('tareEq');
+  function runTare(){
+    cancelRaf();
+    spoolSeg.classList.add('on');
+    tareEq.classList.remove('on');
+    segFil.setAttribute('stroke-width','2');
+    // hold the full total, then subtract the empty-spool portion away
+    later(function(){
+      // slide + fade the empty-spool segment out
+      tween(600, function(k){
+        spoolSeg.style.opacity = 1 - k;
+        spoolSeg.setAttribute('transform','translate(' + (40*k) + ',0)');
+      }, function(){
+        spoolSeg.classList.remove('on');
+        segFil.setAttribute('stroke-width','3');
+        filLbl.textContent = '≈ 440 g filament left';
+        tareEq.classList.add('on');
+      });
+    }, 1200);
+  }
+  function resetTareStatics(){
+    spoolSeg.style.opacity = '';
+    spoolSeg.setAttribute('transform','translate(0,0)');
+    filLbl.textContent = 'filament 440 g';
+  }
+
+  var runners = [ runBar, runHX711, runCal, runTare ];
+  var caps = [
+    '<span class="stepnum">1</span><b>The bar flexes.</b> Set a spool on the free end and the '
+      + 'load cell bends a hair. A <b>strain gauge</b> glued to the bar &mdash; a foil zig-zag &mdash; '
+      + 'changes its electrical resistance as it stretches. That is how the bar "feels" weight. '
+      + '<i>(The bend here is wildly exaggerated &mdash; a real one moves only microns.)</i>',
+
+    '<span class="stepnum">2</span><b>The HX711 makes a number.</b> The gauge\'s voltage change is '
+      + 'microscopic. The <b>HX711</b> chip amplifies it, and its <b>ADC</b> turns it into a big '
+      + '<b>raw count</b> the Arduino can read over two wires. Important: this raw number is '
+      + '<b>not grams yet</b>.',
+
+    '<span class="stepnum">3</span><b>Calibration maps raw &rarr; grams.</b> Once, you place a '
+      + '<b>known weight</b> (say <code>500 g</code>) and the sketch works out the '
+      + '<b>counts-per-gram</b> &mdash; the <b>calibration factor</b>. After that, '
+      + '<code>raw &divide; factor = grams</code> turns every reading into real grams.',
+
+    '<span class="stepnum">4</span><b>Tare gives grams remaining.</b> The scale only reads '
+      + '<b>total</b> weight, so <code>filament left = total &minus; empty spool</code>. You weigh '
+      + 'the empty spool once and save it. <i>Empty spools vary a lot (~80&ndash;306 g) &mdash; use '
+      + 'YOUR measured number.</i>'
+  ];
+
+  var holds = reduced ? [4600,4600,5200,5200] : [3400,3400,4300,4400];
+
+  function showStage(i){
+    for (var s=0; s<scenes.length; s++) scenes[s].classList.toggle('active', s === i);
+    for (var d=0; d<dots.length; d++) dots[d].classList.toggle('on', d === i);
+    caption.innerHTML = caps[i];
+    if (i !== 3) resetTareStatics();
+    runners[i]();
+  }
+
+  function playAll(){
+    clearTimers(); cancelRaf();
+    var i = 0;
+    showStage(0);
+    function step(){
+      i++;
+      if (i < scenes.length){
+        showStage(i);
+        timers.push(setTimeout(step, holds[i]));
+      }
+    }
+    timers.push(setTimeout(step, holds[0]));
+  }
+
+  document.getElementById('replay').onclick = playAll;
+
+  // first run: reduced-motion readers get every scene laid out in its end state,
+  // one after another; everyone else gets the animated auto-play.
+  if (reduced){
+    showStage(0);
+    var i = 1;
+    (function step(){
+      if (i < scenes.length){ showStage(i); timers.push(setTimeout(function(){ i++; step(); }, holds[i-1])); }
+    })();
+  } else {
+    playAll();
+  }
+</script>
+</body>
+</html>
