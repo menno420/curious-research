@@ -1,12 +1,12 @@
 # Session — 2026-07-13 — the possibility dossier (what the gear + Claude can do this week)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** opus-4.8 (Claude Opus family). **Venue:** the fleet's hub session
 > (owner-live), building on the owner's direction.
 
 ## What this session did
 
-*(in-progress — born red; this section closes out at session end)*
+Shipped `research/possibility-dossier.md` (485 lines) — an honest, citation-backed capability map of the friend's bench (two 3D printers incl. one 3-color, a 6-servo robot arm, an Arduino bench) + Claude, organized by *what he can try this week*. Every claim carries a ✅ verified-with-cite / 🧪 plausible-run-the-experiment / 🚫 known-wall mark.
 
 Building `research/possibility-dossier.md` — an honest, citation-backed dossier of what the
 owner's friend's actual bench (two 3D printers incl. one 3-color, a 6-servo robot arm, an
