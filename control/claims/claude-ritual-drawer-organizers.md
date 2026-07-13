@@ -1,1 +1,0 @@
-- `claude/ritual-drawer-organizers` · **scope** — idea ritual: grow drawer-organizer-generator to a verdict · `ideas/drawer-organizer-generator.md` + `.sessions/` · `2026-07-13`
