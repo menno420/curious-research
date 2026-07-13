@@ -8,14 +8,15 @@
 
 ## Stability baseline
 
-*Snapshot dated 2026-07-13 (session close, all PRs #1–#10 merged).*
+*Snapshot dated 2026-07-13 (all PRs #1–#20 merged).*
 
 Known-good and live on `main`:
 
-- **Five animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
+- **Eight animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
   indexed in `guides/README.md`): `start-here` (the day-one welcome tour) ·
   `how-a-pr-flows` · `what-can-claude-see` · `retraction-vs-stringing` ·
-  `how-print-clearance-works`.
+  `how-print-clearance-works` · `temperature-tower` · `arm-envelope-explained` ·
+  `lithophane-night-light`.
 - **Projects:**
   - `projects/tolerance-test-coin/` — parametric OpenSCAD clearance coin + print-and-test
     guide + results template. Ships `.scad` only; the owner renders the STL locally
@@ -26,10 +27,19 @@ Known-good and live on `main`:
     on-board too (`pen_plotter_arm.ino`), a printable floating pen holder (`pen_holder.scad`,
     source only), a calibration-first walkthrough (`README.md`), and an animated teach-mode
     explainer (`index.html`). Draws charming wobbly line art; calibration before any motion.
+- **Workshop lanes — `arm/`:** the robot-arm lane, seeded #14 and documented #19. Holds
+  `arm/README.md` and `arm/calibration.example.json` — a 6-servo `min`/`max`/`center`
+  template, all `PLACEHOLDER` values. The owner copies it to `arm/calibration.json`, fills
+  every joint from his own hand measurements (how-to: `guides/arm-envelope-explained/guide.md`),
+  and commits it — the measured file belongs IN the repo (it's just servo angles, not personal
+  data) and it is the clamp target every motion routine points at. No `arm/calibration.json`
+  yet — the owner's step-one measurement is still pending.
 - **Research lane:** `research/possibility-dossier.md` — the cited capability map
   (what the bench + Claude can do together), with honest ✅/🧪/🚫 marks.
-- **Three idea-ritual verdicts** in `ideas/`: tolerance-test-coin = build (→ built),
-  filament-drybox-logger = think-more, lithophane-night-light = build.
+- **Five idea-ritual verdicts** in `ideas/`: tolerance-test-coin = build (→ built),
+  filament-drybox-logger = think-more, lithophane-night-light = build (→ built as a guide),
+  arm-pen-plotter = build (→ building as `projects/arm-pen-plotter/`),
+  spool-weight-scale = build (the honest spot-check-gauge version).
 - **Control loop live:** `control/inbox.md` (manager-written) / `control/outbox.md`
   (lane-written reports) / `control/status.md` (heartbeat). ORDER 001 served with
   REPORT 001.
@@ -39,7 +49,7 @@ Known-good and live on `main`:
 
 ## In flight
 
-Nothing — all PRs #1–#10 are merged and no PRs are open (verified 2026-07-13T10:40Z).
+Nothing — all PRs #1–#20 are merged and no PRs are open (verified 2026-07-13T14:11Z).
 
 Housekeeping note: the `rescue/*` and `*-telemetry*` branches on origin are **kit telemetry
 only** (stop-hook guard-fires/state churn), no PRs by design — safe to delete once the kit's
@@ -47,6 +57,16 @@ telemetry churn is fixed (proposal filed in `control/outbox.md`, PROPOSAL 001).
 
 ## Recently shipped (newest first)
 
+- **#20** Idea ritual → spool-weight-scale: verdict build, the honest spot-check-gauge version (`3a54844`, 2026-07-13)
+- **#19** Doc: your measured `arm/calibration.json` belongs in the repo (`1c254f1`, 2026-07-13)
+- **#18** `projects/arm-pen-plotter/` starter kit — teach-mode recorder, clamped Arduino sketch, pen holder, animated explainer (`998a20e`, 2026-07-13)
+- **#17** Heartbeat: midday — guides wave landed (#12–#16), pen-plotter kit dispatched (`5d6277f`, 2026-07-13)
+- **#16** Idea ritual: grow arm-pen-plotter to a build verdict (`47aa103`, 2026-07-13)
+- **#15** Guide: lithophane-night-light (animated explainer + step-by-step) (`3da0c60`, 2026-07-13)
+- **#14** Guide: arm-envelope-explained (animated envelope + clamp) + `arm/` lane groundwork (`edf4f90`, 2026-07-13)
+- **#13** Heartbeat: coordinator boot — routines rearmed, two guide slices dispatched (`4a2cc7a`, 2026-07-13)
+- **#12** Guide: temperature-tower (animated explainer + step-by-step) (`4063e84`, 2026-07-13)
+- **#11** Session close 2026-07-13: retro card, current-state refresh, PROPOSAL 001, heartbeat (`537ce1f`, 2026-07-13)
 - **#10** Welcome tour: `guides/start-here/` + README gift note + guides index rewrite (`f3e1cfd`, 2026-07-13)
 - **#9** `projects/tolerance-test-coin/` + `guides/how-print-clearance-works/` (`c871f0e`, 2026-07-13)
 - **#8** REPORT 001 + `control/outbox.md` created (`a7e9a3f`, 2026-07-13)
