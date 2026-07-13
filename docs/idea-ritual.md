@@ -1,5 +1,7 @@
 # The idea ritual — 8 questions, one page, one verdict
 
+> **Status:** `reference`
+
 Drop a one-liner in [`ideas/`](../ideas/) whenever something crosses your mind. When you feel
 like growing one, tell Claude: *"run the ritual on `ideas/<file>`."* It fills the idea file
 with the 8 answers and ends in exactly one verdict. Nothing here is homework — un-probed

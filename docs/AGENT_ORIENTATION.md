@@ -58,3 +58,9 @@ touching the trigger registry.
 
 See the working agreement (`.claude/CLAUDE.md`) and its verify guidance
 (one home, never two copies).
+
+## House rules & rituals (this repo's own layer — read with the kit docs)
+
+- [`teaching-style.md`](teaching-style.md) — **binding**: the visual-teaching doctrine (step-by-step guides + animated HTML explainers) every agent here works under.
+- [`git-for-makers.md`](git-for-makers.md) — git in bench terms for the owner.
+- [`idea-ritual.md`](idea-ritual.md) — the 8-question probe that grows `ideas/` entries.

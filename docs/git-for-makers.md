@@ -1,5 +1,7 @@
 # Git in bench terms — the five words you actually need
 
+> **Status:** `reference`
+
 No theory, just the mapping. (Watch it move: [`../guides/how-a-pr-flows/`](../guides/how-a-pr-flows/guide.md).)
 
 | Git word | At the bench |

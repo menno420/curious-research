@@ -1,5 +1,7 @@
 # Teaching style — thorough, visual, durable (binding)
 
+> **Status:** `binding`
+
 > The owner's founding request, near-verbatim: *any agent reviewing or working with this
 > repo is very thorough in step-by-step guides and visual explanation — it should create
 > HTML artifacts that properly show animations of certain things, to help him understand
