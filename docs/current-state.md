@@ -57,6 +57,7 @@ telemetry churn is fixed (proposal filed in `control/outbox.md`, PROPOSAL 001).
 
 ## Recently shipped (newest first)
 
+- Audits: [2026-07-13 fleet cleanup](audits/2026-07-13-fleet-cleanup-audit.md) — independent read-mostly audit pass (EAP final night)
 - **#20** Idea ritual → spool-weight-scale: verdict build, the honest spot-check-gauge version (`3a54844`, 2026-07-13)
 - **#19** Doc: your measured `arm/calibration.json` belongs in the repo (`1c254f1`, 2026-07-13)
 - **#18** `projects/arm-pen-plotter/` starter kit — teach-mode recorder, clamped Arduino sketch, pen holder, animated explainer (`998a20e`, 2026-07-13)
