@@ -8,16 +8,48 @@
 
 ## Stability baseline
 
-(Describe the accepted-stable baseline once established — what is known-good and
-should not be re-audited without a reported regression.)
+*Snapshot dated 2026-07-13 (session close, all PRs #1–#10 merged).*
+
+Known-good and live on `main`:
+
+- **Five animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
+  indexed in `guides/README.md`): `start-here` (the day-one welcome tour) ·
+  `how-a-pr-flows` · `what-can-claude-see` · `retraction-vs-stringing` ·
+  `how-print-clearance-works`.
+- **First project:** `projects/tolerance-test-coin/` — parametric OpenSCAD clearance coin
+  + print-and-test guide + results template. Ships `.scad` only; the owner renders the STL
+  locally (OpenSCAD is a verified wall in the build env, see `docs/CAPABILITIES.md`).
+- **Research lane:** `research/possibility-dossier.md` — the cited capability map
+  (what the bench + Claude can do together), with honest ✅/🧪/🚫 marks.
+- **Three idea-ritual verdicts** in `ideas/`: tolerance-test-coin = build (→ built),
+  filament-drybox-logger = think-more, lithophane-night-light = build.
+- **Control loop live:** `control/inbox.md` (manager-written) / `control/outbox.md`
+  (lane-written reports) / `control/status.md` (heartbeat). ORDER 001 served with
+  REPORT 001.
+- **README** opens with the gift note; first click is `guides/start-here/`.
+- Kit: substrate-kit v1.15.0, `substrate-gate` CI required and green; Claude PRs
+  auto-merge on green.
 
 ## In flight
 
-(Verify against live source control — this section is a dated snapshot.)
+Nothing — all PRs #1–#10 are merged and no PRs are open (verified 2026-07-13T10:40Z).
+
+Housekeeping note: the `rescue/*` and `*-telemetry*` branches on origin are **kit telemetry
+only** (stop-hook guard-fires/state churn), no PRs by design — safe to delete once the kit's
+telemetry churn is fixed (proposal filed in `control/outbox.md`, PROPOSAL 001).
 
 ## Recently shipped (newest first)
 
-(Merged work only, newest first.)
+- **#10** Welcome tour: `guides/start-here/` + README gift note + guides index rewrite (`f3e1cfd`, 2026-07-13)
+- **#9** `projects/tolerance-test-coin/` + `guides/how-print-clearance-works/` (`c871f0e`, 2026-07-13)
+- **#8** REPORT 001 + `control/outbox.md` created (`a7e9a3f`, 2026-07-13)
+- **#7** ORDER 001 filed to `control/inbox.md` (manager-authored) (`d96beb9`, 2026-07-13)
+- **#6** Heartbeat: night program complete (`d847874`, 2026-07-13)
+- **#5** `research/possibility-dossier.md` (`0c19ee9`, 2026-07-13)
+- **#4** Guide: retraction-vs-stringing (`793db0f`, 2026-07-13)
+- **#3** Guide: what-can-claude-see (`152abec`, 2026-07-13)
+- **#2** Idea ritual, 3 verdicts (`1f2453b`, 2026-07-13)
+- **#1** Seed: substrate-kit v1.15.0 + teaching doctrine + founding guide (`ff35b69`, 2026-07-13)
 
 ## Review rhythm
 

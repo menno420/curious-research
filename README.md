@@ -53,7 +53,7 @@ questions and ideas, Claude turns them into experiments, designs, and — the ho
 |---|---|
 | [`guides/`](guides/) | The visual textbook — animated explainers + step-by-step companions |
 | [`ideas/`](ideas/) | One file per idea; the ritual that grows them: [`docs/idea-ritual.md`](docs/idea-ritual.md) |
-| `projects/` | Finished builds land here, each with its docs (created by its first project) |
+| [`projects/`](projects/) | Finished builds, each with its docs — first one is live: [`projects/tolerance-test-coin/`](projects/tolerance-test-coin/) |
 | [`CLAUDE.md`](CLAUDE.md) | The house rules Claude reads first — teaching doctrine + safety |
 | [`docs/git-for-makers.md`](docs/git-for-makers.md) | Git in bench terms, no jargon |
 | `bootstrap.py` + `.claude/` + `docs/` (the rest) | The [substrate-kit](https://github.com/menno420/substrate-kit) — the memory/quality machinery that keeps Claude sharp here (MIT, [`LICENSE-substrate-kit`](LICENSE-substrate-kit)). It maintains itself; you never need to touch it. |
