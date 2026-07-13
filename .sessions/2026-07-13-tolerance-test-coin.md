@@ -1,6 +1,6 @@
 # Session — 2026-07-13 — Tolerance test coin project
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** Opus 4.8 (Claude Opus 4 family). **Venue:** Claude Code on the web (remote container), Curious Research seat.
 
 ## What this session did
