@@ -1,6 +1,6 @@
 # Arm pen plotter — the arm draws wobbly line art (and that's the charm)
 
-> **State:** grown via the ritual (2026-07-13) → verdict: **build** (start with a single straight line, not portraits)
+> **State:** verdict **build** → **building as `projects/arm-pen-plotter/`** (2026-07-13) — starter kit shipped: teach-mode recorder, Arduino sketch, floating pen holder, walkthrough + animated explainer. Start with a single straight line, not portraits.
 
 The 6-servo arm holds a printed, spring-loaded pen and draws simple line art on paper, with Claude turning a drawing into a small, clamped, safe serial motion script — and the honest promise is *charming wobbly lines*, not printer-perfect ones.
 

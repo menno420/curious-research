@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teach-mode, watched: jog, record a waypoint, replay through the clamp</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --paper:#eef1f4; --desk:#9a7b5a; --seg:#334155; --joint:#0ea5e9;
+    --pen:#0f172a; --ink-line:#2563eb; --safe:#16a34a; --safefill:rgba(22,163,74,.14);
+    --bad:#dc2626; --accent:#0ea5e9; --wp:#0ea5e9; --line:#d1d5db;
+    --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --paper:#232a33; --desk:#a98a63; --seg:#cbd5e1; --joint:#38bdf8;
+      --pen:#e2e8f0; --ink-line:#60a5fa; --safe:#4ade80; --safefill:rgba(74,222,128,.16);
+      --bad:#f87171; --accent:#38bdf8; --wp:#38bdf8; --line:#374151;
+      --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; max-width:34em; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:42em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:780px; }
+  svg { width:100%; height:auto; display:block; }
+  .paper { fill:var(--paper); }
+  .desk { stroke:var(--desk); stroke-width:6; stroke-linecap:round; }
+  .seg { stroke:var(--seg); stroke-width:14; stroke-linecap:round; fill:none; }
+  .joint { fill:var(--joint); stroke:var(--card); stroke-width:3; }
+  .pivot { fill:var(--seg); stroke:var(--card); stroke-width:3; }
+  .pen { stroke:var(--pen); stroke-width:5; stroke-linecap:round; }
+  .nib { fill:var(--pen); }
+  #trace { fill:none; stroke:var(--ink-line); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  #wedge { fill:var(--safefill); stroke:var(--safe); stroke-width:1.5; opacity:0; transition:opacity .4s; }
+  .wpMark { fill:var(--wp); stroke:var(--card); stroke-width:2; opacity:0; transition:opacity .35s; }
+  .wpMark.on { opacity:1; }
+  #ghost { stroke:var(--bad); stroke-width:2; stroke-dasharray:5 5; opacity:0; transition:opacity .3s; }
+  #blocked { opacity:0; transition:opacity .3s; }
+  #blocked line { stroke:var(--bad); stroke-width:3; stroke-linecap:round; }
+  #clampBox { opacity:0; transition:opacity .35s; }
+  #clampBox rect { fill:var(--card); stroke:var(--accent); stroke-width:2; }
+  #clampBox .ttl { font:700 12px ui-monospace,monospace; fill:var(--accent); }
+  #clampBox .out { font:700 14px system-ui,sans-serif; fill:var(--safe); }
+  #clampBox .strike { font:600 13px system-ui,sans-serif; fill:var(--bad); text-decoration:line-through; }
+  /* waypoint list panel */
+  #wpPanel rect.bg { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+  #wpPanel .hd { font:700 12px system-ui,sans-serif; fill:var(--muted); }
+  #wpPanel .row { opacity:0; transition:opacity .35s; }
+  #wpPanel .row.on { opacity:1; }
+  #wpPanel .dot { fill:var(--wp); }
+  #wpPanel .lbl { font:600 12px ui-monospace,monospace; fill:var(--ink); }
+  .small { font:12px system-ui,sans-serif; fill:var(--muted); }
+  .caption { min-height:5.4em; margin:14px auto 0; max-width:660px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption code { font:600 13px ui-monospace,monospace; background:var(--bg);
+                  padding:1px 5px; border-radius:5px; }
+  .stepnum { display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+             width:1.6em; height:1.6em; line-height:1.6em; font-weight:700; margin-right:.45em;
+             text-align:center; }
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  button { font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+           border:1.5px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .recap { max-width:660px; margin-top:26px; background:var(--card); border-radius:14px;
+           box-shadow:var(--shadow); padding:16px 20px; }
+  .recap h2 { font-size:1.02rem; margin:.3em 0 .4em; }
+  .recap p { margin:.4em 0; color:var(--muted); }
+  .recap b { color:var(--ink); }
+  .recap li { color:var(--muted); margin:.25em 0; }
+  .recap li b { color:var(--ink); }
+  .danger { color:var(--bad)!important; font-weight:700; }
+</style>
+</head>
+<body>
+<h1>Teach-mode, watched — jog, record a waypoint, replay through the clamp</h1>
+<p class="sub">This is how you draw your first line with the arm and <b>no math</b>: nudge
+the joints to a spot, save it, nudge to the next spot, save it — then replay the saved
+spots slowly. Every angle is trimmed to your measured safe range before it reaches a motor.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 780 360" aria-label="Animated 2-joint robot arm holding a pen over paper, showing teach-mode: jogging the arm, recording waypoints into a list, a clamp trimming an out-of-range jog, and replaying the waypoints to draw a wobbly line">
+    <!-- paper + desk -->
+    <rect class="paper" x="210" y="284" width="300" height="34" rx="3"/>
+    <line class="desk" x1="120" y1="318" x2="600" y2="318"/>
+    <text class="small" x="214" y="336">paper taped to the desk</text>
+
+    <!-- safe-range wedge at the shoulder (revealed from the clamp stage on) -->
+    <path id="wedge" d=""></path>
+
+    <!-- ghost of where an over-range jog WOULD have gone, and the clamp block -->
+    <line id="ghost" x1="0" y1="0" x2="0" y2="0"/>
+    <g id="blocked">
+      <line x1="-7" y1="-7" x2="7" y2="7"/>
+      <line x1="7" y1="-7" x2="-7" y2="7"/>
+    </g>
+
+    <!-- the drawn ink line grows here during replay -->
+    <path id="trace" d=""></path>
+
+    <!-- recorded-waypoint markers on the paper -->
+    <circle id="wp1" class="wpMark" r="6"/>
+    <circle id="wp2" class="wpMark" r="6"/>
+
+    <!-- the arm: pivot -> seg1 -> joint -> seg2 -> pen -->
+    <line id="seg1" class="seg" x1="0" y1="0" x2="0" y2="0"/>
+    <line id="seg2" class="seg" x1="0" y1="0" x2="0" y2="0"/>
+    <line id="pen"  class="pen" x1="0" y1="0" x2="0" y2="0"/>
+    <circle id="nib" class="nib" r="3.5"/>
+    <circle id="elbow" class="joint" r="7"/>
+    <circle class="pivot" cx="390" cy="70" r="10"/>
+    <text class="small" x="404" y="66">shoulder</text>
+
+    <!-- clamp tag -->
+    <g id="clampBox">
+      <rect x="60" y="30" width="212" height="62" rx="9"/>
+      <text class="ttl" x="74" y="52">clamp(150, 20, 120)</text>
+      <text class="strike" x="74" y="78">150&#176;</text>
+      <text class="out" x="120" y="78">&#8594; 120&#176; (trimmed to max)</text>
+    </g>
+
+    <!-- waypoint list panel -->
+    <g id="wpPanel">
+      <rect class="bg" x="600" y="120" width="158" height="112" rx="10"/>
+      <text class="hd" x="616" y="142">waypoints.json</text>
+      <g id="row1" class="row">
+        <circle class="dot" cx="622" cy="164" r="5"/>
+        <text class="lbl" x="636" y="169">#1  start</text>
+      </g>
+      <g id="row2" class="row">
+        <circle class="dot" cx="622" cy="190" r="5"/>
+        <text class="lbl" x="636" y="195">#2  end</text>
+      </g>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="controls">
+    <button id="prev">&#9664; Back</button>
+    <button id="next" class="primary">Next step &#9654;</button>
+    <button id="play">&#9654; Play all</button>
+    <button id="replay">&#8635; Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p><b>1.</b> In <b>teach-mode</b> you don't do any geometry. You <b>jog</b> the arm — nudge
+  one joint a few degrees at a time — until the pen is where you want it.</p>
+  <p><b>2.</b> When the pen is on the spot, you <b>record a waypoint</b>: a snapshot of all six
+  joint angles, saved to a plain file. Here we recorded two — the start and end of one line.</p>
+  <p><b>3.</b> Ask a joint to go past its safe limit and the <b>clamp</b> — <code>clamp(angle,
+  min, max)</code> — trims the number down to the edge <i>before</i> the motor moves. The
+  joint stops at the safe edge; the pen never leaves the safe zone.</p>
+  <p><b>4.</b> <b>Replay</b> eases the arm from waypoint to waypoint, slowly, drawing the line.
+  Every replayed value passes through the clamp again. And it <span class="danger">wobbles</span>
+  — that's the hobby-servo character, not a bug. Celebrate the wobble.</p>
+
+  <h2>Safety, for real</h2>
+  <ul>
+    <li><b>No calibration file, no motion.</b> The real tool refuses to run until you've
+    measured your arm into <code>arm/calibration.json</code>. The clamp is only as safe as
+    those measured numbers.</li>
+    <li><b>Servo power is external, always</b> — a separate 5&ndash;6&nbsp;V supply, shared
+    ground, fused, reachable switch. Never the Arduino's 5&nbsp;V pin.</li>
+    <li><b>A human watches every move</b>, hand on the switch. Nothing is ever safe unattended.</li>
+  </ul>
+
+  <h2>What this animation simplifies</h2>
+  <p>It shows a <b>2-joint arm from the side</b>; yours has six servos moving in 3-D. The
+  clamp really trims <b>joint angles</b> (shown here as the pen halting at the safe edge). And
+  the wobble is drawn gently — a real hobby arm is often wobblier. Measure first, clamp always,
+  watch every time.</p>
+</div>
+
+<script>
+  // --- geometry: a 2-link arm, IK so the pen sits exactly where we drive it --
+  const PIV = { x: 390, y: 70 };
+  const L1 = 128, L2 = 128;
+  const PAPER_Y = 284;                 // pen-down height
+  const START = { x: 300, y: PAPER_Y };
+  const END   = { x: 470, y: PAPER_Y };
+  const REST  = { x: 388, y: 176 };    // pen up, mid-air rest pose
+  const LIFT  = 210;                    // pen-up travel height
+
+  const seg1 = document.getElementById('seg1');
+  const seg2 = document.getElementById('seg2');
+  const pen  = document.getElementById('pen');
+  const nib  = document.getElementById('nib');
+  const elbow= document.getElementById('elbow');
+  const trace= document.getElementById('trace');
+  const wedge= document.getElementById('wedge');
+  const ghost= document.getElementById('ghost');
+  const blocked = document.getElementById('blocked');
+  const clampBox= document.getElementById('clampBox');
+  const wp1 = document.getElementById('wp1'), wp2 = document.getElementById('wp2');
+  const row1= document.getElementById('row1'), row2 = document.getElementById('row2');
+  const caption = document.getElementById('caption');
+  const bPrev = document.getElementById('prev'), bNext = document.getElementById('next');
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let curTip = { x: REST.x, y: REST.y };
+  let raf = null, timer = null, step = -1;
+
+  // 2-link inverse kinematics: place the pen tip at (tx,ty), draw the arm to it.
+  function applyTip(tx, ty) {
+    curTip = { x: tx, y: ty };
+    let dx = tx - PIV.x, dy = ty - PIV.y;
+    let d = Math.hypot(dx, dy);
+    const dmax = L1 + L2 - 0.6, dmin = Math.abs(L1 - L2) + 0.6;
+    d = Math.max(dmin, Math.min(dmax, d));
+    const ang = Math.atan2(dy, dx);
+    const cos2 = (d*d - L1*L1 - L2*L2) / (2*L1*L2);
+    const a2 = Math.acos(Math.max(-1, Math.min(1, cos2)));
+    const a1 = ang - Math.atan2(L2*Math.sin(a2), L1 + L2*Math.cos(a2));
+    const jx = PIV.x + L1*Math.cos(a1), jy = PIV.y + L1*Math.sin(a1);
+    const ex = jx + L2*Math.cos(a1 + a2), ey = jy + L2*Math.sin(a1 + a2);
+    seg1.setAttribute('x1', PIV.x); seg1.setAttribute('y1', PIV.y);
+    seg1.setAttribute('x2', jx);    seg1.setAttribute('y2', jy);
+    seg2.setAttribute('x1', jx);    seg2.setAttribute('y1', jy);
+    seg2.setAttribute('x2', ex);    seg2.setAttribute('y2', ey);
+    elbow.setAttribute('cx', jx);   elbow.setAttribute('cy', jy);
+    // the pen hangs straight down a little from the tip; nib is the drawing point
+    pen.setAttribute('x1', ex); pen.setAttribute('y1', ey);
+    pen.setAttribute('x2', ex); pen.setAttribute('y2', ey + 14);
+    nib.setAttribute('cx', ex); nib.setAttribute('cy', ey + 14);
+    return { x: ex, y: ey + 14 };
+  }
+
+  function cancelRaf() { if (raf) cancelAnimationFrame(raf); raf = null; }
+  function ease(k) { return k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2; }
+
+  // tween the pen tip through a list of {x,y,dur} frames
+  function tweenTip(frames, done) {
+    cancelRaf();
+    if (reduced) { const f = frames[frames.length-1]; applyTip(f.x, f.y); if (done) done(); return; }
+    let i = 0, sx = curTip.x, sy = curTip.y, t0 = performance.now();
+    function run(now) {
+      const f = frames[i], k = Math.min((now - t0) / f.dur, 1), e = ease(k);
+      applyTip(sx + (f.x - sx)*e, sy + (f.y - sy)*e);
+      if (k < 1) { raf = requestAnimationFrame(run); }
+      else if (++i < frames.length) { sx = f.x; sy = f.y; t0 = now; raf = requestAnimationFrame(run); }
+      else if (done) done();
+    }
+    raf = requestAnimationFrame(run);
+  }
+
+  // draw the wobbly ink line from START to END while sweeping the pen
+  function drawReplay(done) {
+    cancelRaf();
+    const y0 = PAPER_Y + 14;               // nib height on paper
+    if (reduced) {
+      let d = 'M ' + START.x + ' ' + y0;
+      for (let x = START.x; x <= END.x; x += 6) {
+        d += ' L ' + x + ' ' + (y0 + wobble(x));
+      }
+      trace.setAttribute('d', d);
+      applyTip(END.x, END.y);
+      if (done) done();
+      return;
+    }
+    const dur = 2600, t0 = performance.now();
+    function run(now) {
+      const k = Math.min((now - t0) / dur, 1);
+      const x = START.x + (END.x - START.x) * k;
+      applyTip(x, END.y);
+      let d = 'M ' + START.x + ' ' + y0;
+      for (let px = START.x; px <= x; px += 5) {
+        d += ' L ' + px + ' ' + (y0 + wobble(px));
+      }
+      trace.setAttribute('d', d);
+      if (k < 1) raf = requestAnimationFrame(run);
+      else if (done) done();
+    }
+    raf = requestAnimationFrame(run);
+  }
+  // the "charming wobble": a gentle, repeatable wiggle so replay looks hand-drawn
+  function wobble(x) {
+    return Math.sin(x * 0.16) * 2.6 + Math.sin(x * 0.53) * 1.3;
+  }
+
+  function setWedge(on) {
+    if (on && !wedge.getAttribute('d')) {
+      // a shallow wedge at the shoulder, purely illustrative of "the safe range"
+      wedge.setAttribute('d', 'M 390 70 L 300 210 A 168 168 0 0 1 480 210 Z');
+    }
+    wedge.style.opacity = on ? 1 : 0;
+  }
+
+  const stages = [
+    { cap: '<span class="stepnum">1</span><b>Meet the setup.</b> A 2-joint arm (yours has six '
+      + 'servos) holds a floating pen over taped-down paper. Right now nothing is recorded — '
+      + 'the <b>waypoints</b> file is empty.',
+      run: () => { resetScene(); tweenTip([{ x:REST.x, y:REST.y, dur:600 }]); } },
+
+    { cap: '<span class="stepnum">2</span><b>Jog to the start.</b> You <b>jog</b> the arm — '
+      + 'nudge one joint a few degrees at a time, by eye — until the pen touches the spot where '
+      + 'your line should begin. No math, just nudging.',
+      run: () => { resetScene(); tweenTip([{ x:START.x, y:LIFT, dur:700 }, { x:START.x, y:START.y, dur:600 }]); } },
+
+    { cap: '<span class="stepnum">3</span><b>Record waypoint #1.</b> Happy with the spot? Type '
+      + '<code>rec</code>. That snapshots all six joint angles and adds them to '
+      + '<code>waypoints.json</code>. One dot saved.',
+      run: () => { resetScene(); applyTip(START.x, START.y); revealWp(1); } },
+
+    { cap: '<span class="stepnum">4</span><b>The clamp catches an over-jog.</b> Nudge a joint '
+      + 'past its measured max and <code>clamp(angle, min, max)</code> trims it to the edge '
+      + '<i>before</i> the motor moves. The joint stops safely; the pen never crosses the line.',
+      run: () => runClamp() },
+
+    { cap: '<span class="stepnum">5</span><b>Jog to the end &amp; record #2.</b> Lift the pen, '
+      + 'jog to where the line should end, set it down, and <code>rec</code> again. Two '
+      + 'waypoints now — the whole line is taught.',
+      run: () => runToEnd() },
+
+    { cap: '<span class="stepnum">6</span><b>Replay through the clamp.</b> Type <code>replay</code>: '
+      + 'the arm eases from #1 to #2, slowly, every value re-clamped, drawing the line. See the '
+      + '<span class="danger">wobble</span>? That\'s the hobby-servo charm — not a defect.',
+      run: () => runReplay() },
+  ];
+
+  function resetScene() {
+    setWedge(false);
+    clampBox.style.opacity = 0;
+    ghost.style.opacity = 0;
+    blocked.style.opacity = 0;
+  }
+  function clearTrace() { trace.setAttribute('d', ''); }
+  function revealWp(n) {
+    if (n >= 1) { wp1.setAttribute('cx', START.x); wp1.setAttribute('cy', PAPER_Y+14); wp1.classList.add('on'); row1.classList.add('on'); }
+    if (n >= 2) { wp2.setAttribute('cx', END.x);   wp2.setAttribute('cy', PAPER_Y+14); wp2.classList.add('on'); row2.classList.add('on'); }
+  }
+
+  function runClamp() {
+    resetScene();
+    revealWp(1);
+    setWedge(true);
+    applyTip(START.x, START.y);
+    // show where the over-range jog WOULD have gone (dashed ghost, up-left past the edge)
+    const edge = { x: 300, y: 210 };       // the safe edge the clamp stops at
+    ghost.setAttribute('x1', START.x); ghost.setAttribute('y1', START.y);
+    ghost.setAttribute('x2', 232);     ghost.setAttribute('y2', 150);
+    ghost.style.opacity = 1;
+    tweenTip([{ x: edge.x, y: edge.y, dur: 900 }], () => {
+      const t = applyTip(edge.x, edge.y);
+      blocked.setAttribute('transform', 'translate(' + t.x + ' ' + (t.y-6) + ')');
+      blocked.style.opacity = 1;
+      clampBox.style.opacity = 1;
+      // ease back to the start spot after the clamp has been shown
+      if (!reduced) setTimeout(() => tweenTip([{ x: START.x, y: START.y, dur: 700 }]), 900);
+    });
+  }
+
+  function runToEnd() {
+    resetScene();
+    revealWp(1);
+    applyTip(START.x, START.y);
+    tweenTip([{ x: START.x, y: LIFT, dur: 500 },
+              { x: END.x,   y: LIFT, dur: 800 },
+              { x: END.x,   y: END.y, dur: 500 }], () => revealWp(2));
+  }
+
+  function runReplay() {
+    resetScene();
+    revealWp(2);
+    clearTrace();
+    applyTip(START.x, START.y);
+    if (reduced) { drawReplay(); return; }
+    setTimeout(() => drawReplay(), 450);
+  }
+
+  function render(s, animate) {
+    step = s;
+    const st = stages[s];
+    caption.innerHTML = st.cap;
+    // reveal state that should persist by this stage
+    if (s < 2) { wp1.classList.remove('on'); row1.classList.remove('on'); }
+    if (s < 4) { wp2.classList.remove('on'); row2.classList.remove('on'); }
+    if (s !== 5) clearTrace();
+    if (animate || reduced) st.run();
+    else { st.run(); }        // each run() also lands a correct static pose
+    bPrev.disabled = s <= 0; bNext.disabled = s >= stages.length - 1;
+  }
+
+  function stopPlay() { if (timer) { clearInterval(timer); timer = null; } }
+  function playAll() {
+    stopPlay(); cancelRaf();
+    render(0, true);
+    let i = 1;
+    timer = setInterval(() => { render(i, true); if (++i >= stages.length) stopPlay(); },
+                        reduced ? 4200 : 3600);
+  }
+
+  bNext.onclick = () => { stopPlay(); render(Math.min(step+1, stages.length-1), true); };
+  bPrev.onclick = () => { stopPlay(); render(Math.max(step-1, 0), true); };
+  document.getElementById('play').onclick = playAll;
+  document.getElementById('replay').onclick = playAll;
+
+  render(0, true);
+  if (!reduced) setTimeout(playAll, 700);
+</script>
+</body>
+</html>
