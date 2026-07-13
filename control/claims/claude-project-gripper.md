@@ -1,1 +1,0 @@
-- `claude/project-gripper` · **projects/effector-mount gripper** — single-servo rack-and-pinion 2-finger gripper (.scad + bench .ino + README + animation) · projects/effector-mount/, ideas/printed-end-effectors.md · `2026-07-13`
