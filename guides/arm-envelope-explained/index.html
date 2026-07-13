@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The arm's safe envelope — why a software clamp matters</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --desk:#9a7b5a; --base:#8b95a6; --seg:#334155; --joint:#7c3aed;
+    --safe:#16a34a; --safefill:rgba(22,163,74,.16); --bad:#dc2626;
+    --accent:#7c3aed; --line:#d1d5db; --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --desk:#a98a63; --base:#4b5563; --seg:#cbd5e1; --joint:#a78bfa;
+      --safe:#4ade80; --safefill:rgba(74,222,128,.18); --bad:#f87171;
+      --accent:#a78bfa; --line:#374151; --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:40em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:760px; }
+  svg { width:100%; height:auto; display:block; }
+  .desk { stroke:var(--desk); stroke-width:6; stroke-linecap:round; }
+  .base { fill:var(--base); }
+  .seg { stroke:var(--seg); stroke-width:16; stroke-linecap:round; fill:none; }
+  .joint { fill:var(--joint); stroke:var(--card); stroke-width:3; }
+  #wedge { fill:var(--safefill); stroke:var(--safe); stroke-width:2; opacity:0; transition:opacity .5s; }
+  .edgeLbl { font:600 13px system-ui,sans-serif; fill:var(--safe); opacity:0; transition:opacity .5s; }
+  .grip { stroke:var(--seg); stroke-width:7; stroke-linecap:round; fill:none; }
+  .small { font:12px system-ui,sans-serif; fill:var(--muted); }
+  #cmdTag { opacity:0; transition:opacity .3s; }
+  #cmdTag rect { fill:var(--bad); }
+  #cmdTag text { font:700 14px system-ui,sans-serif; fill:#fff; }
+  #impact { opacity:0; transform-origin:378px 322px; }
+  #impact.flash { animation:crunch .55s ease; }
+  @keyframes crunch { 0%{transform:scale(.4)} 55%{transform:scale(1.3)} 100%{transform:scale(1)} }
+  #impact path { fill:var(--bad); }
+  #impact text { font:800 15px system-ui,sans-serif; fill:var(--bad); }
+  #clampBox { opacity:0; transition:opacity .4s; }
+  #clampBox rect { fill:var(--card); stroke:var(--accent); stroke-width:2; rx:9; }
+  #clampBox .ttl { font:700 13px ui-monospace,monospace; fill:var(--accent); }
+  #clampBox .out { font:700 15px system-ui,sans-serif; fill:var(--safe); }
+  #clampBox .strike { font:600 14px system-ui,sans-serif; fill:var(--bad);
+                      text-decoration:line-through; }
+  .caption { min-height:5.6em; margin:14px auto 0; max-width:640px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption code { font:600 13px ui-monospace,monospace; background:var(--bg);
+                  padding:1px 5px; border-radius:5px; }
+  .stepnum { display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+             width:1.6em; height:1.6em; line-height:1.6em; font-weight:700; margin-right:.45em;
+             text-align:center; }
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  button { font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+           border:1.5px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .recap { max-width:640px; margin-top:26px; background:var(--card); border-radius:14px;
+           box-shadow:var(--shadow); padding:16px 20px; }
+  .recap h2 { font-size:1.02rem; margin:.3em 0 .4em; }
+  .recap p { margin:.4em 0; color:var(--muted); }
+  .recap b { color:var(--ink); }
+  .recap li { color:var(--muted); margin:.25em 0; }
+  .recap li b { color:var(--ink); }
+  .danger { color:var(--bad)!important; font-weight:700; }
+</style>
+</head>
+<body>
+<h1>The arm's safe envelope — and why a software clamp matters</h1>
+<p class="sub">A <b>servo</b> is a motor you tell to go to an exact angle. Your arm has six of
+them; here we watch just the shoulder joint, and watch what happens when a command aims
+somewhere the joint should never go.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 760 380" aria-label="Animated side view of a robot arm showing its safe angle range and how a software clamp stops an out-of-range command from slamming into the desk">
+    <!-- desk -->
+    <line class="desk" x1="40" y1="330" x2="720" y2="330"/>
+    <text class="small" x="46" y="352">the desk — a hard thing the arm can crash into</text>
+
+    <!-- safe range wedge at the shoulder -->
+    <path id="wedge" d="M 270 250 L 174.5 154.5 A 135 135 0 0 1 347.4 139.4 Z"/>
+    <text id="minLbl" class="edgeLbl" x="120" y="150">min 45°</text>
+    <text id="maxLbl" class="edgeLbl" x="356" y="132">max 125°</text>
+
+    <!-- base pillar bolted to the desk -->
+    <rect class="base" x="250" y="250" width="40" height="80" rx="4"/>
+
+    <!-- the moving arm: shoulder group rotates about (270,250); elbow group nested inside -->
+    <g id="shoulderG">
+      <line class="seg" x1="270" y1="250" x2="270" y2="130"/>
+      <g id="elbowG">
+        <line class="seg" x1="270" y1="130" x2="270" y2="45"/>
+        <path class="grip" d="M 270 45 L 258 30 M 270 45 L 282 30"/>
+        <circle class="joint" cx="270" cy="130" r="8"/>
+      </g>
+    </g>
+    <circle class="joint" cx="270" cy="250" r="11"/>
+    <text class="small" x="286" y="258">shoulder servo</text>
+
+    <!-- incoming command tag -->
+    <g id="cmdTag">
+      <rect x="560" y="24" width="150" height="30" rx="8"/>
+      <text x="574" y="45">command: go to 170°</text>
+    </g>
+
+    <!-- impact burst -->
+    <g id="impact">
+      <path d="M 378 300 l 9 16 l 18 -6 l -9 17 l 15 12 l -19 3 l -1 19 l -14 -13
+               l -18 8 l 6 -19 l -15 -11 l 19 -5 l -1 -19 l 14 12 z"/>
+      <text x="410" y="300">crunch!</text>
+    </g>
+
+    <!-- the clamp catching a bad number -->
+    <g id="clampBox">
+      <rect x="60" y="28" width="230" height="66"/>
+      <text class="ttl" x="74" y="52">clamp(170, 45, 125)</text>
+      <text class="strike" x="74" y="80">170°</text>
+      <text class="out" x="132" y="80">&#8594;  125° (trimmed to max)</text>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="controls">
+    <button id="prev">&#9664; Back</button>
+    <button id="next" class="primary">Next step &#9654;</button>
+    <button id="play">&#9654; Play all</button>
+    <button id="replay">&#8635; Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p><b>1.</b> Each joint is turned by one <b>servo</b> — a motor you command to a specific
+  angle. A real arm has six; we showed one.</p>
+  <p><b>2.</b> The green wedge is that joint's <b>envelope</b>: every angle it can reach
+  without hitting itself, the desk, or a wire. You measure its real min and max once.</p>
+  <p><b>3.</b> A command past the max (<span class="danger">170°</span>) with nothing checking
+  it drives the joint straight into the desk. That is how gears strip and brackets crack.</p>
+  <p><b>4.</b> A <b>clamp</b> — <code>clamp(angle, min, max)</code> — compares every command
+  to the measured min/max and trims anything out of range down to the edge, <i>before</i> the
+  motor moves. The wrong number never reaches the servo.</p>
+
+  <h2>Safety, for real</h2>
+  <ul>
+    <li><b>The clamp is only software.</b> It works only if the min/max were measured
+    correctly and <b>every</b> motion routine actually routes through it. No motion code
+    merges without the clamp in the path.</li>
+    <li><b>Servo power is external, always</b> — a separate 5&ndash;6&nbsp;V supply with a
+    shared ground, fused, with a reachable power switch. Never the Arduino's 5&nbsp;V pin.</li>
+    <li><b>A human watches every move.</b> The arm moves only inside its calibrated envelope,
+    and only with you standing there, hand near the switch.</li>
+  </ul>
+
+  <h2>What this animation simplifies</h2>
+  <p>It shows <b>angles only</b>. A real joint also fights gravity, momentum, and wire snag;
+  a real arm has six servos; and the true envelope is a 3-D volume, not a flat wedge. Measure
+  first, clamp always, watch every time.</p>
+</div>
+
+<script>
+  const stages = [
+    { sh:0,  el:25,  cap:'<span class="stepnum">1</span><b>Meet the arm.</b> A <b>servo</b> is '
+      + 'a motor you tell to go to an exact angle &mdash; say "60&deg;". Here the shoulder and '
+      + 'elbow each have one (a real arm has six; we simplified to two).' },
+    { sh:0,  el:25,  cap:'<span class="stepnum">2</span><b>The safe range.</b> The green wedge '
+      + 'is this joint\'s <b>envelope</b> &mdash; every angle it can reach without hitting '
+      + 'itself, the desk, or a wire. Watch it sweep from its measured min (45&deg;) to max '
+      + '(125&deg;).' },
+    { sh:80, el:100, cap:'<span class="stepnum">3</span><b>A bad command.</b> Something sends '
+      + '"go to 170&deg;" &mdash; past the max. Nothing checked the number, so the servo drives '
+      + 'the joint straight past safe and into the desk. This is how gears strip and brackets '
+      + 'crack.' },
+    { sh:35, el:25,  cap:'<span class="stepnum">4</span><b>The clamp catches it.</b> Same '
+      + '"170&deg;", now routed through <code>clamp(angle, min, max)</code>. It trims 170 down '
+      + 'to 125 &mdash; the edge of the wedge &mdash; <i>before</i> the motor moves. The joint '
+      + 'eases to the edge and stops. No impact.' },
+    { sh:0,  el:25,  cap:'<span class="stepnum">5</span><b>Why it matters.</b> Measure each '
+      + 'joint\'s real min/max once, put them in the clamp, and every future command is '
+      + 'filtered through the safe envelope &mdash; a wrong number can\'t reach the motor.' },
+  ];
+
+  const shoulderG = document.getElementById('shoulderG');
+  const elbowG    = document.getElementById('elbowG');
+  const wedge     = document.getElementById('wedge');
+  const minLbl    = document.getElementById('minLbl');
+  const maxLbl    = document.getElementById('maxLbl');
+  const cmdTag    = document.getElementById('cmdTag');
+  const impact    = document.getElementById('impact');
+  const clampBox  = document.getElementById('clampBox');
+  const caption   = document.getElementById('caption');
+  const bPrev = document.getElementById('prev'), bNext = document.getElementById('next');
+
+  let step = -1, timer = null, raf = null;
+  let curSh = 0, curEl = 25;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function applyPose(sh, el) {
+    curSh = sh; curEl = el;
+    shoulderG.setAttribute('transform', 'rotate(' + sh + ' 270 250)');
+    elbowG.setAttribute('transform', 'rotate(' + el + ' 270 130)');
+  }
+  function cancelRaf() { if (raf) cancelAnimationFrame(raf); raf = null; }
+  function ease(k) { return k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2; }
+
+  // frames: [{sh,el,dur}, ...] tweened from the current pose in sequence
+  function tween(frames, done) {
+    cancelRaf();
+    if (reduced) { const f = frames[frames.length-1]; applyPose(f.sh, f.el); if (done) done(); return; }
+    let i = 0, startSh = curSh, startEl = curEl, t0 = performance.now();
+    function run(now) {
+      const f = frames[i], k = Math.min((now - t0) / f.dur, 1), e = ease(k);
+      applyPose(startSh + (f.sh - startSh)*e, startEl + (f.el - startEl)*e);
+      if (k < 1) { raf = requestAnimationFrame(run); }
+      else if (++i < frames.length) { startSh = f.sh; startEl = f.el; t0 = now; raf = requestAnimationFrame(run); }
+      else if (done) { done(); }
+    }
+    raf = requestAnimationFrame(run);
+  }
+  function showImpact() {
+    impact.style.opacity = 1;
+    impact.classList.remove('flash'); void impact.getBBox(); impact.classList.add('flash');
+  }
+  function runStage(s) {
+    if (s === 0) { tween([{ sh:0, el:25, dur:700 }]); }
+    else if (s === 1) {                                   // sweep the safe range
+      tween([{ sh:-45, el:25, dur:800 }, { sh:35, el:25, dur:1100 }, { sh:0, el:25, dur:700 }]);
+    }
+    else if (s === 2) {                                   // bad command: crash into desk
+      applyPose(0, 25);
+      tween([{ sh:80, el:100, dur:1100 }], showImpact);
+    }
+    else if (s === 3) {                                   // clamp: eased to the edge, holds
+      applyPose(0, 25);
+      tween([{ sh:35, el:25, dur:1100 }]);
+    }
+    else { tween([{ sh:0, el:25, dur:800 }]); }           // settle safe
+  }
+
+  function render(s, animate) {
+    step = s;
+    const st = stages[s];
+    caption.innerHTML = st.cap;
+    const showWedge = s >= 1 ? 1 : 0;
+    wedge.style.opacity = showWedge; minLbl.style.opacity = showWedge; maxLbl.style.opacity = showWedge;
+    cmdTag.style.opacity = (s === 2 || s === 3) ? 1 : 0;
+    clampBox.style.opacity = (s === 3) ? 1 : 0;
+    impact.style.opacity = 0;
+    if (!animate || reduced) { applyPose(st.sh, st.el); if (s === 2) showImpact(); }
+    else { runStage(s); }
+    bPrev.disabled = s <= 0; bNext.disabled = s >= stages.length - 1;
+  }
+
+  function stopPlay() { if (timer) { clearInterval(timer); timer = null; } }
+  function playAll() {
+    stopPlay(); render(0, false);
+    let i = 1;
+    timer = setInterval(() => { render(i, true); if (++i >= stages.length) stopPlay(); },
+                        reduced ? 3600 : 3000);
+  }
+
+  bNext.onclick   = () => { stopPlay(); render(Math.min(step+1, stages.length-1), true); };
+  bPrev.onclick   = () => { stopPlay(); render(Math.max(step-1, 0), false); };
+  document.getElementById('play').onclick   = playAll;
+  document.getElementById('replay').onclick = playAll;
+
+  // Reduced motion: land on step 1 and let the reader step through; otherwise auto-play once.
+  render(0, false);
+  if (!reduced) setTimeout(playAll, 600);
+</script>
+</body>
+</html>
