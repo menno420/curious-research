@@ -1,6 +1,6 @@
 # Session — 2026-07-13 — project-spool-scale (build)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** Claude Opus 4 family. **Venue:** Claude Code (remote), building
 > `projects/spool-weight-scale/` from the `ideas/spool-weight-scale.md` ritual verdict
 > (build — the honest spot-check-gauge version).
@@ -30,8 +30,8 @@ not an always-on precision shelf display.
 
 ## 💡 Session idea
 
-*(filled at session close)*
+**Grams → "can I actually print this?"** Turn grams-remaining into the answer the maker really wants. Using filament density + diameter (PLA ≈ 1.24 g/cm³, 1.75 mm ≈ 2.98 g per metre), the sketch converts `~440 g left` into approximate **metres of filament**, and — with one saved grams-per-model number — into "enough for about N more of these." The scale already knows the grams; one small formula makes it answer "is there enough to start this print?" in the unit that matters, on the same OLED. It reuses the exact hardware for a genuinely different question than "how much is left," and it's the natural companion to the ritual card's print-failure-by-grams idea — both turn one weight reading into a decision.
 
 ## ⟲ Previous-session review
 
-*(filled at session close)*
+Predecessor: `.sessions/2026-07-13-ritual-spool-scale.md` (complete) — the idea ritual that grew this one-liner to a `build` verdict. This session executes that verdict into a real project lane, and it deliberately honours the ritual's hard-won honest reframe: an on-demand spot-check + a personal weigh-it-empty tare table, **not** the always-on live-grams display a drifting load cell can't support. It also carries the ritual's crossover thinking forward — this card's grams→metres idea is the weight-world sibling of that card's print-failure-by-grams idea.
