@@ -1,1 +1,0 @@
-- `claude/project-effector-mount` · **scope: projects/effector-mount** — new lane: standard mount plate + passive magnet tool (steps 1–2 of printed-end-effectors) · 2026-07-13
