@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One mount, many tools — the effector standard, animated</title>
+<style>
+  :root{
+    --bg:#eef1f5; --panel:#ffffff; --ink:#1b2230; --muted:#586074;
+    --line:#d3d9e2; --accent:#2f6df6; --shadow:rgba(20,30,60,.10);
+    --plate:#8f98a8; --plateface:#c3cad6; --hole:#232a38; --hub:#f0b429;
+    --pen:#2e8b57; --mag:#c0392b; --bad:#d23b3b; --peg:#3a4353;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1218; --panel:#191d25; --ink:#e6ebf3; --muted:#98a2b3;
+      --line:#2a303b; --accent:#5b8cff; --shadow:rgba(0,0,0,.4);
+      --plate:#59626f; --plateface:#7b8494; --hole:#0c0f15; --hub:#f0b429;
+      --pen:#4cae74; --mag:#e05a48; --bad:#e05a5a; --peg:#aab2c0;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px;}
+  h1{font-size:1.5rem;margin:.2em 0 .1em;}
+  .sub{color:var(--muted);margin:0 0 22px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+        box-shadow:0 6px 22px var(--shadow);overflow:hidden;}
+  .stage{display:block;width:100%;height:auto;background:transparent;}
+  .capbar{padding:16px 20px;border-top:1px solid var(--line);min-height:86px;}
+  .capnum{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+          color:var(--accent);font-weight:700;margin-bottom:4px;}
+  .cap{margin:0;}
+  .controls{display:flex;align-items:center;gap:14px;padding:14px 20px;
+            border-top:1px solid var(--line);flex-wrap:wrap;}
+  button{font:inherit;font-weight:600;color:#fff;background:var(--accent);
+         border:0;border-radius:9px;padding:9px 18px;cursor:pointer;}
+  .dots{display:flex;gap:8px;margin-left:auto;}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--line);
+       transition:background .25s;}
+  .dot.on{background:var(--accent);}
+  .note{margin:22px 0 0;padding:14px 16px;border:1px dashed var(--line);
+        border-radius:10px;color:var(--muted);font-size:.92rem;}
+  .note b{color:var(--ink);}
+  h2{font-size:1.05rem;margin:26px 0 8px;}
+  ul{margin:.3em 0;padding-left:1.2em;} li{margin:.25em 0;}
+  code{background:rgba(130,140,160,.16);padding:.06em .35em;border-radius:5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>One mount, many tools</h1>
+  <p class="sub">Why the robot arm gets <em>one</em> standard plate — and every tool clicks onto it the same way.</p>
+
+  <div class="card">
+    <svg class="stage" viewBox="0 0 700 380" role="img" aria-label="Animated diagram of two tools mounting onto one shared plate">
+      <!-- arm wrist -->
+      <rect x="26" y="120" width="120" height="150" rx="10" fill="var(--plate)"/>
+      <text x="86" y="300" text-anchor="middle" fill="var(--muted)" font-size="14">arm wrist</text>
+      <!-- servo horn behind the plate -->
+      <circle cx="250" cy="195" r="30" fill="none" stroke="var(--muted)" stroke-width="3" stroke-dasharray="4 4"/>
+
+      <!-- the standard plate (fixed) -->
+      <g id="plate">
+        <rect x="234" y="120" width="34" height="150" rx="6" fill="var(--plateface)" stroke="var(--plate)" stroke-width="2"/>
+        <circle id="holeA" cx="251" cy="158" r="7" fill="var(--hole)"/>
+        <circle id="holeB" cx="251" cy="232" r="7" fill="var(--hole)"/>
+        <circle id="hub" cx="251" cy="195" r="15" fill="none" stroke="var(--hub)" stroke-width="4"/>
+        <path id="notch" d="M243 270 l8 -12 l8 12 z" fill="var(--hub)"/>
+        <text x="251" y="300" text-anchor="middle" fill="var(--muted)" font-size="13">standard plate</text>
+      </g>
+
+      <!-- PEN TOOL -->
+      <g id="pen" transform="translate(340,0)" opacity="0">
+        <rect x="268" y="132" width="150" height="126" rx="12" fill="var(--panel)" stroke="var(--pen)" stroke-width="3"/>
+        <circle cx="268" cy="158" r="6" fill="var(--peg)"/>
+        <circle cx="268" cy="232" r="6" fill="var(--peg)"/>
+        <text x="343" y="200" text-anchor="middle" fill="var(--pen)" font-size="15" font-weight="700">PEN TOOL</text>
+        <line x1="418" y1="210" x2="470" y2="255" stroke="var(--pen)" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="472" cy="258" r="4" fill="var(--pen)"/>
+      </g>
+
+      <!-- MAGNET TOOL -->
+      <g id="mag" transform="translate(340,0)" opacity="0">
+        <rect x="268" y="132" width="150" height="126" rx="12" fill="var(--panel)" stroke="var(--mag)" stroke-width="3"/>
+        <circle cx="268" cy="158" r="6" fill="var(--peg)"/>
+        <circle cx="268" cy="232" r="6" fill="var(--peg)"/>
+        <text x="343" y="184" text-anchor="middle" fill="var(--mag)" font-size="15" font-weight="700">MAGNET</text>
+        <text x="343" y="204" text-anchor="middle" fill="var(--mag)" font-size="15" font-weight="700">TOOL</text>
+        <ellipse cx="430" cy="195" rx="10" ry="26" fill="var(--mag)"/>
+      </g>
+
+      <!-- badge for the "won't rotate" stage -->
+      <g id="keybadge" opacity="0">
+        <text x="343" y="112" text-anchor="middle" fill="var(--bad)" font-size="15" font-weight="700">&#10007; won't turn — the key holds it</text>
+      </g>
+    </svg>
+
+    <div class="capbar">
+      <div class="capnum" id="capnum">Step 1 of 5</div>
+      <p class="cap" id="cap">…</p>
+    </div>
+
+    <div class="controls">
+      <button id="replay">&#9654; Replay</button>
+      <div class="dots" id="dots"></div>
+    </div>
+  </div>
+
+  <p class="note"><b>What the animation simplifies:</b> real arms mount the plate at
+  whatever angle the wrist servo is turned to — this side view flattens that to keep
+  the idea clear. The pen tip and magnet are drawn big so you can see them. And two
+  tight screws already resist turning; the hub recess and back-notch shown here are
+  what make the fit <em>centred and repeatable</em>, so every tool lands in the same
+  place facing the same way.</p>
+
+  <h2>What you just watched</h2>
+  <ul>
+    <li><b>One plate</b> bolts to the arm's servo horn: two screw holes (the bolt
+    pattern), a round hub recess, and a back-edge notch.</li>
+    <li><b>Any tool</b> — the pen holder, the magnet pickup — is built on that same
+    plate, so it mounts in the same two holes, in the same spot.</li>
+    <li><b>The key</b> (hub recess + notch + two screws) stops the tool spinning or
+    sitting crooked, so it always faces the same way.</li>
+    <li><b>The payoff:</b> design a new tool once and it just clicks on. Swapping is
+    two screws, not a re-measure.</li>
+  </ul>
+
+  <p class="note">Built as source only — the shapes live in
+  <code>mount_standard.scad</code> and <code>magnet_tool.scad</code> next to this
+  file. You render, slice, and print them yourself; any lift is a "check the magnet
+  holds your part first."</p>
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var raf = window.requestAnimationFrame || function(f){ return setTimeout(function(){ f(performance.now()); }, 16); };
+  var pen = document.getElementById('pen');
+  var mag = document.getElementById('mag');
+  var badge = document.getElementById('keybadge');
+  var capnum = document.getElementById('capnum');
+  var cap = document.getElementById('cap');
+  var dotsWrap = document.getElementById('dots');
+  var replay = document.getElementById('replay');
+  var timers = [];
+  var currentDeg = 0;
+
+  var stages = [
+    "This is the arm's wrist and the one standard mounting plate. It has two screw holes (the bolt pattern), a round hub recess in the middle, and a small notch marking its back edge.",
+    "Tool #1 — the pen holder — drops straight onto the plate. Its two pegs line up with the plate's two holes. Two screws, and it's on.",
+    "Now the swap: lift the pen off, and the magnet tool drops onto the very same plate. Same two holes, same spot, same two screws.",
+    "The key at work: try to twist the tool. The hub recess centres it on the shaft and the two screws hold it — it barely budges and springs right back. It always sits square, facing the same way.",
+    "That's the whole idea: measure the mount once, and every tool clicks onto it the same way. Design a new tool, and it just fits."
+  ];
+
+  var dotEls = stages.map(function(){
+    var d = document.createElement('div'); d.className = 'dot'; dotsWrap.appendChild(d); return d;
+  });
+  function setDot(i){ dotEls.forEach(function(d,j){ d.classList.toggle('on', j===i); }); }
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function after(ms, fn){ timers.push(setTimeout(fn, ms)); }
+
+  function setTf(el, x, deg){
+    var t = 'translate(' + x + ',0)';
+    if(deg){ t = 'rotate(' + deg + ' 251 195) ' + t; }
+    el.setAttribute('transform', t);
+  }
+
+  function tween(dur, from, to, onUpd, done){
+    if(reduced){ onUpd(to); if(done) done(); return; }
+    var start = performance.now();
+    (function frame(now){
+      var t = Math.min(1, (now - start) / dur);
+      var e = t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+      onUpd(from + (to - from) * e);
+      if(t < 1){ raf(frame); } else if(done){ done(); }
+    })(performance.now());
+  }
+
+  function reset(){
+    clearTimers();
+    currentDeg = 0;
+    setTf(pen, 340, 0); pen.setAttribute('opacity', '0');
+    setTf(mag, 340, 0); mag.setAttribute('opacity', '0');
+    badge.setAttribute('opacity', '0');
+  }
+  function caption(i){
+    capnum.textContent = 'Step ' + (i+1) + ' of ' + stages.length;
+    cap.textContent = stages[i];
+    setDot(i);
+  }
+
+  function run(){
+    reset(); caption(0);
+    after(reduced ? 700 : 2600, stage1);
+  }
+  function stage1(){
+    caption(1);
+    pen.setAttribute('opacity', '1');
+    tween(reduced ? 0 : 900, 340, 0, function(v){ setTf(pen, v, 0); });
+    after(reduced ? 700 : 2900, stage2);
+  }
+  function stage2(){
+    caption(2);
+    tween(reduced ? 0 : 700, 0, 340, function(v){ setTf(pen, v, 0); }, function(){
+      pen.setAttribute('opacity', '0');
+      mag.setAttribute('opacity', '1');
+      tween(reduced ? 0 : 900, 340, 0, function(v){ setTf(mag, v, 0); });
+    });
+    after(reduced ? 900 : 3300, stage3);
+  }
+  function stage3(){
+    caption(3);
+    badge.setAttribute('opacity', '1');
+    if(reduced){ after(1400, stage4); return; }
+    var seq = [3, -2, 2, -1, 1, 0], i = 0;
+    (function nudge(){
+      if(i >= seq.length){ after(1500, stage4); return; }
+      var target = seq[i++];
+      tween(150, currentDeg, target, function(v){ currentDeg = v; setTf(mag, 0, v); }, nudge);
+    })();
+  }
+  function stage4(){
+    caption(4);
+    badge.setAttribute('opacity', '0');
+    currentDeg = 0; setTf(mag, 0, 0);
+  }
+
+  replay.addEventListener('click', run);
+  run();
+})();
+</script>
+</body>
+</html>
