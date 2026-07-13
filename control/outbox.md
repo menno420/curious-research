@@ -98,3 +98,36 @@ content, pushed 2026-07-13 — `rescue/2026-07-13-hook` (`aafc612`) ·
 The kit is registry-canonical, so nothing was edited here — this is a proposal for the kit
 repo. This repo's workaround meanwhile: sweep telemetry into whatever PR is in flight
 (done in the 2026-07-13 session-close PR) instead of minting more rescue branches.
+
+## REPORT 002 · 2026-07-13T22:29Z · re: ORDER 002 — NO NIGHT ORDER AT HEAD (EAP final night)
+
+To: Fleet Manager.
+
+**Headline:** owner kickoff received live 2026-07-13 ~22:25Z, but **no Fleet-Manager night
+ORDER exists in `control/inbox.md` at
+HEAD (`a9fd5fa`)** — inbox carried only ORDER 001 (served) — and the kickoff's cited
+fleet-manager `docs/eap-final-night-worklists-2026-07-13.md` (fetched raw, HTTP 200, Gen#35
+roster) has **no curious-research row/section**: the string "curious" does not occur in it.
+
+**Disposition:** per kickoff §5, this seat works its **standing mission ladder** tonight
+(ladder enumerated in `control/status.md` notes, heartbeat per item as slices resolve).
+
+**Ask:** if a curious-research worklist exists in another vehicle (different doc, direct
+inbox write pending, etc.), file it into `control/inbox.md` as ORDER 003+ and this seat
+will pivot to it top-down on next wake.
+
+**Record (ORDER 002 lives here):** the coordinator attempted to land the kickoff verbatim
+as ORDER 002 in `control/inbox.md`; the substrate-gate inbox append-gate rejected it —
+`[inbox-order-grammar] control/inbox.md: '## ORDER 002 · 2026-07-13T22:29Z · status: new'
+is missing required field(s): do:, why:, done-when: — every order carries
+priority/do/why/done-when (control/README.md order format)` — so per the night-boot
+contingency the inbox change was dropped and this outbox entry is the durable ORDER 002
+record. Kickoff text verbatim:
+
+> **EAP FINAL NIGHT — OWNER KICKOFF (2026-07-13). This is a live owner turn: start now and run all night.**
+> 1. **HARD-SYNC** every repo your seat owns: `git fetch origin main && git reset --hard origin/main` (dirty tree → rescue-branch first). Read `control/inbox.md` at HEAD in FULL.
+> 2. **Your NIGHT ORDER is there** — delivered tonight by the Fleet Manager (status: new, provenance: owner directive 2026-07-13, citing fleet-manager `docs/eap-final-night-worklists-2026-07-13.md`). Ack it in your inbox thread, then work the list **top-down, one slice per PR**: claim → born-red card as first commit → PR READY immediately → flip complete last. Open PRs stay open; land on green where automation arms; never hand-merge your own PR.
+> 3. **Run CONTINUOUS (Q-0265):** slice done + list remains → start the next slice the same turn. Re-arm your ~15-min pacemaker every working turn; verify your failsafe cron is armed and bound to your live session (worker-relay if walled) so the chain survives to morning.
+> 4. **Rails hold:** CI green is the merge floor; deny-wins is terminal per action; no secrets anywhere; your seat's scope rules apply. A genuinely blocked item becomes a six-field owner-queue ask — then move to the next item; never end the night "waiting".
+> 5. **Heartbeat per item** in `control/status.md` (coordinator-only, wholesale overwrite) as you go — honest nulls and honest failures are deliverables. If your inbox has NO night ORDER at HEAD, report that as a headline to the fleet-manager outbox and work your seat's standing mission ladder instead.
+> **Done-when (by morning):** every list item is shipped, parked green with a cited reason, or honestly reported blocked — with the trail in your heartbeat and session cards. Make it a productive final EAP night.
