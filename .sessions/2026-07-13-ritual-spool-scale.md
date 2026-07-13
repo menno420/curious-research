@@ -1,6 +1,6 @@
 # Session — 2026-07-13 — ritual-spool-scale (idea ritual)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** Claude Opus 4 family. **Venue:** Claude Code (remote), running the idea
 > ritual on `ideas/spool-weight-scale.md` and landing the result against `main`.
 
