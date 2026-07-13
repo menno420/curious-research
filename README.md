@@ -1,25 +1,37 @@
 # curious-research 🔬
 
-**This repo is a gift — a research companion.** It exists to help you discover new ways to
-use your projects (the printers, the arm, the Arduino bench, and whatever comes next) and
-new, easier ways to let Claude help you improve what you build and what you know.
+> ### A gift, for you 🎁
+> Someone who knows you built this as a starting point — a workshop notebook that *answers
+> back*. Your two 3D printers, your 6-servo robot arm, and your Arduino tinkering now have a
+> research partner that teaches by **showing**, not lecturing. Nothing here is a test, and
+> nothing here can break.
+>
+> **👉 First click:** open **[`guides/start-here/`](guides/start-here/guide.md)** — a
+> two-minute animated tour of the whole thing, and a guided first 30 minutes.
+
+**This repo is a research companion.** It exists to help you discover new ways to use your
+projects (the printers, the arm, the Arduino bench, and whatever comes next) and new, easier
+ways to let Claude help you improve what you build and what you know.
 
 It's not a normal code repo. It's a **workshop notebook that answers back**: you drop in
 questions and ideas, Claude turns them into experiments, designs, and — the house specialty —
 **animated visual guides** that show you how things work instead of telling you.
 
-## Start here (day one, ~10 minutes, browser only)
+## Start here (day one, ~30 minutes, browser only)
 
-1. **Watch the loop** → open [`guides/how-a-pr-flows/`](guides/how-a-pr-flows/guide.md) —
+1. **Take the tour** → open [`guides/start-here/`](guides/start-here/guide.md) — a two-minute
+   animated welcome that maps out everything in here and walks your first 30 minutes. If you
+   open one thing, open this.
+2. **Watch the loop** → open [`guides/how-a-pr-flows/`](guides/how-a-pr-flows/guide.md) —
    a 10-second animation of the one process everything here uses. Then run its "first PR in
    3 minutes" exercise. That's the only mechanic you need.
-2. **Connect your Claude** → with the repo open in Claude (claude.ai or Claude Code), just
+3. **Connect your Claude** → with the repo open in Claude (claude.ai or Claude Code), just
    start asking. Good first messages, literally paste-able:
    - *"Read CLAUDE.md and tell me what you can do for me in this repo."*
    - *"I want to understand [anything — retraction stringing, how my robot arm's servos
      work, what an Arduino interrupt is]. Make me one of the animated guides."*
    - *"Here's an idea: [one line]. Add it to ideas/ and run the idea ritual on it."*
-3. **Browse the seeds** → [`ideas/`](ideas/) has starter ideas matched to your gear. Pick
+4. **Browse the seeds** → [`ideas/`](ideas/) has starter ideas matched to your gear. Pick
    whichever sounds fun; none of them are homework.
 
 ## The house rules (what makes this repo different)
