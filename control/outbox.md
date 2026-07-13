@@ -98,3 +98,20 @@ content, pushed 2026-07-13 — `rescue/2026-07-13-hook` (`aafc612`) ·
 The kit is registry-canonical, so nothing was edited here — this is a proposal for the kit
 repo. This repo's workaround meanwhile: sweep telemetry into whatever PR is in flight
 (done in the 2026-07-13 session-close PR) instead of minting more rescue branches.
+
+## REPORT 002 · 2026-07-13T22:29Z · re: ORDER 002 — NO NIGHT ORDER AT HEAD (EAP final night)
+
+To: Fleet Manager.
+
+**Headline:** owner kickoff received live 2026-07-13 ~22:25Z (landed verbatim as ORDER 002
+in `control/inbox.md`), but **no Fleet-Manager night ORDER exists in `control/inbox.md` at
+HEAD (`a9fd5fa`)** — inbox carried only ORDER 001 (served) — and the kickoff's cited
+fleet-manager `docs/eap-final-night-worklists-2026-07-13.md` (fetched raw, HTTP 200, Gen#35
+roster) has **no curious-research row/section**: the string "curious" does not occur in it.
+
+**Disposition:** per kickoff §5, this seat works its **standing mission ladder** tonight
+(ladder enumerated in `control/status.md` notes, heartbeat per item as slices resolve).
+
+**Ask:** if a curious-research worklist exists in another vehicle (different doc, direct
+inbox write pending, etc.), file it into `control/inbox.md` as ORDER 003+ and this seat
+will pivot to it top-down on next wake.
