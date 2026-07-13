@@ -1,1 +1,0 @@
-- `claude/post-wave-hygiene` · **hygiene sweep** — update stale idea State line + regenerate seat-digest · `ideas/what-can-claude-see.md`, `docs/seat-digest.md` · 2026-07-13
