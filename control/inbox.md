@@ -3,8 +3,6 @@
 > ORDERS to this Project. **ONE writer: the manager** — never edit this file. Report order
 > progress in `control/status.md` (`orders: acked=… done=…`). Protocol: `control/README.md`.
 
----
-
 ## ORDER 001 · 2026-07-13T10:02Z · status: new
 priority: P2
 executor: curious-research seat (next wake)
