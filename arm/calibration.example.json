@@ -1,0 +1,15 @@
+{
+  "_README": "TEMPLATE ONLY. Copy to arm/calibration.json and replace every value with YOUR OWN hand-measured numbers before any motion code runs. See arm/README.md and guides/arm-envelope-explained/guide.md.",
+  "_units": "degrees",
+  "_fields": "min = safe lowest angle, max = safe highest angle, center = neutral rest pose. All measured with a safety margin backed off from the physical stop.",
+  "measured_by": "",
+  "measured_on": "",
+  "joints": {
+    "base":        { "_status": "PLACEHOLDER - replace with your measurement", "min": 0, "max": 180, "center": 90 },
+    "shoulder":    { "_status": "PLACEHOLDER - replace with your measurement", "min": 0, "max": 180, "center": 90 },
+    "elbow":       { "_status": "PLACEHOLDER - replace with your measurement", "min": 0, "max": 180, "center": 90 },
+    "wrist_tilt":  { "_status": "PLACEHOLDER - replace with your measurement", "min": 0, "max": 180, "center": 90 },
+    "wrist_rotate":{ "_status": "PLACEHOLDER - replace with your measurement", "min": 0, "max": 180, "center": 90 },
+    "gripper":     { "_status": "PLACEHOLDER - replace with your measurement", "min": 0, "max": 180, "center": 90 }
+  }
+}
