@@ -1,0 +1,136 @@
+{
+  "graduation": {
+    "criteria": {
+      "blocking_questions": 0,
+      "critical_slots_filled_pct": 0.8
+    },
+    "soft_target_sessions": 50
+  },
+  "graduation_proposed": false,
+  "kit_version": "1.15.0",
+  "last_compaction_session": 0,
+  "mode": "guided",
+  "mode_history": [
+    {
+      "date": "2026-07-13",
+      "mode": "guided",
+      "session": 0
+    }
+  ],
+  "open_questions": [],
+  "planted_doc_hashes": {
+    ".claude/CLAUDE.md": "5e9cd2c752dceafbb3b1ae767abbb077e0b4095da6e611eafbcb30429338456d",
+    ".session-journal.md": "5df14b8d2630fe4f272a335712b45454d65bcdcdd142971caeb5385d7674d967",
+    "CONSTITUTION.md": "fe8bd622d925e23820b7b6b2570e8c8f27b3df35881aa52d8ad7f75bd132d838",
+    "control/README.md": "24d7ba8bf975156e6c6b688264ddd6c3029f281b861ffbbf84c6ef991cb3be43",
+    "control/claims/README.md": "816d2cd27acaa6508d8cebb5a8d591fb7d217643eee77a724c1977799dc13f5b",
+    "control/inbox.md": "c545529f2855bbc977319c48328f0b3f8188da15034d7021ba1dc309698e6637",
+    "control/status.md": "65ddaa386a88372b347aed90a4b55e93a662a542713f00c445dbead3650f03ad",
+    "docs/AGENT_ORIENTATION.md": "95dce9ca540784ab76f0ed93a2bce6e076b9014f22ecfe57fb113d5d73d7f3ef",
+    "docs/CAPABILITIES.md": "0462955e7e7db3f209f7b53f9fe090c91c3ed24bb83ea943f255f1107a4de399",
+    "docs/ROUTINES.md": "7a94469fe40a6c1c6ee1603717e3388293dbd4572291deec7c494efc74fb1f79",
+    "docs/SKILLS.md": "b28fcee139ed4082e909ae14c4915085f0f96fda17f8fb91d0b7ce6a6e5cbee7",
+    "docs/ai-project-workflow.md": "a8fb1cdfd308cc97e02d548c7018553ad7cb7aaabbe10a858c5a9ee890dcd220",
+    "docs/architecture.md": "c056cc1d3e3ffec5ea74be68f2df65c210b0b603fa706d74459e444f75b4830d",
+    "docs/collaboration-model.md": "4a0305ed54ca2c8f3681070331babefd788239978248060f94306319120453d0",
+    "docs/current-state.md": "c41ef7216dc0dae3b8cce481109cc01797f47a7d7830bf5eb3f4b15cabc69847",
+    "docs/decisions.md": "355a229ad74247a1a38ad30b15ccd003029586b0ef168b218ac8ee958361b498",
+    "docs/helper-policy.md": "bfc417e23d8ca35407e61f3f4433bab67c546c99cc3a75edcd6ed6229dab580c",
+    "docs/ideas/README.md": "478b2c8e211712a1f3b8dd83b63b6414f7b988c2474187e042b7bc505b793132",
+    "docs/owner-profile.md": "2c11db51103d64fe4ab013e9aae1671cabb3be2c77230fdb8c98089fcd935958",
+    "docs/ownership.md": "12e6ce424d5800481f23a6b5572b67a9aeab4ef7c3869cb15b0e201b3e86ae4b",
+    "docs/question-router.md": "06895a7c553391758a01884cea7f615e42401fb4adbf7aede0430d8d4f136bda",
+    "docs/repo-navigation-map.md": "7d62e14a041896e442cfb88400b8d1d3c2c0a99691c89a5fee4501b2a9b1adfc",
+    "docs/runtime_contracts.md": "6bc483e838ef2d9cd14f8797c6c8e80b9b0cfc7f4572bb7956ba5ab7b45349aa",
+    "docs/seat-digest.md": "97895ab668eae9f2c986f115d5f20a07a5e7f621c6a789424bd775bbe3194724",
+    "scripts/env-setup.sh": "cd2145129fcba288ff9399ad44146a09017d85813e282c16bcba22340b613a2c"
+  },
+  "project_id": "e47e2c4755a9",
+  "promotion_rights": "propose",
+  "quiet_sessions": 0,
+  "reflection_buffer": {
+    "active_count": 0,
+    "last_mined": null
+  },
+  "review_log": [],
+  "session_count": 0,
+  "slot_values": {
+    "architecture_layers": {
+      "question_id": "Q-004",
+      "source": "user",
+      "value": "flat lanes, no layering rules: guides/ (visual explainers), ideas/ (one file per idea), projects/ (finished builds with their docs), plus workshop lanes (printing/, arduino/, arm/) added as needed - keep each thing in its lane"
+    },
+    "doc_roots": {
+      "question_id": "Q-007",
+      "source": "derived",
+      "value": "docs"
+    },
+    "drift_resolution": {
+      "question_id": "Q-011",
+      "source": "user",
+      "value": "the file on main wins over any doc or chat claim; when a guide contradicts reality, fix the guide in the same PR that noticed"
+    },
+    "mutation_seam": {
+      "question_id": "Q-009",
+      "source": "user",
+      "value": "no runtime or database here - the seam is the PR itself: branch, PR, green substrate-gate, merge; nothing lands on main directly"
+    },
+    "new_area_ownership": {
+      "question_id": "Q-013",
+      "source": "user",
+      "value": "a new top-level folder starts as an idea file; create it in the PR that ships its first real content"
+    },
+    "owner_profile": {
+      "question_id": "Q-008",
+      "source": "user",
+      "value": "a curious maker (two 3D printers, a 6-servo robot arm, Arduino tinkering), brand new to Claude+GitHub; teach him visually - thorough step-by-step guides and animated HTML explainers (docs/teaching-style.md is binding); never assume jargon; an empty week is fine"
+    },
+    "ownership_model": {
+      "question_id": "Q-006",
+      "source": "user",
+      "value": "one human owner (the friend) plus his Claude; every change lands via a PR he can read; nothing merges that he could not understand from the PR description"
+    },
+    "primary_language": {
+      "question_id": "Q-003",
+      "source": "user",
+      "value": "Python for tools and scripts (plus Arduino C++ sketches when the workshop lanes arrive)"
+    },
+    "project_name": {
+      "question_id": "Q-002",
+      "source": "derived",
+      "value": "curious-research"
+    },
+    "review_ritual": {
+      "question_id": "Q-010",
+      "source": "user",
+      "value": "the friend reads the PR description and any rendered guide/artifact, asks questions right in the PR, merges when he understands it - understanding is the review bar"
+    },
+    "staleness_review": {
+      "question_id": "Q-012",
+      "source": "user",
+      "value": "whenever a guide or idea contradicts what actually happened - fix on sight; no calendar ceremony"
+    },
+    "verify_command": {
+      "question_id": "Q-005",
+      "source": "user",
+      "value": "python3 bootstrap.py check --strict"
+    }
+  },
+  "slots": {
+    "architecture_layers": "filled",
+    "doc_roots": "provisional",
+    "drift_resolution": "filled",
+    "mutation_seam": "filled",
+    "new_area_ownership": "filled",
+    "owner_profile": "filled",
+    "ownership_model": "filled",
+    "primary_language": "filled",
+    "project_name": "provisional",
+    "review_ritual": "filled",
+    "staleness_review": "filled",
+    "verify_command": "filled"
+  },
+  "stage": "integration",
+  "stance": "analysis",
+  "version": 1
+}
