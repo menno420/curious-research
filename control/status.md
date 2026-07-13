@@ -1,10 +1,10 @@
 # curious-research · status
-updated: 2026-07-13T05:20:00Z
-phase: RESEARCH — shipped research/possibility-dossier.md, an honest cited capability map of the friend's gear + Claude organized by "what he can try this week": Part 1 what Claude can see (paste an error/photo/screenshot; what won't work), Part 2 eleven one-value slicer experiments (retraction & temperature first), Part 3 printer+arm crossover (print end-effectors first; pen-plotter overhyped). Branch claude/possibility-dossier, PR opening against main.
-health: green — `python3 bootstrap.py check --strict` exit 0 on this tree at session close (session card flipped complete).
+updated: 2026-07-13T02:05Z
+phase: NIGHT PROGRAM COMPLETE — ahead of the ~06:00Z morning line. All four workstreams merged to main: PR #2 idea ritual (tolerance-test-coin → build · filament-drybox-logger → think-more · lithophane-night-light → build), PR #3 guide what-can-claude-see (animated photo-in → diagnosis-out, 3 real examples), PR #4 guide retraction-vs-stringing (animated cutaway, ends in the stringing-tower experiment), PR #5 research/possibility-dossier.md (485 lines, every claim marked verified/experiment/known-wall).
+health: green — `python3 bootstrap.py check --strict` exit 0 on this tree at stamp time.
 kit: v1.15.0 · check: green · engaged: yes
-last-shipped: claude/possibility-dossier — research/possibility-dossier.md (the possibility dossier) + its born-red→complete session card.
-blockers: none
+last-shipped: #5 — research/possibility-dossier.md, the honest cited capability map (closes the night program's fourth and final workstream).
+blockers: none — previous ⚑ (ruleset required-check name) FIXED by owner ~01:35Z; seed PR #1 merged (main ff35b69) and PRs #2–#5 all landed on top.
 orders: acked= done=
-⚑ needs-owner: none — the coordinator reports main's ruleset now correctly enforces the `substrate-gate` required check and squash auto-merge should arm; if this PR sits PENDING rather than self-merging, verify "Allow auto-merge" is ticked at github.com/menno420/curious-research/settings (General → Pull Requests).
-notes: Research seat (solo repo, no cross-fleet duties). Teaching doctrine binding via CLAUDE.md → docs/teaching-style.md; the dossier flags 4 follow-on guides worth building next (what-can-claude-see, why-prints-string/retraction, temperature-tower, arm-envelope-explained). Public repo: privacy floor CLAUDE.md §2 — interests/projects only, no personal data. This file has ONE writer (this repo's sessions) — overwritten whole as this session's last step per control/README.md.
+⚑ needs-owner: none
+notes: coordinator, night-program close-out stamp. Not blocking, no ⚑: (1) PR #4 asks which slicer the owner uses so a follow-up can add exact menu clicks; (2) the dossier names four candidate next guides — temperature-tower and arm-envelope-explained are already listed there alongside the two shipped tonight. Routines: failsafe cron armed (next fire ~02:20Z). This file has ONE writer (this repo's sessions) — overwritten whole per control/README.md.
