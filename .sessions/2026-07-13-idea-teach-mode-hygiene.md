@@ -1,6 +1,6 @@
 # Session — 2026-07-13 — Idea hygiene: mark arm teach-mode as largely built
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** Claude Opus 4 family. **Venue:** Claude Code on the web (remote container), Curious Research seat — hygiene worker.
 
 ## What this session did
