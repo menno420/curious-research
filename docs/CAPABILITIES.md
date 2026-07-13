@@ -110,3 +110,5 @@ as venue `any`.)
 (Hand-filled by sessions, per the discovery rule. Seed rows above are
 kit-owned — they refresh at upgrade between the fence markers; local
 findings go here, below the fence.)
+
+- 2026-07-13 · wall · autonomous-project · No OpenSCAD or slicer CLI in this environment — cannot render `.scad`→`.stl` or slice here · evidence: `which openscad` → not found; `openscad --version` → "openscad: command not found"; same for `openscad-nightly`, `prusa-slicer`, `slic3r` · workaround: ship the `.scad` source + owner-side render steps (see `projects/tolerance-test-coin/print-and-test-guide.md` Part A), or download a ready STL from Printables; never generate/ship G-code (safety rule).
