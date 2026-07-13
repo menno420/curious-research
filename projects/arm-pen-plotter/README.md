@@ -78,6 +78,11 @@ and the animation:
    numbers, and fill in `measured_by` and `measured_on`. (The tool refuses to run while any
    placeholder remains — that's on purpose.)
 
+5. **Commit `arm/calibration.json`** once your real numbers are in. It's just servo angles —
+   not personal data — and committing it is how Claude and reviewers learn your arm's true
+   limits. See [`arm/README.md`](../../arm/README.md) for why. (Keep your identity out of it —
+   `measured_by` can be a first name or nickname.)
+
 **Verify:** run the tool with no arm connected. It should print your limits in the banner
 and *not* complain about calibration:
 

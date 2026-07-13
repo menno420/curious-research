@@ -8,8 +8,36 @@ the arm in this lane.
 measurements — the how-to is in
 [`guides/arm-envelope-explained/guide.md`](../guides/arm-envelope-explained/guide.md).
 
-`arm/calibration.json` is intentionally **NOT** in this repo: it's born from real measurements,
-it's yours, and fake numbers in it would be dangerous.
+## Your real `arm/calibration.json` belongs in the repo — commit it
+
+Once you have measured your own arm and filled in real numbers, **commit `arm/calibration.json`.**
+It is not a secret and it is not personal — it's six servos' worth of `min` / `max` / `center`
+angles, just numbers. Keeping it in the repo is what makes this whole workflow work:
+
+- **Claude reads it to design motion for *your* arm.** The clamp that keeps the arm safe is only
+  right if it knows your true limits — and it can only know them if the file is here.
+- **A reviewer reads it to confirm a motion change stays inside your envelope.** Nobody can check
+  a file they can't see.
+
+So the file follows the normal template pattern — like `.env.example` → `.env` — except here the
+filled-in file is *meant* to be shared:
+
+1. Copy the template: `cp arm/calibration.example.json arm/calibration.json`
+2. Fill every joint's `min` / `max` / `center` from **your own** hand measurements — the
+   step-by-step (and an animation) is in
+   [`guides/arm-envelope-explained/`](../guides/arm-envelope-explained/): open its `index.html`
+   and press **Replay** first.
+3. **Commit it.** From then on it is the arm's source of truth for
+   [`projects/arm-pen-plotter/`](../projects/arm-pen-plotter/) and any future motion routine.
+
+**Never commit fake or placeholder numbers.** The tools refuse to run on the template's
+`PLACEHOLDER` values on purpose — wrong limits are dangerous. Commit the file only once the
+numbers are really yours.
+
+> **What never goes in this public repo:** genuinely personal data — full names, photos,
+> addresses, account handles. Servo angles are not personal data; *you* are. Keep the numbers,
+> leave yourself out — `measured_by` is fine as a first name or nickname, nothing that identifies
+> you.
 
 ## The safety rules (repeat — binding)
 
