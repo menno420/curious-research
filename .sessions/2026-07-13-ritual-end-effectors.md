@@ -1,6 +1,6 @@
 # Session — 2026-07-13 — Idea ritual: printed end-effectors (the swappable tool family)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** Claude Opus 4 family. **Venue:** Claude Code on the web (remote container), Curious Research seat — ritual worker.
 
 ## What this session is doing
