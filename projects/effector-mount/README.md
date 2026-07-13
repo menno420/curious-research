@@ -34,6 +34,8 @@ different tools click onto the same plate, and see the key stop one from spinnin
 |------|-----------|
 | `mount_standard.scad` | The shared interface. A **library** — you don't print it alone; tools pull it in. Holds every number of the mounting plate: bolt pattern, thickness, keying. |
 | `magnet_tool.scad` | The first tool. Pulls in the standard, adds a cup for a magnet. **This** is the file you render + print. |
+| `gripper.scad` | The second, *active* tool — a single-servo rack-and-pinion 2-finger gripper on the same plate. Pulls in the standard; **this** is a file you render + print. |
+| `gripper_test.ino` | A tiny Arduino sketch to test the gripper's **one servo on the bench** (not on the arm). |
 | `index.html` | A small self-contained animated explainer — open in any browser. |
 | `README.md` | This walkthrough. |
 
@@ -169,6 +171,125 @@ calibrated and a human watching) trying a taught pick-and-place move.
 - **Unverified by render.** These `.scad` files were written where OpenSCAD isn't
   installed, so they have *not* been rendered or sliced here. Open them, render, and
   eyeball the shapes before printing.
+
+## The single-servo gripper (step 3) — a hand that actually grips
+The magnet tool is passive; the **gripper** is the family's first *active* member.
+It is a **rack-and-pinion** design: one servo turns a round gear (the **pinion**),
+and that pinion drives **two straight toothed bars** (the **racks**) that sit on
+*opposite* sides of it. Turn the servo one way and one rack slides left while the
+other slides right — so both jaws close (or open) together, at the same speed,
+from one motor. Each rack carries a printed **finger**; the fingers meet in front
+to grab a part. The whole thing is built on the same standard plate, so it clicks
+onto the arm's wrist exactly like the pen and the magnet.
+
+Two files make it up:
+- `gripper.scad` — the printed parts (plate + servo cradle + pinion + two racks +
+  two fingers), all parametric.
+- `gripper_test.ino` — a bench sketch that sweeps the **one servo by itself** so
+  you can find its open/closed positions safely, off the arm.
+
+> **Bench words for this section:** **rack** = a straight bar with teeth (a
+> flattened gear); **pinion** = the round gear the servo turns; **mesh** = two
+> sets of teeth engaging cleanly, rolling instead of jamming or slipping;
+> **stall** = a servo pushing against something it can't move — it draws a lot of
+> current and heats up, so you never hold a gripper hard-closed.
+
+### Build it in this order (don't skip ahead)
+
+**Step 1 — Print the parts, in the right orientation.** A printed part is weakest
+*between* its layers, and gear teeth push on each other sideways. So print the
+**pinion and both racks lying flat** on the bed, so each tooth's load runs *along*
+the layers, not across them — teeth printed standing up shear off at the layer
+lines on the first firm grip. Use **PETG** (tougher, better layer bond) over PLA
+for these load-bearing gear parts. Open `gripper.scad`, pick your servo, then
+render (**F6**), export, and slice. Set the servo before anything else:
+```scad
+servo_type = "MG90S";   // "MG90S" (default) or "MG996R". Never "SG90".
+```
+Then correct the servo body/shaft/tab numbers to the servo in your hand
+(calipers), for example:
+```scad
+body_l = 22.8;   // servo body length in mm — measure yours
+```
+```scad
+shaft_d = 4.8;   // output-shaft diameter in mm — measure yours
+```
+*You should see* the assembled gripper in preview: a servo cradle, a central gear,
+two racks reaching out to two fingers.
+
+**Step 2 — Check the gear MESH by hand, with NO power.** This is the make-or-break
+check, and it costs nothing but a minute:
+1. Slot the pinion onto the racks (or assemble as printed) and turn the pinion
+   **by hand**.
+2. Watch both racks: they must slide in **opposite** directions, smoothly, and
+   the two jaws must move **together** — closing as one, opening as one.
+3. There must be **no binding** and no skipping teeth. If the teeth jam, the gap
+   is too tight; if they slip, it's too loose. Nudge the fit and re-print:
+```scad
+mesh_tweak = 0.0;   // +raises tightness of the mesh; clearance widens the fit
+```
+*You should see* a clean roll: turn pinion → jaws glide together → reverse → jaws
+glide apart. Do NOT go near power until this feels right by hand. (The teeth here
+are a **simplified straight-flank profile**, not proper involute gears — the
+`.scad` says so honestly — so this hand-check matters. If you have a gear library
+you can swap in real teeth.)
+
+**Step 3 — Bench-test the ONE servo, off the arm.** Now, and only now, add power —
+to the servo *alone*, on the bench, using `gripper_test.ino`. Wire it on its
+**external, fused 5–6 V supply with the ground shared to the Arduino, and a
+reachable switch — never the Arduino's 5 V pin** (a gripping servo stalls and can
+brown out or fry the board). Then find your two pulse widths by hand, power off
+between tries, in tiny steps:
+```cpp
+const int GRIP_OPEN_US  = 1300;   // pulse where the jaws are open enough
+```
+```cpp
+const int GRIP_CLOSE_US = 1600;   // pulse where the jaws JUST MEET — no harder
+```
+Set `GRIP_CLOSE_US` so the jaws *just touch* your object and **no further** — never
+drive them into a hard closed stall (that overheats the servo and strips gears; an
+SG90's plastic gears strip fast, which is why the `.scad` refuses SG90). Upload,
+open the Serial Monitor at 115200 baud, **read the banner**, keep a hand on the
+switch, and watch it sweep open↔closed.
+
+**Step 4 — Only then, mount it on the arm.** Once the mesh is clean and the servo
+sweeps sweetly on the bench, bolt the gripper onto the arm's standard plate (two
+horn screws, power off — same hand-fit as the magnet tool above). Arm-mounted
+motion does **not** use `gripper_test.ino`; it goes through the arm's **clamped**
+path — `projects/arm-pen-plotter/teach_and_replay.py` driving the gripper as joint
+index 5, against `arm/calibration.json`, where every angle is trimmed to your
+measured safe range before it can reach a motor. **That calibration file does not
+exist yet, so no arm motion runs until you make it** (see the arm-envelope guide).
+
+### Honest payload — what one small servo can actually hold
+Keep expectations low and you won't be disappointed:
+- **Usable grip is small — think ~50–200 g at an optimistic ceiling**, and that
+  figure is *before* you subtract the gripper's own weight. A printed servo tool
+  like this weighs roughly **30–120 g**, and that mass hangs at the very end of
+  the arm's longest lever, so it comes straight off the arm's already-modest lift
+  budget (a small hobby arm is working in the low hundreds of grams total). Net:
+  grip *light* parts — small hardware, a bottle cap, a lego brick — not a full can.
+  (Numbers from [`ideas/printed-end-effectors.md`](../../ideas/printed-end-effectors.md).)
+- An **MG90S** is the gentle default; an **MG996R** grips harder but adds ~55 g of
+  end-of-arm weight and a bigger current draw. **Never an SG90** — it strips its
+  plastic gears on the stall a gripper makes by design.
+
+> ### ⚠ Load-bearing — check this yourself
+> A gripper that lets go mid-lift **drops the part**, and preventing that is on the
+> human, not the design. Before you ever ask the arm to lift with it: at the bench,
+> power off after positioning, confirm the jaws actually **hold YOUR object** — at
+> the angle, height, and firmness you'll use. If it barely holds in your hand it
+> will not hold on a moving arm. Pick a lighter part or a firmer grip first. This
+> is a "flag it, you verify it" step, per repo `CLAUDE.md` §2.
+
+### The gripper's safety rules, restated
+- **Servo power stays external and fused** — a separate 5–6 V supply, shared
+  ground, reachable switch — **never the Arduino's 5 V pin**.
+- **You slice, print, power, and watch.** Claude designs the parts; the print and
+  every powered move are yours, hand on the switch.
+- **No raw servo writes on the arm.** On the wrist, the gripper moves only through
+  the clamped `teach_and_replay.py` path against `arm/calibration.json` — and that
+  file must exist first.
 
 ## Migrating the pen holder onto the standard (a later, backward-compatible step)
 The pen holder still has its own `arm_mount()` and is left **unchanged** by this

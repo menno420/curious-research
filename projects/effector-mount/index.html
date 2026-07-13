@@ -131,6 +131,110 @@
   <code>mount_standard.scad</code> and <code>magnet_tool.scad</code> next to this
   file. You render, slice, and print them yourself; any lift is a "check the magnet
   holds your part first."</p>
+
+  <!-- ===================================================================== -->
+  <!-- SECOND EXPLAINER — the single-servo gripper's rack-and-pinion motion   -->
+  <!-- ===================================================================== -->
+  <hr style="border:0;border-top:1px solid var(--line);margin:40px 0 30px;">
+
+  <h1>How the gripper's one servo moves two jaws</h1>
+  <p class="sub">The <em>rack-and-pinion</em> trick: one round gear, two toothed
+  bars on opposite sides, two jaws that always move together.</p>
+
+  <div class="card">
+    <svg class="stage" viewBox="0 0 700 380" role="img" aria-label="Animated diagram of a rack-and-pinion gripper: the pinion turns, two racks slide opposite ways, and two jaws close on an object then release">
+      <!-- the object to grip -->
+      <rect id="gObject" x="335" y="158" width="30" height="64" rx="4"
+            fill="var(--pen)" opacity="0.9"/>
+
+      <!-- TOP RACK + its jaw (approaches the object from the LEFT) -->
+      <g id="rackTop">
+        <rect x="150" y="92" width="400" height="24" rx="3"
+              fill="var(--plateface)" stroke="var(--plate)" stroke-width="2"/>
+        <!-- tooth ticks along the bottom edge -->
+        <g stroke="var(--hub)" stroke-width="3">
+          <line x1="170" y1="116" x2="170" y2="126"/><line x1="190" y1="116" x2="190" y2="126"/>
+          <line x1="210" y1="116" x2="210" y2="126"/><line x1="230" y1="116" x2="230" y2="126"/>
+          <line x1="250" y1="116" x2="250" y2="126"/><line x1="270" y1="116" x2="270" y2="126"/>
+          <line x1="290" y1="116" x2="290" y2="126"/><line x1="310" y1="116" x2="310" y2="126"/>
+          <line x1="330" y1="116" x2="330" y2="126"/><line x1="350" y1="116" x2="350" y2="126"/>
+          <line x1="370" y1="116" x2="370" y2="126"/><line x1="390" y1="116" x2="390" y2="126"/>
+          <line x1="410" y1="116" x2="410" y2="126"/><line x1="430" y1="116" x2="430" y2="126"/>
+        </g>
+        <!-- the jaw: a finger hanging down, its RIGHT edge is the gripping face -->
+        <rect x="318" y="116" width="14" height="70" rx="3" fill="var(--peg)"/>
+      </g>
+
+      <!-- BOTTOM RACK + its jaw (approaches the object from the RIGHT) -->
+      <g id="rackBot">
+        <rect x="150" y="262" width="400" height="24" rx="3"
+              fill="var(--plateface)" stroke="var(--plate)" stroke-width="2"/>
+        <g stroke="var(--hub)" stroke-width="3">
+          <line x1="270" y1="252" x2="270" y2="262"/><line x1="290" y1="252" x2="290" y2="262"/>
+          <line x1="310" y1="252" x2="310" y2="262"/><line x1="330" y1="252" x2="330" y2="262"/>
+          <line x1="350" y1="252" x2="350" y2="262"/><line x1="370" y1="252" x2="370" y2="262"/>
+          <line x1="390" y1="252" x2="390" y2="262"/><line x1="410" y1="252" x2="410" y2="262"/>
+          <line x1="430" y1="252" x2="430" y2="262"/><line x1="450" y1="252" x2="450" y2="262"/>
+          <line x1="470" y1="252" x2="470" y2="262"/><line x1="490" y1="252" x2="490" y2="262"/>
+          <line x1="510" y1="252" x2="510" y2="262"/><line x1="530" y1="252" x2="530" y2="262"/>
+        </g>
+        <!-- the jaw: a finger rising up, its LEFT edge is the gripping face -->
+        <rect x="368" y="192" width="14" height="70" rx="3" fill="var(--peg)"/>
+      </g>
+
+      <!-- THE PINION — the servo turns this. Sits between the two racks. -->
+      <g id="pinionRot">
+        <circle cx="350" cy="189" r="34" fill="var(--accent)"/>
+        <!-- radial teeth ticks so the spin is visible -->
+        <g stroke="var(--hub)" stroke-width="4">
+          <line x1="350" y1="155" x2="350" y2="167"/><line x1="374" y1="165" x2="366" y2="173"/>
+          <line x1="384" y1="189" x2="372" y2="189"/><line x1="374" y1="213" x2="366" y2="205"/>
+          <line x1="350" y1="223" x2="350" y2="211"/><line x1="326" y1="213" x2="334" y2="205"/>
+          <line x1="316" y1="189" x2="328" y2="189"/><line x1="326" y1="165" x2="334" y2="173"/>
+        </g>
+        <!-- a spoke marker + hub, so you can see which way it turns -->
+        <line x1="350" y1="189" x2="350" y2="161" stroke="var(--panel)" stroke-width="4"/>
+        <circle cx="350" cy="189" r="7" fill="var(--panel)"/>
+      </g>
+      <text x="350" y="356" text-anchor="middle" fill="var(--muted)" font-size="13">one servo turns the pinion</text>
+    </svg>
+
+    <div class="capbar">
+      <div class="capnum" id="gCapnum">Step 1 of 4</div>
+      <p class="cap" id="gCap">…</p>
+    </div>
+
+    <div class="controls">
+      <button id="gReplay">&#9654; Replay</button>
+      <div class="dots" id="gDots"></div>
+    </div>
+  </div>
+
+  <p class="note"><b>What the animation simplifies:</b> the teeth are drawn as
+  idealized ticks — real gear teeth have a curved (involute) shape, and the
+  <code>gripper.scad</code> file uses a simplified straight-flanked profile you
+  check by hand. There's no friction, backlash, or print slop here, and the two
+  jaws are shown meeting cleanly — on a real print one finger sits a little forward
+  of the other, and you tune the fit before trusting a grip.</p>
+
+  <h2>What you just watched</h2>
+  <ul>
+    <li><b>One servo</b> turns a single round gear — the <b>pinion</b> — in the
+    middle.</li>
+    <li><b>Two racks</b> (toothed bars) mesh on <b>opposite</b> sides of the pinion,
+    so one slides one way while the other slides the other way — always by the same
+    amount.</li>
+    <li><b>Each rack carries a finger</b>, so both jaws close (or open) together,
+    symmetrically, from that one motor.</li>
+    <li><b>The rule that stays:</b> the servo runs on an external fused supply
+    (never the Arduino's 5 V pin), and you set "closed" so the jaws <i>just meet</i>
+    — never a hard stall.</li>
+  </ul>
+
+  <p class="note">Built as source only — the gripper's parts live in
+  <code>gripper.scad</code>, and its bench test in <code>gripper_test.ino</code>,
+  next to this file. You render, slice, print, wire, and watch. Any grip is a
+  "check the jaws hold your part first."</p>
 </div>
 
 <script>
@@ -226,6 +330,90 @@
     caption(4);
     badge.setAttribute('opacity', '0');
     currentDeg = 0; setTf(mag, 0, 0);
+  }
+
+  replay.addEventListener('click', run);
+  run();
+})();
+</script>
+
+<script>
+/* Second explainer — the gripper's rack-and-pinion motion. Fully independent
+   of the first animation: its own element IDs, its own timers. */
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var raf = window.requestAnimationFrame || function(f){ return setTimeout(function(){ f(performance.now()); }, 16); };
+  var pinion = document.getElementById('pinionRot');
+  var rackTop = document.getElementById('rackTop');
+  var rackBot = document.getElementById('rackBot');
+  var obj = document.getElementById('gObject');
+  var capnum = document.getElementById('gCapnum');
+  var cap = document.getElementById('gCap');
+  var dotsWrap = document.getElementById('gDots');
+  var replay = document.getElementById('gReplay');
+  var timers = [];
+
+  var OPEN_GAP = 84;   // how far each jaw sits from closed, in SVG units
+  var SPIN = 58;       // pinion rotation across the full close, in degrees
+
+  var stages = [
+    "Here's the whole mechanism. One servo turns the round PINION (blue) in the middle. Two RACKS — the toothed bars above and below — mesh on OPPOSITE sides of it, and each rack carries a finger. Right now the jaws are open.",
+    "The servo turns the pinion. Because the racks touch it on opposite sides, the top rack slides one way and the bottom rack slides the other — always by the same amount. Watch the two fingers move inward together.",
+    "The jaws meet the object and hold it. One motor, two jaws, perfectly symmetric — that's the whole point of rack-and-pinion. You set this 'closed' point so the jaws JUST meet, never a hard stall.",
+    "Turn the servo back the other way and the racks reverse: the jaws open and release the object. Open, grip, release — from a single servo."
+  ];
+
+  var dotEls = stages.map(function(){
+    var d = document.createElement('div'); d.className = 'dot'; dotsWrap.appendChild(d); return d;
+  });
+  function setDot(i){ dotEls.forEach(function(d,j){ d.classList.toggle('on', j===i); }); }
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function after(ms, fn){ timers.push(setTimeout(fn, ms)); }
+
+  // c = 0 fully open, c = 1 fully closed.
+  function setC(c){
+    var topX = OPEN_GAP * (c - 1);   // closed(c=1) -> 0 ; open(c=0) -> -OPEN_GAP
+    var botX = OPEN_GAP * (1 - c);   // closed(c=1) -> 0 ; open(c=0) -> +OPEN_GAP
+    rackTop.setAttribute('transform', 'translate(' + topX + ',0)');
+    rackBot.setAttribute('transform', 'translate(' + botX + ',0)');
+    pinion.setAttribute('transform', 'rotate(' + (c * SPIN) + ' 350 189)');
+  }
+  function gripped(on){
+    obj.setAttribute('fill', on ? 'var(--mag)' : 'var(--pen)');
+  }
+
+  function tween(dur, from, to, onUpd, done){
+    if(reduced){ onUpd(to); if(done) done(); return; }
+    var start = performance.now();
+    (function frame(now){
+      var t = Math.min(1, (now - start) / dur);
+      var e = t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+      onUpd(from + (to - from) * e);
+      if(t < 1){ raf(frame); } else if(done){ done(); }
+    })(performance.now());
+  }
+
+  function caption(i){
+    capnum.textContent = 'Step ' + (i+1) + ' of ' + stages.length;
+    cap.textContent = stages[i];
+    setDot(i);
+  }
+  function reset(){ clearTimers(); setC(0); gripped(false); }
+
+  function run(){
+    reset(); caption(0);
+    after(reduced ? 900 : 2600, close);
+  }
+  function close(){
+    caption(1);
+    tween(reduced ? 0 : 1600, 0, 1, setC, function(){
+      caption(2); gripped(true);
+      after(reduced ? 1000 : 1700, open);
+    });
+  }
+  function open(){
+    caption(3); gripped(false);
+    tween(reduced ? 0 : 1400, 1, 0, setC);
   }
 
   replay.addEventListener('click', run);
