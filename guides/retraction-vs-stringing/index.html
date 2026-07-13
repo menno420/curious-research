@@ -42,6 +42,7 @@
             stroke-dasharray:520; stroke-dashoffset:520; }
   .hair { stroke:var(--string); stroke-width:1.6; fill:none; stroke-linecap:round; }
   #plugG, #blobG, #cleanG, #noteG, #sweepG { opacity:0; transition:opacity .35s ease; }
+  #gapLbl { transition:opacity .35s ease; }
   #plug { fill:var(--warn); }
   .warnstroke { stroke:var(--warn); stroke-width:2.5; fill:none; stroke-linecap:round; }
   .blob { fill:var(--warn); }
@@ -97,8 +98,10 @@ what that slider is doing inside the nozzle.</p>
     <rect class="tower" x="543" y="98" width="34" height="138" rx="3"/>
     <text class="small" x="150" y="90">tower A</text>
     <text class="small" x="530" y="90">tower B</text>
-    <text class="small" x="318" y="150">open gap — the nozzle</text>
-    <text class="small" x="335" y="166">must cross empty air</text>
+    <g id="gapLbl">
+      <text class="small" x="318" y="150">open gap — the nozzle</text>
+      <text class="small" x="335" y="166">must cross empty air</text>
+    </g>
 
     <!-- string that oozes across the gap (stage 2) -->
     <g id="stringG">
@@ -143,8 +146,8 @@ what that slider is doing inside the nozzle.</p>
       <!-- jam plug in the cool zone (stage 5) -->
       <g id="plugG">
         <rect id="plug" x="171" y="30" width="18" height="16" rx="3"/>
-        <text class="warnt small" x="210" y="24">plug jams here</text>
-        <text class="warnt small" x="210" y="12">(heat creep)</text>
+        <text class="warnt small" x="250" y="24">plug jams here</text>
+        <text class="warnt small" x="250" y="12">(heat creep)</text>
       </g>
       <!-- filament piston (moves up/down) -->
       <g id="filament">
@@ -253,22 +256,22 @@ what that slider is doing inside the nozzle.</p>
   // Per-stage visual state. render() sets EVERY field every time, so Replay resets cleanly.
   const V = [
     // 0  pressure builds
-    { x:0,   fy:6,   glow:1, string:0, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0,
+    { x:0,   fy:6,   glow:1, string:0, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0, gapLbl:1,
       motor:'motor: pushing ↓' },
     // 1  no retraction -> string
-    { x:380, fy:6,   glow:1, string:1, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0,
+    { x:380, fy:6,   glow:1, string:1, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0, gapLbl:1,
       motor:'motor: stopped — still oozing' },
     // 2  what retraction does
-    { x:0,   fy:-14, glow:0, string:0, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0,
+    { x:0,   fy:-14, glow:0, string:0, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0, gapLbl:1,
       motor:'motor: retracting ↑' },
     // 3  just-right clean gap
-    { x:380, fy:-14, glow:0, string:0, plug:0, blob:0, clean:1, note:1, sweep:0, dim:0,
+    { x:380, fy:-14, glow:0, string:0, plug:0, blob:0, clean:1, note:1, sweep:0, dim:0, gapLbl:0,
       motor:'travel, then prime ↓' },
     // 4  too much
-    { x:0,   fy:-30, glow:0, string:0, plug:1, blob:1, clean:0, note:0, sweep:0, dim:0,
+    { x:0,   fy:-30, glow:0, string:0, plug:1, blob:1, clean:0, note:0, sweep:0, dim:0, gapLbl:1,
       motor:'motor: retracting too far ↑' },
     // 5  stringing tower
-    { x:120, fy:-14, glow:0, string:0, plug:0, blob:0, clean:0, note:0, sweep:1, dim:1,
+    { x:120, fy:-14, glow:0, string:0, plug:0, blob:0, clean:0, note:0, sweep:1, dim:1, gapLbl:0,
       motor:'sweep retraction up the tower' },
   ];
 
@@ -283,6 +286,7 @@ what that slider is doing inside the nozzle.</p>
   const cleanG   = document.getElementById('cleanG');
   const noteG    = document.getElementById('noteG');
   const sweepG   = document.getElementById('sweepG');
+  const gapLbl   = document.getElementById('gapLbl');
   const motorTxt = document.getElementById('motorTxt');
   const caption  = document.getElementById('caption');
   const prevBtn  = document.getElementById('prev');
@@ -296,6 +300,11 @@ what that slider is doing inside the nozzle.</p>
     const v = V[s];
     caption.innerHTML = stages[s].cap;
     const tween = animate && !reduced;
+
+    // On a non-animated render (Back / Replay reset), snap overlay fades off instantly so no
+    // stray layer from a later stage lingers mid-crossfade. Animated renders keep the CSS fades.
+    const snap = tween ? '' : 'none';
+    [glow, melt, stringG, plugG, blobG, cleanG, noteG, sweepG, gapLbl].forEach(el => el.style.transition = snap);
 
     // hot end travels; filament pistons up/down
     hotend.style.transition   = tween ? 'transform 1.05s ease, opacity .4s' : 'none';
@@ -319,6 +328,7 @@ what that slider is doing inside the nozzle.</p>
     cleanG.style.opacity = v.clean ? 1 : 0;
     noteG.style.opacity  = v.note  ? 1 : 0;
     sweepG.style.opacity = v.sweep ? 1 : 0;
+    gapLbl.style.opacity = v.gapLbl ? 1 : 0;
 
     motorTxt.textContent = v.motor;
 
