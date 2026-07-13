@@ -28,5 +28,6 @@ with captions under every step and a "what you just watched" recap at the end. P
 | [`retraction-vs-stringing/`](./retraction-vs-stringing/) | Why prints grow fine hairs (stringing) and how retraction stops it — animated cutaway of the hot end, ending in a "print this tower and read it" experiment. |
 | [`how-print-clearance-works/`](./how-print-clearance-works/) | What "clearance" is — the air gap that makes two printed parts fit — why it counts per side (so it doubles), the press→snug→sliding→loose ladder, and how elephant's foot skews the bottom. Pairs with the `projects/tolerance-test-coin/` build. |
 | [`temperature-tower/`](./temperature-tower/) | How one tall test print sweeps the nozzle temperature from hot to cool to reveal the cleanest setting — reading stringing, sagging bridges, and layer adhesion band by band. |
+| [`lithophane-night-light/`](./lithophane-night-light/) | Turn a photo into a glowing backlit print: how thickness becomes brightness (thick = dark, thin = bright), why you print it standing upright, and the full photo → web tool → slice → print workflow with exact settings. |
 
 *(New guides are added by the PR that creates them — an unindexed guide is a lost guide.)*
