@@ -1,6 +1,6 @@
 # Session card — 2026-07-13 · current-state-refresh
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 
 **Seat:** Curious Research (dispatched work session)
 **Branch:** `claude/current-state-refresh`
@@ -15,9 +15,9 @@ friend reading it sees an accurate picture of his workshop companion today.
 ## Plan
 - [x] Ground all six stale items against HEAD (PR numbers / paths verified).
 - [x] Session card (born red) + claim → push → PR READY.
-- [ ] Rewrite the six stale spots, keep everything still true, keep the voice.
-- [ ] `python3 bootstrap.py check --strict` green (bare exit code).
-- [ ] Flip card complete + drop claim as the last commit.
+- [x] Rewrite the six stale spots, keep everything still true, keep the voice.
+- [x] `python3 bootstrap.py check --strict` green (bare exit code).
+- [x] Flip card complete + drop claim as the last commit.
 
 ## The six stale spots fixed
 1. Snapshot header: "all PRs #1–#10 merged" → **#1–#20 merged**.
