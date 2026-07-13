@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retraction vs stringing — watch why prints grow hairs, and how to stop it</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --plate:#9ca3af; --plastic:#e0912f; --plastic-soft:#f0c48a;
+    --cool:#cbd5e1; --cool-line:#94a3b8; --metal:#8b93a1;
+    --melt-calm:#e0912f; --melt-hot:#fb7233; --glow:#fb7233;
+    --string:#dc2626; --warn:#dc2626; --ok:#16a34a; --accent:#7c3aed;
+    --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --plate:#4b5563; --plastic:#eab308; --plastic-soft:#a16207;
+      --cool:#475569; --cool-line:#64748b; --metal:#6b7280;
+      --melt-calm:#d97706; --melt-hot:#fb923c; --glow:#fb923c;
+      --string:#f87171; --warn:#f87171; --ok:#4ade80; --accent:#a78bfa;
+      --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:40em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:780px; }
+  svg { width:100%; height:auto; display:block; }
+  .plate { fill:var(--plate); }
+  .tower { fill:var(--plastic-soft); stroke:var(--plastic); stroke-width:1.5; }
+  .heatsink { fill:var(--cool); }
+  .fin { stroke:var(--cool-line); stroke-width:2; }
+  .heater { fill:var(--metal); }
+  .filament { fill:var(--plastic); }
+  #melt { fill:var(--melt-calm); transition:fill .5s ease; }
+  #glow { opacity:0; transition:opacity .5s ease; }
+  #stringG { opacity:0; transition:opacity .35s ease; }
+  #string { stroke:var(--string); stroke-width:2.5; fill:none; stroke-linecap:round;
+            stroke-dasharray:520; stroke-dashoffset:520; }
+  .hair { stroke:var(--string); stroke-width:1.6; fill:none; stroke-linecap:round; }
+  #plugG, #blobG, #cleanG, #noteG, #sweepG { opacity:0; transition:opacity .35s ease; }
+  #plug { fill:var(--warn); }
+  .warnstroke { stroke:var(--warn); stroke-width:2.5; fill:none; stroke-linecap:round; }
+  .blob { fill:var(--warn); }
+  #check { stroke:var(--ok); stroke-width:4; fill:none; stroke-linecap:round; }
+  .band { opacity:.16; }
+  .band-lo { fill:var(--string); }
+  .band-mid { fill:var(--ok); }
+  .band-hi { fill:var(--warn); }
+  .label { font:600 13px system-ui, sans-serif; fill:var(--ink); }
+  .small { font:11px system-ui, sans-serif; fill:var(--muted); }
+  .okt { fill:var(--ok); font-weight:700; }
+  .warnt { fill:var(--warn); }
+  .arrow { stroke:var(--accent); stroke-width:2.5; fill:none; }
+  .caption { min-height:6.4em; margin:14px auto 0; max-width:660px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .stepnum { display:inline-block; background:var(--accent); color:#fff; border-radius:999px;
+             width:1.6em; height:1.6em; line-height:1.6em; text-align:center; font-weight:700; margin-right:.45em; }
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  button { font:600 14px system-ui,sans-serif; padding:9px 18px; border-radius:10px;
+           border:1.5px solid var(--cool); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .recap { max-width:660px; margin-top:26px; background:var(--card); border-radius:14px;
+           box-shadow:var(--shadow); padding:16px 20px; }
+  .recap h2 { font-size:1.02rem; margin:.1em 0 .4em; }
+  .recap p { margin:.4em 0; color:var(--muted); }
+  .recap b { color:var(--ink); }
+  .recap .note { border-top:1px solid var(--cool); padding-top:.5em; margin-top:.7em; }
+</style>
+</head>
+<body>
+<h1>Retraction vs stringing: why prints grow hairs — and how to stop it</h1>
+<p class="sub">One slider in your slicer decides whether the gaps between parts come out bare or
+covered in fine plastic hairs. Watch the hot end cross an open gap six times and see exactly
+what that slider is doing inside the nozzle.</p>
+
+<div class="stage-box">
+  <svg viewBox="0 0 760 260" aria-label="Animated cutaway of a 3D printer hot end crossing a gap between two towers">
+    <defs>
+      <radialGradient id="glowGrad" cx="50%" cy="55%" r="55%">
+        <stop offset="0%" stop-color="var(--glow)" stop-opacity="0.9"/>
+        <stop offset="60%" stop-color="var(--glow)" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="var(--glow)" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- build plate -->
+    <rect class="plate" x="40" y="236" width="680" height="8" rx="3"/>
+    <text class="small" x="40" y="256">build plate</text>
+
+    <!-- the two towers with the open gap between them -->
+    <rect class="tower" x="163" y="98" width="34" height="138" rx="3"/>
+    <rect class="tower" x="543" y="98" width="34" height="138" rx="3"/>
+    <text class="small" x="150" y="90">tower A</text>
+    <text class="small" x="530" y="90">tower B</text>
+    <text class="small" x="318" y="150">open gap — the nozzle</text>
+    <text class="small" x="335" y="166">must cross empty air</text>
+
+    <!-- string that oozes across the gap (stage 2) -->
+    <g id="stringG">
+      <path id="string" d="M197 102 Q 285 132 373 108 Q 462 130 543 102"/>
+      <path class="hair" d="M250 120 q 3 12 6 0"/>
+      <path class="hair" d="M320 112 q 3 14 6 0"/>
+      <path class="hair" d="M430 118 q 3 12 6 0"/>
+      <path class="hair" d="M500 110 q 3 12 6 0"/>
+    </g>
+
+    <!-- clean-travel checkmark (stage 4) -->
+    <g id="cleanG">
+      <path id="check" d="M352 116 l 9 10 l 18 -20"/>
+      <text class="okt label" x="300" y="145">clean travel — nothing trails</text>
+    </g>
+
+    <!-- blob + gap defects on tower B (stage 5) -->
+    <g id="blobG">
+      <circle class="blob" cx="560" cy="104" r="7"/>
+      <rect class="warnstroke" x="545" y="150" width="30" height="12" rx="2" stroke-dasharray="4 3"/>
+      <text class="warnt small" x="588" y="106">blob</text>
+      <text class="warnt small" x="588" y="162">gap (missing plastic)</text>
+    </g>
+
+    <!-- the hot end assembly (moves left/right); drawn in cutaway -->
+    <g id="hotend">
+      <!-- pressure glow behind the nozzle -->
+      <ellipse id="glow" cx="180" cy="80" rx="40" ry="30" fill="url(#glowGrad)"/>
+      <!-- heatsink / cool zone -->
+      <rect class="heatsink" x="156" y="26" width="48" height="30" rx="3"/>
+      <line class="fin" x1="156" y1="34" x2="204" y2="34"/>
+      <line class="fin" x1="156" y1="42" x2="204" y2="42"/>
+      <line class="fin" x1="156" y1="50" x2="204" y2="50"/>
+      <text class="small" x="210" y="42">cool zone</text>
+      <!-- heater block -->
+      <rect class="heater" x="152" y="56" width="56" height="26" rx="2"/>
+      <text class="small" x="212" y="74">heater ~210°C</text>
+      <!-- melt pocket -->
+      <rect id="melt" x="166" y="60" width="28" height="20" rx="4"/>
+      <!-- nozzle cone down to the tip/hole -->
+      <path class="heater" d="M154 82 L 206 82 L 180 98 Z"/>
+      <!-- jam plug in the cool zone (stage 5) -->
+      <g id="plugG">
+        <rect id="plug" x="171" y="30" width="18" height="16" rx="3"/>
+        <text class="warnt small" x="210" y="24">plug jams here</text>
+        <text class="warnt small" x="210" y="12">(heat creep)</text>
+      </g>
+      <!-- filament piston (moves up/down) -->
+      <g id="filament">
+        <rect class="filament" x="172" y="4" width="16" height="60" rx="4"/>
+      </g>
+    </g>
+
+    <!-- motor status read-out (fixed HUD, updates per stage) -->
+    <text id="motorTxt" class="label" x="40" y="22"></text>
+
+    <!-- prime distances note (stage 4) -->
+    <g id="noteG">
+      <text class="label" x="380" y="200" text-anchor="middle">on arrival, push back in — "prime"</text>
+      <text class="small" x="380" y="216" text-anchor="middle">direct drive ~0.5–2 mm · Bowden ~4–7 mm</text>
+    </g>
+
+    <!-- stringing tower reading (stage 6) -->
+    <g id="sweepG">
+      <rect class="band band-hi" x="210" y="98" width="330" height="46"/>
+      <rect class="band band-mid" x="210" y="144" width="330" height="46"/>
+      <rect class="band band-lo" x="210" y="190" width="330" height="46"/>
+      <text class="warnt small" x="222" y="118">too much → blobs + clicking</text>
+      <text class="okt small" x="222" y="170">clean — strings just vanish</text>
+      <text class="warnt small" x="222" y="216">too little → strings</text>
+      <path class="arrow" d="M470 167 l 34 0"/>
+      <path class="arrow" d="M498 161 l 8 6 l -8 6"/>
+      <text class="label" x="510" y="170">your number</text>
+      <text class="small" x="222" y="90">retraction swept up the height →</text>
+    </g>
+  </svg>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+
+  <div class="controls">
+    <button id="prev">◀ Back</button>
+    <button id="next" class="primary">Next step ▶</button>
+    <button id="play">▶ Play all</button>
+    <button id="replay">↻ Replay</button>
+  </div>
+</div>
+
+<div class="recap">
+  <h2>What you just watched</h2>
+  <p><b>1.</b> While the nozzle prints a wall, the motor keeps pushing filament in like a
+  piston, so the little <b>melt pocket</b> above the hole builds up pressure — primed to flow.</p>
+  <p><b>2.</b> Cross a gap with that pressure still loaded and nothing pulling back, and plastic
+  oozes out the whole way — the nozzle drags it into a thin <b>string</b>.</p>
+  <p><b>3.</b> <b>Retraction</b> briefly pulls the filament backward first, which releases the
+  pocket's pressure and stops the ooze at the tip.</p>
+  <p><b>4.</b> With pressure released the nozzle crosses clean, then <b>primes</b> (pushes back
+  in) on arrival — a tiny tug for direct drive, a bigger one for Bowden.</p>
+  <p><b>5.</b> Pull back too far and you trade stringing for a <b>jam</b> (heat creep), gaps,
+  blobs, or ground filament — more is not better.</p>
+  <p><b>6.</b> Print a <b>stringing tower</b> that sweeps the value up its height, then read it
+  top-to-bottom and pick the setting where the strings just disappear.</p>
+  <p class="note">Simplification note: real melt flow is messier than this cartoon — the plastic
+  gets runnier the faster it flows and the hotter it is (it isn't one fixed "liquid"), the
+  hot-to-cold boundary inside the hot end is a fuzzy gradient not a hard line, and the nozzle's
+  exact shape matters. The biggest hidden gotcha isn't a setting at all: if your filament is
+  <b>damp</b>, absorbed water flashes to steam and makes it string and sputter no matter how
+  perfect your retraction. Dry the filament first, then trust the tower.</p>
+  <p class="note"><b>Stay safe:</b> the hot end runs 200–250&nbsp;°C and will burn you; the
+  motors and heaters carry real power. Claude can explain and help you set up the slicer, but
+  you power the printer, you slice, and you start and watch every print yourself — never leave
+  one running on the strength of a guide.</p>
+</div>
+
+<script>
+  const stages = [
+    { cap: '<span class="stepnum">1</span><b>Pressure builds up.</b> While the <b>nozzle</b> ' +
+      '(the metal tip the plastic flows out of) lays down a wall, the motor keeps pushing ' +
+      'filament in like a piston. That squeezes the melted plastic in the little <b>hot ' +
+      'pocket</b> just above the hole — it&rsquo;s under pressure, ready to flow. Watch the ' +
+      'pocket glow.' },
+    { cap: '<span class="stepnum">2</span><b>No retraction &rarr; a string.</b> Now the nozzle ' +
+      'must cross an open gap to the next tower &mdash; a <b>travel move</b> (moving without ' +
+      'printing). The motor stops pushing, but the pocket is still pressurized, so plastic ' +
+      'keeps oozing out. The nozzle drags that ooze across the gap and it hardens into a thin ' +
+      'string. That&rsquo;s <b>stringing</b>.' },
+    { cap: '<span class="stepnum">3</span><b>What retraction does.</b> <b>Retraction</b> means ' +
+      'the printer briefly pulls the filament backward before it travels. That releases the ' +
+      'pressure in the pocket (watch the glow fade) and draws the plastic back from the tip, ' +
+      'so the oozing stops. The trick is relieving pressure &mdash; not sucking the plastic ' +
+      'far up the tube.' },
+    { cap: '<span class="stepnum">4</span><b>Just-right &rarr; a clean gap.</b> With the ' +
+      'pressure released, the nozzle crosses the same gap trailing nothing &mdash; a clean ' +
+      'travel. On arrival it pushes the filament back in (a <b>prime</b>) to re-pressurize ' +
+      'before printing again. A <b>direct-drive</b> printer (motor sitting on the nozzle) ' +
+      'needs only a tiny tug, about 0.5&ndash;2&nbsp;mm; a <b>Bowden</b> printer (motor ' +
+      'pushing through a long springy tube) needs a bigger one, about 4&ndash;7&nbsp;mm, just ' +
+      'to take up the tube&rsquo;s slack first.' },
+    { cap: '<span class="stepnum">5</span><b>Too much &rarr; new problems.</b> Overshoot and ' +
+      'you swap one defect for another. Pull too far and molten plastic gets dragged up into ' +
+      'the cooler part of the hot end, where it hardens into a plug and jams (called <b>heat ' +
+      'creep</b>). On the next line you get a gap (<b>under-extrusion</b>) or a blob, and ' +
+      'yanking too hard or fast can grind a flat spot into the filament so it slips. More is ' +
+      'not better &mdash; you want the balance point.' },
+    { cap: '<span class="stepnum">6</span><b>Find your number: the stringing tower.</b> To ' +
+      'dial it in, print a <b>stringing tower</b>: two thin pillars with a gap, so the nozzle ' +
+      'must cross open air on every layer and any ooze shows. Sweep the retraction value up ' +
+      'the height in small steps (about 0.5&nbsp;mm for Bowden, 0.2&nbsp;mm for direct drive). ' +
+      'Then read it top to bottom &mdash; lots of strings means too little; clean but with ' +
+      'blobs or a clicking sound means too much; pick the value where the strings just vanish.' },
+  ];
+
+  // Per-stage visual state. render() sets EVERY field every time, so Replay resets cleanly.
+  const V = [
+    // 0  pressure builds
+    { x:0,   fy:6,   glow:1, string:0, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0,
+      motor:'motor: pushing ↓' },
+    // 1  no retraction -> string
+    { x:380, fy:6,   glow:1, string:1, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0,
+      motor:'motor: stopped — still oozing' },
+    // 2  what retraction does
+    { x:0,   fy:-14, glow:0, string:0, plug:0, blob:0, clean:0, note:0, sweep:0, dim:0,
+      motor:'motor: retracting ↑' },
+    // 3  just-right clean gap
+    { x:380, fy:-14, glow:0, string:0, plug:0, blob:0, clean:1, note:1, sweep:0, dim:0,
+      motor:'travel, then prime ↓' },
+    // 4  too much
+    { x:0,   fy:-30, glow:0, string:0, plug:1, blob:1, clean:0, note:0, sweep:0, dim:0,
+      motor:'motor: retracting too far ↑' },
+    // 5  stringing tower
+    { x:120, fy:-14, glow:0, string:0, plug:0, blob:0, clean:0, note:0, sweep:1, dim:1,
+      motor:'sweep retraction up the tower' },
+  ];
+
+  const hotend   = document.getElementById('hotend');
+  const filament = document.getElementById('filament');
+  const glow     = document.getElementById('glow');
+  const melt     = document.getElementById('melt');
+  const stringG  = document.getElementById('stringG');
+  const stringP  = document.getElementById('string');
+  const plugG    = document.getElementById('plugG');
+  const blobG    = document.getElementById('blobG');
+  const cleanG   = document.getElementById('cleanG');
+  const noteG    = document.getElementById('noteG');
+  const sweepG   = document.getElementById('sweepG');
+  const motorTxt = document.getElementById('motorTxt');
+  const caption  = document.getElementById('caption');
+  const prevBtn  = document.getElementById('prev');
+  const nextBtn  = document.getElementById('next');
+
+  let step = -1, timer = null;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function render(s, animate) {
+    step = s;
+    const v = V[s];
+    caption.innerHTML = stages[s].cap;
+    const tween = animate && !reduced;
+
+    // hot end travels; filament pistons up/down
+    hotend.style.transition   = tween ? 'transform 1.05s ease, opacity .4s' : 'none';
+    hotend.style.transform    = 'translateX(' + v.x + 'px)';
+    hotend.style.opacity      = v.dim ? 0.22 : 1;
+    filament.style.transition = tween ? 'transform .8s ease' : 'none';
+    filament.style.transform  = 'translateY(' + v.fy + 'px)';
+
+    // melt-pocket pressure: glow + hotter fill
+    glow.style.opacity = v.glow ? 1 : 0;
+    melt.style.fill    = v.glow ? 'var(--melt-hot)' : 'var(--melt-calm)';
+
+    // string reveal (dash like the exemplar's branch path)
+    stringG.style.opacity        = v.string ? 1 : 0;
+    stringP.style.transition     = tween ? 'stroke-dashoffset 1s ease .15s' : 'none';
+    stringP.style.strokeDashoffset = v.string ? 0 : 520;
+
+    // defect / annotation layers
+    plugG.style.opacity  = v.plug  ? 1 : 0;
+    blobG.style.opacity  = v.blob  ? 1 : 0;
+    cleanG.style.opacity = v.clean ? 1 : 0;
+    noteG.style.opacity  = v.note  ? 1 : 0;
+    sweepG.style.opacity = v.sweep ? 1 : 0;
+
+    motorTxt.textContent = v.motor;
+
+    prevBtn.disabled = s <= 0;
+    nextBtn.disabled = s >= stages.length - 1;
+  }
+
+  function playAll() {
+    stopPlay();
+    render(0, false);
+    let i = 1;
+    timer = setInterval(() => {
+      render(i, true);
+      if (++i >= stages.length) stopPlay();
+    }, reduced ? 3000 : 2300);
+  }
+  function stopPlay() { if (timer) { clearInterval(timer); timer = null; } }
+
+  nextBtn.onclick   = () => { stopPlay(); render(Math.min(step + 1, stages.length - 1), true); };
+  prevBtn.onclick   = () => { stopPlay(); render(Math.max(step - 1, 0), false); };
+  document.getElementById('replay').onclick = playAll;
+  document.getElementById('play').onclick   = playAll;
+
+  // Reduced motion: land on step 1 and let the reader step through; otherwise auto-play once.
+  render(0, false);
+  if (!reduced) setTimeout(playAll, 700);
+</script>
+</body>
+</html>
