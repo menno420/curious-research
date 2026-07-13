@@ -1,0 +1,1 @@
+- `claude/ritual-arm-timelapse` · **idea ritual** — grow arm-camera-timelapse to one honest verdict · `ideas/arm-camera-timelapse.md` + this session card · `2026-07-13`
