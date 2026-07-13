@@ -1,12 +1,28 @@
-# Guides — the growing visual textbook
+# Guides — your growing visual textbook
 
-Every non-trivial explanation in this repo earns a guide here: an **animated HTML explainer**
-(`<topic>/index.html`, self-contained — download and open, no internet needed) plus a
-**step-by-step companion** (`<topic>/guide.md`). The bar they must meet:
+Welcome. This folder is the heart of the gift: every time something here gets explained, it gets
+explained *visually* — a self-contained **animated HTML explainer** you open in a browser (no
+internet needed), plus a plain-language **step-by-step companion** you can read instead. Over time
+they pile up into a textbook that's entirely about *your* bench.
+
+## 👉 Start with this one
+
+**[`start-here/`](./start-here/) — the two-minute welcome tour.** It greets you, shows what's in
+here, and walks your first 30 minutes. If you open one thing in this whole repo, open that.
+Everything below is where the tour points you next.
+
+## How each guide works
+
+Open the `index.html` and press **Play** (or **Replay**) — it animates the idea in a few seconds,
+with captions under every step and a "what you just watched" recap at the end. Prefer to read? The
+`guide.md` next to it has the same lesson as numbered steps. The bar every guide meets:
 [`../docs/teaching-style.md`](../docs/teaching-style.md).
+
+## The shelf so far
 
 | Guide | What it shows |
 |---|---|
+| [`start-here/`](./start-here/) | **Open this first.** A warm two-minute tour of your whole workshop companion, plus a guided first 30 minutes. |
 | [`how-a-pr-flows/`](./how-a-pr-flows/) | The one loop everything runs on: branch → PR → gate → merge, animated — plus your first PR in 3 minutes. |
 | [`what-can-claude-see/`](./what-can-claude-see/) | What Claude can do with a photo, an error, or a screenshot — something goes in, a plain-language diagnosis comes out (with three real maker examples). |
 | [`retraction-vs-stringing/`](./retraction-vs-stringing/) | Why prints grow fine hairs (stringing) and how retraction stops it — animated cutaway of the hot end, ending in a "print this tower and read it" experiment. |
