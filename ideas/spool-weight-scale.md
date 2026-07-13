@@ -1,6 +1,6 @@
 # Filament spool scale — an honest "how much is left?" gauge, not an always-on precision readout
 
-> **State:** grown via the ritual (2026-07-13) → verdict: **build** (as an on-demand spot-check + your own tare table — not a live shelf display)
+> **State:** grown via the ritual (2026-07-13) → verdict: **build** (an on-demand spot-check + your own tare table — not a live shelf display) → building as [`projects/spool-weight-scale/`](../projects/spool-weight-scale/) (2026-07-13)
 
 A cheap load cell + HX711 amplifier + Arduino that tells you how many grams of filament are left on a spool — a superb beginner electronics build, as long as it's honest about what it is: an *on-demand* gauge you set a spool on to spot-check, backed by a one-time "weigh it empty" tare habit — not a precise always-on display drifting on a shelf next to a hot printer.
 
