@@ -16,9 +16,16 @@ Known-good and live on `main`:
   indexed in `guides/README.md`): `start-here` (the day-one welcome tour) ·
   `how-a-pr-flows` · `what-can-claude-see` · `retraction-vs-stringing` ·
   `how-print-clearance-works`.
-- **First project:** `projects/tolerance-test-coin/` — parametric OpenSCAD clearance coin
-  + print-and-test guide + results template. Ships `.scad` only; the owner renders the STL
-  locally (OpenSCAD is a verified wall in the build env, see `docs/CAPABILITIES.md`).
+- **Projects:**
+  - `projects/tolerance-test-coin/` — parametric OpenSCAD clearance coin + print-and-test
+    guide + results template. Ships `.scad` only; the owner renders the STL locally
+    (OpenSCAD is a verified wall in the build env, see `docs/CAPABILITIES.md`).
+  - `projects/arm-pen-plotter/` — the robot-arm pen-plotter starter kit: a teach-mode
+    waypoint recorder/replayer (`teach_and_replay.py`, refuses to run without
+    `arm/calibration.json`, clamps every value it sends), an Arduino sketch that clamps
+    on-board too (`pen_plotter_arm.ino`), a printable floating pen holder (`pen_holder.scad`,
+    source only), a calibration-first walkthrough (`README.md`), and an animated teach-mode
+    explainer (`index.html`). Draws charming wobbly line art; calibration before any motion.
 - **Research lane:** `research/possibility-dossier.md` — the cited capability map
   (what the bench + Claude can do together), with honest ✅/🧪/🚫 marks.
 - **Three idea-ritual verdicts** in `ideas/`: tolerance-test-coin = build (→ built),
