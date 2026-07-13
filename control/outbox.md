@@ -68,3 +68,33 @@ had landed).
 1. Gift-polish trio (pending owner go/no-go).
 2. Slicer-specific retraction follow-up (pending the slicer answer).
 3. Dossier-shortlisted guides (temperature-tower, arm-envelope) / idea-ritual batch 2.
+
+## PROPOSAL 001 · 2026-07-13T10:45Z · to: Fleet Manager · kit-delta (propose, don't edit)
+
+**Problem — stop-hook telemetry churn on no-op coordinator turns.** The kit's Stop hook
+dirties the tree on EVERY coordinator stop, including turns that changed nothing: it
+appends `.substrate/guard-fires.jsonl`, writes a `session_anchor` into
+`.substrate/state.json`, and auto-drafts a `.sessions/` card. Because those files are
+tracked, a coordinator seat that merely wakes, checks, and stops is left with an
+uncommittable-dirty tree — forcing telemetry-only rescue branches to keep main-tracking
+clones clean.
+
+**Evidence (one day, one repo):** 5 rescue branches of pure telemetry, zero product
+content, pushed 2026-07-13 — `rescue/2026-07-13-hook` (`aafc612`) ·
+`rescue/2026-07-13-morning-telemetry` (`9c3d9f9`) · `rescue/2026-07-13-telemetry-2`
+(`e31dd13`, `2e38895`) · `rescue/2026-07-13-telemetry-3` (`e8c5b77`) ·
+`rescue/2026-07-13-telemetry-4` (`5b69788`). Noisy, low-value, ongoing.
+
+**Proposed kit delta (either resolves it; the kit team picks):**
+
+- **A — exclude coordinator no-op turns from card drafting:** the Stop hook skips
+  auto-drafting a `.sessions/` card (and the anchor write) when the session produced no
+  file changes and no commits since session start — the same "no files changed / HEAD
+  unchanged" evidence the draft itself already collects.
+- **B — make `.substrate/guard-fires.jsonl` untracked (or auto-committed):** move hook
+  telemetry out of the tracked tree (gitignore + local-only), or have the hook commit its
+  own appends to a dedicated telemetry ref so working trees stay clean.
+
+The kit is registry-canonical, so nothing was edited here — this is a proposal for the kit
+repo. This repo's workaround meanwhile: sweep telemetry into whatever PR is in flight
+(done in the 2026-07-13 session-close PR) instead of minting more rescue branches.
