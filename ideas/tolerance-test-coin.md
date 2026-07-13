@@ -1,8 +1,12 @@
 # Tolerance test coin — calibration that compounds
 
-> **State:** grown via the ritual (2026-07-13) → verdict: build
+> **State:** grown via the ritual (2026-07-13) → verdict: build → **built** (2026-07-13)
 
 Print one small coin covered in test gaps (a "clearance" set — the deliberate air gap left between two parts so they fit), write down which gaps actually fit, and Claude keeps your printers' real tolerance numbers on file so every future design starts from *your* machine's truth instead of a guess.
+
+## Built (2026-07-13)
+
+Now a real project: **[`projects/tolerance-test-coin/`](../projects/tolerance-test-coin/)** — a parametric OpenSCAD coin, a step-by-step print-and-test guide, and a fill-in results record. Watch the idea move: [`guides/how-print-clearance-works/`](../guides/how-print-clearance-works/).
 
 ## The 8 questions
 
