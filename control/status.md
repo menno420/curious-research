@@ -1,10 +1,11 @@
 # curious-research · status
-updated: 2026-07-14T11:40Z
-phase: EAP CLOSED — handover mode. All deliverables terminal: #1–#43 merged, 0 open PRs; walkthrough + audit landed.
-health: green — `python3 bootstrap.py check --strict` exit 0 at c02eb4c (2 pre-existing never-exit-affecting advisories).
-kit: v1.15.0 · check: green · engaged: yes
-last-shipped: #43 — EAP close-out walkthrough (docs/eap-closeout-walkthrough-2026-07-14.md, 4dc912c) · #42 — EAP project audit (docs/audits/eap-project-audit-2026-07-14.md, b7a91a8). Full record: docs/current-state.md.
-blockers: none. One standing wall: remote branch deletion (CAPABILITIES 2026-07-14 entry) — owner action, walkthrough §C item 1–2.
-orders: acked=001,002 done=001,002 (no Fleet-Manager close-out ORDER existed at HEAD — honest null, walkthrough §E)
-⚑ needs-owner: the full checklist lives in docs/eap-closeout-walkthrough-2026-07-14.md §C (6 items, one sitting): one-time branch sweep (walkthrough §C item 1, final — root cause routed to kit as PROPOSAL 003) · optional 37-branch sweep (PR #41 table) · slicer name · drybox **A**/L · arm calibration.json · hand the gift over + collaborator invite.
-notes: successor/next-phase baton: batons = this heartbeat + docs/current-state.md; open threads = §C decisions + kit PROPOSAL 001 (stop-hook telemetry churn) & 002 (idea-seed H1 truncation) in control/outbox.md; walls = docs/CAPABILITIES.md; rescue/* branches (6) kept until PROPOSAL 001 resolves. The repo is give-away ready — remaining items are owner inputs, not gaps.
+updated: 2026-07-14T21:23Z
+phase: SEAT DORMANT (owner order 2026-07-14) — EAP ended; projects dormant for an undisclosed period. No routine will wake this seat.
+health: green at shutdown — `python3 bootstrap.py check --strict` exit 0; #1–#47 merged (+ the dormancy PR itself); 0 open PRs/issues.
+kit: v1.15.0 · check: green · engaged: dormant
+last-shipped: this PR — dormancy handoff. Before it: #47 outbox addendum (f2409d7); full record docs/current-state.md.
+blockers: none. Parked (cited): kit PROPOSALs 001/002/003 in control/outbox.md await substrate-kit action; owner ⚑s (walkthrough §C: one-time branch sweep · slicer name · drybox A/L · arm calibration · handover) await owner; branch-deletion wall docs/CAPABILITIES.md 2026-07-14.
+orders: acked=001,002 done=001,002 · no unconsumed orders at shutdown (inbox ends at ORDER 001)
+routine disposition (verified via list_triggers, 1,811 entries / 19 pages, 2026-07-14 ~21:0xZ): failsafe trig_014XdBFcgKwu2Rd9122NZo3S DELETED · pending pacemaker tick trig_015HWKQH3MYSqkwG8KTYwZQP DELETED · business crons: NONE existed (honest null) · residue: 38 spent self-disabled send_later one-shots remain as dead API records bound to the old coordinator session — none can fire · zero live triggers reference this seat.
+revival instructions: 1) read this file, then docs/current-state.md, then docs/eap-closeout-walkthrough-2026-07-14.md (§C owner actions, §E handoff) and docs/audits/eap-project-audit-2026-07-14.md; 2) boot per .claude/CLAUDE.md preflight (hard-sync origin/main); 3) re-arm routines per the seat brief: failsafe cron "Curious Research failsafe wake" `20 */2 * * *` into the live coordinator session + a ~15-min send_later pacemaker chain, verify via list_triggers after arming; 4) work sources ladder: control/inbox.md at HEAD → owner ⚑ answers → ideas/ build verdicts (keychains, drawer bin, sound lamp, drybox-on-A) → dossier remainder.
+doctrine duplication note: this repo restates fleet doctrine only in pointers (CLAUDE.md, seat cards); canonical copies live in menno420/fleet-manager (docs/prompts/v3/, projects/UNIVERSAL.md) and superbot docs/owner/ — no migrations pending; anything here that conflicts with those defers to them.
