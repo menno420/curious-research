@@ -8,14 +8,15 @@
 
 ## Stability baseline
 
-*Snapshot dated 2026-07-13 (all PRs #1–#20 merged).*
+*Snapshot dated 2026-07-14 (all PRs #1–#37 merged).*
 
 Known-good and live on `main`:
 
-- **Eight animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
+- **Nine animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
   indexed in `guides/README.md`): `start-here` (the day-one welcome tour) ·
   `how-a-pr-flows` · `what-can-claude-see` · `retraction-vs-stringing` ·
   `how-print-clearance-works` · `temperature-tower` · `arm-envelope-explained` ·
+  `first-layer` (first-layer adhesion — the foundation every print is built on) ·
   `lithophane-night-light`.
 - **Projects:**
   - `projects/tolerance-test-coin/` — parametric OpenSCAD clearance coin + print-and-test
@@ -27,6 +28,17 @@ Known-good and live on `main`:
     on-board too (`pen_plotter_arm.ino`), a printable floating pen holder (`pen_holder.scad`,
     source only), a calibration-first walkthrough (`README.md`), and an animated teach-mode
     explainer (`index.html`). Draws charming wobbly line art; calibration before any motion.
+  - `projects/spool-weight-scale/` — the honest "how much filament is left?" gauge: an
+    HX711 load-cell Arduino sketch (`spool_scale.ino`), a calibrate-then-read walkthrough
+    (`README.md`), and an animated explainer (`index.html`). A spot-check gauge, honest
+    about what a cheap load cell can and can't tell you — grown from the `spool-weight-scale`
+    idea (#22).
+  - `projects/effector-mount/` — the swappable arm-tooling lane: a standard printable mount
+    plate (`mount_standard.scad`) so every tool shares one interface, a passive magnet tool
+    (`magnet_tool.scad`, #26), and a single-servo rack-and-pinion 2-finger gripper
+    (`gripper.scad` + a clamped `gripper_test.ino`, #30). Grows the `printed-end-effectors`
+    idea one verified tool at a time; any motion still clamps to the arm envelope with the
+    human watching.
 - **Workshop lanes — `arm/`:** the robot-arm lane, seeded #14 and documented #19. Holds
   `arm/README.md` and `arm/calibration.example.json` — a 6-servo `min`/`max`/`center`
   template, all `PLACEHOLDER` values. The owner copies it to `arm/calibration.json`, fills
@@ -36,10 +48,20 @@ Known-good and live on `main`:
   yet — the owner's step-one measurement is still pending.
 - **Research lane:** `research/possibility-dossier.md` — the cited capability map
   (what the bench + Claude can do together), with honest ✅/🧪/🚫 marks.
-- **Five idea-ritual verdicts** in `ideas/`: tolerance-test-coin = build (→ built),
-  filament-drybox-logger = think-more, lithophane-night-light = build (→ built as a guide),
-  arm-pen-plotter = build (→ building as `projects/arm-pen-plotter/`),
-  spool-weight-scale = build (the honest spot-check-gauge version).
+- **Idea lane — 14 ideas in `ideas/`, all carrying a state line** (truncated H1 titles fixed
+  #37). The ritual (`docs/idea-ritual.md`) has returned **10 verdicts**: eight `build`, one
+  `park` (arm-camera-timelapse — a phone is too heavy for the arm's far end; a static phone
+  gets 90% of the shot), one `think-more` (filament-drybox-logger). Five of the eight `build`
+  verdicts have shipped as concrete deliverables — tolerance-test-coin (→ `projects/`),
+  lithophane-night-light (→ a guide), arm-pen-plotter (→ `projects/`), spool-weight-scale
+  (→ `projects/`), printed-end-effectors (→ `projects/effector-mount/`) — and three are
+  verdict-build-not-yet-started: drawer-organizer-generator, multicolor-keychain-factory,
+  sound-reactive-desk-lamp. Two more are built standalone without a separate verdict line
+  (what-can-claude-see → a guide; arm-teach-mode → largely built inside the pen-plotter kit),
+  and two are still captured one-liners waiting for the ritual: arm-print-removal,
+  explain-my-slicer.
+- **Audits:** `docs/audits/` holds the independent read-mostly review pass —
+  `2026-07-13-fleet-cleanup-audit.md` (#34).
 - **Control loop live:** `control/inbox.md` (manager-written) / `control/outbox.md`
   (lane-written reports) / `control/status.md` (heartbeat). ORDER 001 served with
   REPORT 001.
@@ -49,7 +71,7 @@ Known-good and live on `main`:
 
 ## In flight
 
-Nothing — all PRs #1–#20 are merged and no PRs are open (verified 2026-07-13T14:11Z).
+Nothing — all PRs #1–#37 are merged and no PRs are open (verified 2026-07-14T00:22Z).
 
 Housekeeping note: the `rescue/*` and `*-telemetry*` branches on origin are **kit telemetry
 only** (stop-hook guard-fires/state churn), no PRs by design — safe to delete once the kit's
@@ -57,7 +79,23 @@ telemetry churn is fixed (proposal filed in `control/outbox.md`, PROPOSAL 001).
 
 ## Recently shipped (newest first)
 
-- Audits: [2026-07-13 fleet cleanup](audits/2026-07-13-fleet-cleanup-audit.md) — independent read-mostly audit pass (EAP final night)
+- **#37** Fix truncated H1 titles in 4 idea files (`1a1fd1f`, 2026-07-14)
+- **#36** Guide: `first-layer` — first-layer adhesion, the foundation everything else is built on (animated explainer + step-by-step) (`9336fd1`, 2026-07-14)
+- **#35** Idea ritual → sound-reactive-desk-lamp: verdict build (amplitude-reactive version; FFT light-show labeled stretch) (`559169d`, 2026-07-13)
+- **#34** Audit: [2026-07-13 fleet cleanup](audits/2026-07-13-fleet-cleanup-audit.md) — independent read-mostly pass, EAP final night, no PR actions taken (`97ebb50`, 2026-07-13)
+- **#33** Idea ritual → drawer-organizer-generator: verdict build (deliberately tiny — one bin, one drawer corner) (`15f0650`, 2026-07-13)
+- **#32** Idea ritual → multicolor-keychain-factory: verdict build (two-color layer-change first) (`ab7baeb`, 2026-07-13)
+- **#31** Idea ritual → arm-camera-timelapse: verdict park (`b26160b`, 2026-07-13)
+- **#30** Gripper: single-servo rack-and-pinion 2-finger end-effector — effector-mount step 3 (`511c1e5`, 2026-07-13)
+- **#29** Heartbeat: night boot 2026-07-13 (`b6f1ab4`, 2026-07-13)
+- **#28** Heartbeat: end-of-day 2026-07-13 — program complete #12–#27 (`a9fd5fa`, 2026-07-13)
+- **#27** Post-wave hygiene: point shipped-guide idea at its guide + regenerate seat-digest (`b8835fc`, 2026-07-13)
+- **#26** Effector-mount lane: standard mount plate + passive magnet tool (`23994a7`, 2026-07-13)
+- **#25** Idea ritual → printed-end-effectors: verdict build (standardize the mount first) (`89f5f69`, 2026-07-13)
+- **#24** Heartbeat: day-two wave complete #12–#23 (`618367f`, 2026-07-13)
+- **#23** Idea hygiene: mark arm-teach-mode as largely built (`8844748`, 2026-07-13)
+- **#22** `projects/spool-weight-scale/` starter kit — honest load-cell "how much filament is left?" gauge (`cf38e9c`, 2026-07-13)
+- **#21** Refresh current-state.md — snapshot #1–#20 (`e684092`, 2026-07-13)
 - **#20** Idea ritual → spool-weight-scale: verdict build, the honest spot-check-gauge version (`3a54844`, 2026-07-13)
 - **#19** Doc: your measured `arm/calibration.json` belongs in the repo (`1c254f1`, 2026-07-13)
 - **#18** `projects/arm-pen-plotter/` starter kit — teach-mode recorder, clamped Arduino sketch, pen holder, animated explainer (`998a20e`, 2026-07-13)
