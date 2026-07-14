@@ -61,7 +61,7 @@ Known-good and live on `main`:
   and two are still captured one-liners waiting for the ritual: arm-print-removal,
   explain-my-slicer.
 - **Audits:** `docs/audits/` holds the independent read-mostly review pass —
-  `2026-07-13-fleet-cleanup-audit.md` (#34) and `eap-project-audit-2026-07-14.md` (#42).
+  `docs/audits/2026-07-13-fleet-cleanup-audit.md` (#34) and `docs/audits/eap-project-audit-2026-07-14.md` (#42).
 - **Control loop live:** `control/inbox.md` (manager-written) / `control/outbox.md`
   (lane-written reports) / `control/status.md` (heartbeat). ORDER 001 served with
   REPORT 001.
