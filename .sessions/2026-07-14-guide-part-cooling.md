@@ -1,6 +1,6 @@
 # Session — 2026-07-14 — guide-part-cooling (part-cooling fan % explainer)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** opus-4.8 (Claude Opus family). **Venue:** a dispatched work session for the Curious Research seat, building on the coordinator's baton.
 
 ## What this session did
