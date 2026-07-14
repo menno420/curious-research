@@ -1,0 +1,1 @@
+- `claude/guide-infill` · scope: `guides/infill` · 2026-07-14
