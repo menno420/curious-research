@@ -23,7 +23,7 @@ First time you'll meet these words — one line each:
 - **elephant's foot** — a squashed-out bulge at the very bottom edge when the first layer is
   pressed down too hard.
 - **adhesion** — how well the print grips (sticks to) the bed.
-- **brim** — a thin flat skirt of plastic printed around the part's base for extra grip, peeled
+- **brim** — a thin flat collar of plastic printed around the part's base for extra grip, peeled
   off after.
 - **bed leveling** — setting the nozzle-to-bed gap the same at every corner so the whole first
   layer squishes evenly.
@@ -70,6 +70,7 @@ corner (and the middle, if your printer asks).
 
 > Many printers do this automatically ("auto bed leveling" / a bed probe). If yours does, run its
 > routine — the paper-drag method is the manual version and a good sanity check either way.
+> A **bed probe** = a sensor that measures the gap for you automatically.
 
 ### 3. THE ONE-VALUE EXPERIMENT: slow the first layer down
 
@@ -107,7 +108,8 @@ Take a close look at the test square. Match it to one of these three:
 - **TOO FAR** — separate round lines you can see between, gaps, maybe a corner already curling up.
   Not enough squish; it won't stick.
 - **TOO CLOSE** — translucent or torn lines, ridges, very little plastic, and an **elephant's-foot**
-  bulge at the edges. Too much squish; starved of plastic.
+  bulge at the edges. Too much squish; starved of plastic — the little plastic that does escape
+  squeezes out sideways at the base, and that side-squeeze is the elephant's foot.
 - **JUST RIGHT** — the lines have merged into one smooth sheet with a uniform sheen, and it sticks
   hard. This is the target.
 
@@ -124,11 +126,10 @@ Too close (scraping):    nudge nozzle UP 0.05 mm, retest
 0.05 mm is tiny on purpose — the whole "just right" window is a fraction of a millimetre, so small
 nudges land it; big jumps overshoot.
 
-### 7. Adhesion helpers
+### 7. Bed temperature
 
-If a clean bed, a level gap, and a slow first layer still aren't quite enough:
-
-**Bed temperature** — a warm bed helps the first layer grip. A rough starting point per material:
+If a clean bed, a level gap, and a slow first layer still aren't quite enough, a warm bed helps
+the first layer grip. A rough starting point per material:
 
 ```
 PLA bed:  ~60 °C      PETG bed:  ~70–80 °C     (check your filament's label)
@@ -138,15 +139,18 @@ PLA bed:  ~60 °C      PETG bed:  ~70–80 °C     (check your filament's label)
 > is on your filament's label and box. Confirm it against your own spool before you print; don't
 > take a number from a guide (including this one) as gospel.
 
-**A brim** for small-footprint parts — a flat skirt welded to the part's edge gives more grip and
+### 8. A brim
+
+For small-footprint parts, a brim — a flat collar welded to the part's edge — gives more grip and
 peels off cleanly after:
 
 ```
-Brim: 5 mm   (a flat skirt welded to the part's edge — more grip, peels off after)
+Brim: 5 mm   (a flat collar welded to the part's edge — more grip, peels off after)
 ```
 
-> ⚑ Both of these — bed temperature and brim — live in every slicer, under "Material"/"Filament"
-> and "Build Plate Adhesion" (or similar). Tell me your slicer and I'll paste the exact clicks.
+> ⚑ Both of these — bed temperature (step 7) and a brim (step 8) — live in every slicer, under
+> "Material"/"Filament" and "Build Plate Adhesion" (or similar). Tell me your slicer and I'll paste
+> the exact clicks.
 
 ## Safety — check this yourself
 
@@ -154,7 +158,8 @@ Brim: 5 mm   (a flat skirt welded to the part's edge — more grip, peels off af
   never sends print instructions (G-code) to your printer.
 - **Never leave a print running unattended** — nothing here is "safe to print unattended".
 - The **bed and the nozzle are hot enough to burn.** The bed temperatures above are hot surfaces;
-  confirm every temperature against your own filament and hot-end before you print.
+  confirm every temperature against your own filament and hot-end (the heated nozzle assembly the
+  filament melts in) before you print.
 
 ## Sources
 
