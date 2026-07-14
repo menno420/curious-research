@@ -56,6 +56,7 @@ questions and ideas, Claude turns them into experiments, designs, and — the ho
 | [`projects/`](projects/) | Finished builds, each with its docs — first one is live: [`projects/tolerance-test-coin/`](projects/tolerance-test-coin/) |
 | [`CLAUDE.md`](CLAUDE.md) | The house rules Claude reads first — teaching doctrine + safety |
 | [`docs/git-for-makers.md`](docs/git-for-makers.md) | Git in bench terms, no jargon |
+| [`docs/eap-closeout-walkthrough-2026-07-14.md`](docs/eap-closeout-walkthrough-2026-07-14.md) | **Picking this repo up? Start here** — what's built, what works, and the six things only you can do next |
 | `bootstrap.py` + `.claude/` + `docs/` (the rest) | The [substrate-kit](https://github.com/menno420/substrate-kit) — the memory/quality machinery that keeps Claude sharp here (MIT, [`LICENSE-substrate-kit`](LICENSE-substrate-kit)). It maintains itself; you never need to touch it. |
 
 *Seeded 2026-07-13 with substrate-kit v1.15.0. This repo is public — it carries interests
