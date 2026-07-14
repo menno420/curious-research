@@ -216,3 +216,35 @@ leaves behind), so already-seeded repos surface their own instances.
 
 The kit is registry-canonical, so nothing was edited here — this repo's instances are
 already fixed (#37); this proposal is for the kit repo.
+
+## PROPOSAL 003 · 2026-07-14T14:45Z · to: Fleet Manager · kit-delta (propose, don't edit)
+
+**Problem — the kit's Stop hook re-creates merged PR branches, defeating GitHub's
+"Automatically delete head branches" fleet-wide, wherever the kit runs.** When a session's
+PR merges, GitHub deletes the head branch — but the finished session's clone still has that
+branch checked out. The Stop hook's "there are uncommitted changes — commit and push to the
+remote branch" nudge then prompts one last `git push`, and pushing a local branch whose
+remote ref was just deleted **silently re-creates the ref at the same commit**. The result:
+every merged session branch quietly comes back, and the repo accumulates dead branches
+despite auto-delete being on.
+
+**Evidence (this repo, 2026-07-14):** ~40 merged `claude/*` branches surviving; every
+surviving tip **exactly == its merged PR's head SHA** (ref re-creation, not new work);
+owner confirmed the auto-delete box has been ON since repo creation AND that no deletion
+restrictions exist in any of his repos, ever; PR #45's own branch survived its 12:14Z
+merge; the branches from PRs #1/#5/#9/#10 stayed deleted once hand-swept (no session
+re-pushed them). Testable prediction on record (walkthrough §C item 1): hand-swept
+branches stay gone, because the sessions that could re-push them are dead.
+
+**Relationship to PROPOSAL 001:** same stop-hook churn class — the hook dirties/pushes on
+turns that shouldn't touch the remote. The 6 `rescue/*` branches are the sibling symptom
+(telemetry-only pushes); merged-branch re-creation is the same reflex firing after the PR
+already landed.
+
+**Suggested fix:** before nudging (or executing) a push, the Stop hook checks whether the
+current branch's tip is already contained in `origin/main`'s history (`git merge-base
+--is-ancestor HEAD origin/main`, or equivalently: the branch's PR is merged). If so, it
+detaches / skips the push entirely instead of re-creating a branch GitHub just cleaned up.
+
+The kit is registry-canonical, so nothing was edited here — this is a proposal for the kit
+repo. This repo's remediation meanwhile: a one-time owner sweep (walkthrough §C item 1).
