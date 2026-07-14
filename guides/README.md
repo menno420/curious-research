@@ -31,6 +31,7 @@ with captions under every step and a "what you just watched" recap at the end. P
 | [`arm-envelope-explained/`](./arm-envelope-explained/) | A robot joint's safe angle range (its "envelope"), why an uncalibrated command slams a joint into the desk, and how a software clamp catches a bad command before the servo moves; animated 2-joint arm + measure-your-servos guide; seeds the `arm/` calibration template. |
 | [`first-layer/`](./first-layer/) | The #1 beginner failure point, in side-view cross-section: how the nozzle-to-bed gap (too far / too close / just right) and first-layer speed decide whether a print sticks or pops off — ending in a clean-bed + slow-first-layer experiment you can run tonight. |
 | [`part-cooling/`](./part-cooling/) | How the cooling fan % decides whether overhangs droop, bridges sag, and small points go blobby — and why PLA loves max fan while PETG wants less; ending in a fan 0/50/100 % overhang test you read by hand. |
+| [`infill/`](./infill/) | What's inside a print, what % to actually use, and why walls beat infill — an animated cutaway of density, patterns, and the top-layer job, ending in a 10 % vs 30 % vs +1-wall experiment you weigh and squeeze by hand. |
 | [`lithophane-night-light/`](./lithophane-night-light/) | Turn a photo into a glowing backlit print: how thickness becomes brightness (thick = dark, thin = bright), why you print it standing upright, and the full photo → web tool → slice → print workflow with exact settings. |
 
 *(New guides are added by the PR that creates them — an unindexed guide is a lost guide.)*
