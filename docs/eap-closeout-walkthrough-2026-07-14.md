@@ -43,9 +43,10 @@ Expect it to finish with **exit code 0** — no complaints.
 
 Each has a deep link (click it first), the exact steps, and a **VERIFY** line so you know it worked.
 
-**1 · Turn on automatic branch cleanup.**
-Open: https://github.com/menno420/curious-research/settings → **General** → scroll to **Pull Requests** → check **"Automatically delete head branches"**.
-**VERIFY:** after the next PR merges, its `claude/*` branch vanishes on its own.
+**1 · Find out why automatic branch cleanup isn't cleaning up.**
+You report **"Automatically delete head branches" has been checked since the repo was created** — yet merged `claude/*` branches are still hanging around: `claude/eap-closeout-walkthrough` (PR #43, merged 2026-07-14) and `claude/heartbeat-2026-07-14-handover` (PR #44, merged three minutes later) both still exist, their tips still sitting exactly at the commits those PRs merged. So the box is on, but something is overriding it. The usual culprit: a **ruleset** (a repo-wide rule GitHub enforces — think of it as a jig that blocks certain cuts) or a classic branch-protection rule that **restricts deletions**, matching more branches than just `main`. Such a rule silently blocks GitHub's own auto-delete, while you — an admin deleting by hand — bypass it, which is why the branches from PRs #1/#5/#9/#10 deleted fine when you clicked delete yourself.
+Open: https://github.com/menno420/curious-research/settings/rules (**Rulesets**) and https://github.com/menno420/curious-research/settings/branches — look for any rule that **restricts deletions** with a target pattern matching `claude/*` or **all branches**. Change its scope so it targets `main` only. (The rule requiring the `substrate-gate` check on `main` should stay — that's the safety net; only the deletion restriction's reach needs narrowing.)
+**VERIFY:** merge any next PR — its `claude/*` branch should vanish on its own within seconds.
 
 **2 · (Optional) Sweep the 37 old merged branches.**
 Open: https://github.com/menno420/curious-research/branches — the verified-deletable list is in the body of [PR #41](https://github.com/menno420/curious-research/pull/41).
