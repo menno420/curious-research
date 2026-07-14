@@ -1,4 +1,4 @@
-# Record arm poses by hand and replay them inside the safe env
+# Record arm poses by hand and replay them inside the safe envelope — the routine library that powers the other arm ideas (printer/arm crossover).
 
 > **State:** largely built (2026-07-13) — see `projects/arm-pen-plotter/teach_and_replay.py`; grow the remainder with the ritual (`docs/idea-ritual.md`) if curious.
 
