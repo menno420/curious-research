@@ -1,6 +1,6 @@
 # Session — 2026-07-13 — guide-first-layer (the foundation everything is built on)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** opus-4.8 (Claude Opus family). **Venue:** a dispatched work session for the Curious Research seat, EAP final-night ladder slice 6.
 
 ## What this session did
