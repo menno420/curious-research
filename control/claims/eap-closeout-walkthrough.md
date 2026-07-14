@@ -1,0 +1,1 @@
+- `claude/eap-closeout-walkthrough` · **doc** — EAP close-out walkthrough (owner handover) · `docs/eap-closeout-walkthrough-2026-07-14.md` + root README map row · 2026-07-14
