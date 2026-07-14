@@ -62,6 +62,7 @@ Known-good and live on `main`:
   explain-my-slicer.
 - **Audits:** `docs/audits/` holds the independent read-mostly review pass —
   `docs/audits/2026-07-13-fleet-cleanup-audit.md` (#34) and `docs/audits/eap-project-audit-2026-07-14.md` (#42).
+- **Pick-up guide:** `docs/eap-closeout-walkthrough-2026-07-14.md` — the owner handover: what's built, what works, and the six owner actions to pick the repo back up.
 - **Control loop live:** `control/inbox.md` (manager-written) / `control/outbox.md`
   (lane-written reports) / `control/status.md` (heartbeat). ORDER 001 served with
   REPORT 001.

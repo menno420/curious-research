@@ -1,6 +1,6 @@
 # Session — 2026-07-14 — eap-closeout (EAP close-out walkthrough — the seat's owner handover)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** opus-4.8 (Claude Opus family). **Venue:** a dispatched work session for the Curious Research seat, landing the seat's last EAP deliverable on the coordinator's baton.
 
 ## What this session did
