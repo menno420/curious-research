@@ -1,0 +1,1 @@
+- `claude/guide-part-cooling` · **guide** — part-cooling fan % overhang/bridge explainer · guides/part-cooling/{index.html,guide.md} + guides/README.md · 2026-07-14
