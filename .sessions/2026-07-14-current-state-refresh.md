@@ -1,6 +1,6 @@
 # Session — 2026-07-14 — current-state-refresh (docs)
 
-> **Status:** `in-progress`
+> **Status:** `complete`
 > **📊 Model:** Claude Opus 4 family. **Venue:** Claude Code (remote), refreshing
 > `docs/current-state.md` from its stale #21 snapshot up to HEAD (#37) and landing
 > the result against `main`.
