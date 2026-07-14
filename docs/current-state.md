@@ -8,16 +8,17 @@
 
 ## Stability baseline
 
-*Snapshot dated 2026-07-14 (all PRs #1–#37 merged).*
+*Snapshot dated 2026-07-14 (all PRs #1–#47 merged; the seat-dormant handoff PR in flight).*
 
 Known-good and live on `main`:
 
-- **Nine animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
+- **Eleven animated guides** in `guides/` (each with a step-by-step `guide.md` companion,
   indexed in `guides/README.md`): `start-here` (the day-one welcome tour) ·
   `how-a-pr-flows` · `what-can-claude-see` · `retraction-vs-stringing` ·
   `how-print-clearance-works` · `temperature-tower` · `arm-envelope-explained` ·
   `first-layer` (first-layer adhesion — the foundation every print is built on) ·
-  `lithophane-night-light`.
+  `lithophane-night-light` · `part-cooling` (the fan % behind droopy overhangs and
+  brittle PETG) · `infill` (what % to actually use, and why walls matter more).
 - **Projects:**
   - `projects/tolerance-test-coin/` — parametric OpenSCAD clearance coin + print-and-test
     guide + results template. Ships `.scad` only; the owner renders the STL locally
@@ -64,22 +65,36 @@ Known-good and live on `main`:
   `docs/audits/2026-07-13-fleet-cleanup-audit.md` (#34) and `docs/audits/eap-project-audit-2026-07-14.md` (#42).
 - **Pick-up guide:** `docs/eap-closeout-walkthrough-2026-07-14.md` — the owner handover: what's built, what works, and the six owner actions to pick the repo back up.
 - **Control loop live:** `control/inbox.md` (manager-written) / `control/outbox.md`
-  (lane-written reports) / `control/status.md` (heartbeat). ORDER 001 served with
-  REPORT 001.
+  (lane-written reports) / `control/status.md` (heartbeat). ORDERs 001–002 served
+  (REPORTs 001–003; ORDER 002 is recorded in the outbox — the inbox ends at ORDER 001).
 - **README** opens with the gift note; first click is `guides/start-here/`.
 - Kit: substrate-kit v1.15.0, `substrate-gate` CI required and green; Claude PRs
   auto-merge on green.
 
 ## In flight
 
-Nothing — all PRs #1–#37 are merged and no PRs are open (verified 2026-07-14T00:22Z).
+One PR — the seat-dormant handoff itself (#48, `claude/seat-dormant`, the PR this
+snapshot rides in). Everything else is landed: all PRs #1–#47 are merged and no other
+PRs are open (verified 2026-07-14T21:20Z).
 
-Housekeeping note: the `rescue/*` and `*-telemetry*` branches on origin are **kit telemetry
-only** (stop-hook guard-fires/state churn), no PRs by design — safe to delete once the kit's
-telemetry churn is fixed (proposal filed in `control/outbox.md`, PROPOSAL 001).
+Housekeeping note: the stale branches on origin (`rescue/*`, `*-telemetry*`, and merged
+`claude/*` heads left behind by the auto-merge/auto-delete gap — final answer in #46/#47)
+are safe to sweep by hand — the one-time sweep is owner action §C item 1 in
+`docs/eap-closeout-walkthrough-2026-07-14.md`; kit-side proposals are PROPOSALs 001/003 in
+`control/outbox.md`.
 
 ## Recently shipped (newest first)
 
+- **#47** Outbox: PROPOSAL 003 addendum — counter-datapoint; revised best-fit is the GitHub auto-merge/auto-delete gap (`f2409d7`, 2026-07-14)
+- **#46** Branch mystery, final answer — one-time sweep (walkthrough §C item 1) + kit PROPOSAL 003 (`e4d4125`, 2026-07-14)
+- **#45** Fix walkthrough §C item 1 — auto-delete box is already on; check ruleset scope instead (`65a20ad`, 2026-07-14)
+- **#44** Heartbeat: EAP closed — handover mode (#1–#43 all merged) (`7bfe169`, 2026-07-14)
+- **#43** EAP close-out walkthrough — the owner handover (`c02eb4c`, 2026-07-14)
+- **#42** EAP project audit — [docs/audits/eap-project-audit-2026-07-14.md](audits/eap-project-audit-2026-07-14.md) (`058b5f8`, 2026-07-14)
+- **#41** EAP final night report 2026-07-14 — 12 PRs shipped, walls recorded (`a1d14ad`, 2026-07-14)
+- **#40** Guide: `infill` — what % to actually use, and why walls matter more (animated explainer + step-by-step) (`fefc2c6`, 2026-07-14)
+- **#39** Guide: `part-cooling` — the fan % behind droopy overhangs and brittle PETG (animated explainer + step-by-step) (`30153c7`, 2026-07-14)
+- **#38** Refresh current-state.md — snapshot through #37 (`73f6968`, 2026-07-14)
 - **#37** Fix truncated H1 titles in 4 idea files (`1a1fd1f`, 2026-07-14)
 - **#36** Guide: `first-layer` — first-layer adhesion, the foundation everything else is built on (animated explainer + step-by-step) (`9336fd1`, 2026-07-14)
 - **#35** Idea ritual → sound-reactive-desk-lamp: verdict build (amplitude-reactive version; FFT light-show labeled stretch) (`559169d`, 2026-07-13)
@@ -121,3 +136,10 @@ telemetry churn is fixed (proposal filed in `control/outbox.md`, PROPOSAL 001).
 ## Review rhythm
 
 the friend reads the PR description and any rendered guide/artifact, asks questions right in the PR, merges when he understands it - understanding is the review bar
+
+## Seat dormant
+
+The owner ended the EAP on 2026-07-14 and this seat is now **dormant** — no routine will
+wake it. The dormancy record (health at shutdown, routine disposition, revival
+instructions) lives in `control/status.md`; the owner's own next steps live in
+`docs/eap-closeout-walkthrough-2026-07-14.md` (§C).
