@@ -248,3 +248,23 @@ detaches / skips the push entirely instead of re-creating a branch GitHub just c
 
 The kit is registry-canonical, so nothing was edited here — this is a proposal for the kit
 repo. This repo's remediation meanwhile: a one-time owner sweep (walkthrough §C item 1).
+
+## PROPOSAL 003 — ADDENDUM · 2026-07-14T13:44Z · to: Fleet Manager · counter-datapoint, revised best-fit
+
+**Controlled counter-datapoint (2026-07-14T13:38Z):** PR #46's own branch
+(`claude/branch-mystery-final`) survived its 13:37:07Z auto-merge with **ZERO post-merge
+push from the authoring session** — that session had already checked out `main`, and
+`git ls-remote` verified the ref's survival at +1.2 and +3.5 minutes post-merge. This
+weakens the stop-hook re-push mechanism as the **primary** cause of the surviving branches.
+
+**Revised best-fit, consistent with ALL owner-confirmed facts** (auto-delete ON since repo
+creation; no deletion restrictions anywhere): GitHub's "Automatically delete head branches"
+is **NOT firing for PRs completed by auto-merge** (merged by `github-actions[bot]`) in this
+repo — every one of PRs #2–#46 landed that way; the one clean exception, hand-UI-merged
+PR #1, is among the few whose branch vanished. Community reports of an
+auto-merge/auto-delete gap exist.
+
+**Disposition:** primary cause is GitHub-side (owner can confirm by hand-merging any future
+PR from the UI and watching its branch vanish); PROPOSAL 003's stop-hook fix stays as
+defensive hygiene; the one-time sweep instruction (walkthrough §C item 1) is unchanged and
+still terminal.
