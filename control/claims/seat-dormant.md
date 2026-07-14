@@ -1,0 +1,1 @@
+- `claude/seat-dormant` · **dormancy handoff** — final PR: current-state truth pass + status.md dormancy record (owner-ordered EAP shutdown) · docs/current-state.md, control/status.md · 2026-07-14
