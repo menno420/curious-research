@@ -9,6 +9,10 @@
 > **👉 Eerste klik:** open **[`guides/begin-hier/`](guides/begin-hier/guide.md)** — twee
 > minuten, in het Nederlands: wat dit is, wat je er vanavond mee kunt, en hoe je binnenkomt.
 >
+> **👉 Op je telefoon, zonder account:** **[menno420.github.io/curious-research](https://menno420.github.io/curious-research/)**
+> — alle uitleg-animaties op één pagina, in het Nederlands. Niets installeren, nergens
+> inloggen. Handig om erbij te pakken terwijl je bij de printer staat.
+>
 > **👉 Op je Windows-laptop:** [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md)
 > — de gratis programma's die handig zijn, met directe downloadlinks. *(Je hebt er niets van
 > nodig om te beginnen.)*
@@ -64,7 +68,8 @@ questions and ideas, Claude turns them into experiments, designs, and — the ho
 | [`docs/git-for-makers.md`](docs/git-for-makers.md) | Git in bench terms, no jargon |
 | [`guides/begin-hier/`](guides/begin-hier/guide.md) | 🇳🇱 **De Nederlandse rondleiding — begin hier** |
 | [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md) | 🇳🇱 Gratis programma's voor je Windows-laptop, met downloadlinks |
-| `bootstrap.py` + `.claude/` + `docs/` (the rest) | The [substrate-kit](https://github.com/menno420/substrate-kit) — the memory/quality machinery that keeps Claude sharp here (MIT, [`LICENSE-substrate-kit`](LICENSE-substrate-kit)). It maintains itself; you never need to touch it. |
+| [`site/`](site/) | The public read-only website ([live](https://menno420.github.io/curious-research/)) — plain HTML/CSS, no build step |
+| [`arm/`](arm/) | The robot-arm lane — the calibration template every motion routine clamps to |
+| [`research/possibility-dossier.md`](research/possibility-dossier.md) | What the bench + Claude can actually do together, with honest ✅/🧪/🚫 marks |
 
-*Seeded 2026-07-13 with substrate-kit v1.15.0. This repo is public — it carries interests
-and projects, never personal data.*
+*This repo is public — it carries interests and projects, never personal data.*
