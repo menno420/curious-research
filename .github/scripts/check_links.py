@@ -13,6 +13,18 @@ Skipped: absolute URLs (http://, https://, mailto:, //cdn), pure anchors
 ``` is an example, not a link). A link with a trailing #anchor or ?query
 is checked without it -- we verify the file exists, not the anchor.
 
+Not scanned at all: research/dossiers/. Those files are verbatim
+third-party deep-research output, kept unedited as provenance, and nobody
+navigates them -- the site is built FROM them, never links INTO them. Both
+research tools leak citation artifacts and one of them is link-shaped:
+Gemini emits start_span / end_span markers that survive PDF extraction as
+[text](start_span), while ChatGPT emits cite...turn... runs wrapped in
+invisible private-use characters (U+E201/U+E202). Neither is a link.
+Editing them out would make "unedited" a lie about the one property those
+files exist to have, so the directory is skipped and the artifacts stay on
+the record. Anything built from them is checked normally -- which is where
+a dead link could actually reach a reader.
+
 One special case: files under site/. The published site is assembled by
 .github/workflows/pages.yml as site/ + guides/ side by side, so
 site/index.html links to `guides/<naam>/index.html` -- a path that is
@@ -30,6 +42,9 @@ from urllib.parse import unquote
 
 REPO = Path(__file__).resolve().parents[2]
 SKIP_DIRS = {".git", ".github"}
+# Raw research archives -- see the module docstring. Path-prefix, not a bare
+# directory name, so a future guides/dossiers/ would still be checked.
+SKIP_PREFIXES = (("research", "dossiers"),)
 SUFFIXES = {".md", ".html"}
 
 MD_LINK = re.compile(r"\[[^\]]*\]\(\s*<?([^)\s>]+)>?[^)]*\)")
@@ -46,7 +61,10 @@ def files() -> list[Path]:
     for path in sorted(REPO.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in SUFFIXES:
             continue
-        if any(part in SKIP_DIRS for part in path.relative_to(REPO).parts):
+        parts = path.relative_to(REPO).parts
+        if any(part in SKIP_DIRS for part in parts):
+            continue
+        if any(parts[: len(p)] == p for p in SKIP_PREFIXES):
             continue
         out.append(path)
     return out
