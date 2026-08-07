@@ -1,7 +1,9 @@
 # curious-research — current state
 
-*Agent-facing. Written in English on purpose (`CLAUDE.md` §0). Last rewritten 2026-08-07,
-when the dead agent-fleet machinery was removed.*
+*Agent-facing. Written in English on purpose (`CLAUDE.md` §0). Last rewritten 2026-08-07 —
+the day the fleet machinery was removed, the website went live, and the repo was prepared
+for handover. The fleet-side record of that day is
+`menno420/fleet-manager` → `docs/findings/2026-08-07-curious-research-handover.md`.*
 
 Read [`../CLAUDE.md`](../CLAUDE.md) section 0 first — who you are talking to, what language
 to answer in, and whether you can write. This file is the second read: what is actually
@@ -169,6 +171,30 @@ Five things nobody but the owner can answer. Each unblocks concrete work.
    `https://github.com/menno420/curious-research/branches`; each PR page keeps a "Restore
    branch" button. The sessions that could re-create them no longer exist, so once swept
    they stay gone. Cosmetic, not urgent.
+
+## In flight right now (2026-08-07)
+
+**Twelve deep-research runs are out** — the six prompts in
+`research/deep-research-prompts.md`, sent to both ChatGPT deep research and Gemini deep
+research. When they land:
+
+1. Save each raw result to `research/dossiers/<topic>.md`, unedited, with the date and
+   which tool produced it.
+2. Verify the `SOLID` claims that touch safety before any of it reaches him — power
+   figures, fumes, materials that must not be lasered, laser class. A research tool will
+   confidently mislabel these.
+3. Cut into Dutch cards in `site/kennis.html`. **Cut, do not translate** — a 120-word
+   English card is a ~60-word Dutch one once the filler is gone. `lasersnijden` and
+   `frezen` are currently visible, deliberately empty tabs.
+
+**Then the handover:** the owner is writing an introduction email and gifting a Claude
+subscription. That changes the pitch from "your answers stop evaporating" to "…and Claude
+can read the whole workshop before it answers". The maker is on the free tier today.
+
+**Still available, largest first:** rewriting the five printing guides with Bambu Studio's
+real menu names (the smaller half of that job — see `guides/bambu-studio/` for why); a
+repeatability guide for the arm now that smooth motion exists; Dutch project pages so
+`Bouwprojecten` stops sending him to GitHub to read `.scad` source.
 
 ## Answered, and the work they unblocked
 
