@@ -32,6 +32,7 @@ with captions under every step and a "what you just watched" recap at the end. P
 |---|---|
 | [`begin-hier/`](./begin-hier/) | 🇳🇱 **Open deze eerst.** Nederlandse rondleiding: wat dit is, wat je vanavond kunt doen, hoe je binnenkomt, en waarom bewaren anders is dan chatten. |
 | [`windows-gereedschap/`](./windows-gereedschap/) | 🇳🇱 Welke gratis programma's je op je Windows-laptop wilt (slicer, Arduino IDE, OpenSCAD), met directe downloadlinks — en wat je juist **niet** hoeft te installeren. |
+| [`fusion-python/`](./fusion-python/) | 🇳🇱 **Hij vroeg hier zelf om.** Hoe je een Python-script in Fusion 360 laadt en draait — met een werkend voorbeeld, de mm/cm-valkuil, en waarom dit net zo goed werkt voor laser- en freeswerk. |
 | [`start-here/`](./start-here/) | The English original of the welcome tour, plus a guided first 30 minutes. |
 | [`how-a-pr-flows/`](./how-a-pr-flows/) | The one loop everything runs on: branch → PR → gate → merge, animated — plus your first PR in 3 minutes. |
 | [`what-can-claude-see/`](./what-can-claude-see/) | What Claude can do with a photo, an error, or a screenshot — something goes in, a plain-language diagnosis comes out (with three real maker examples). |

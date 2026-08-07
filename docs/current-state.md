@@ -13,11 +13,18 @@ A gift and a workshop notebook for a Dutch hobby maker: two 3D printers (one sma
 3-colour), a 6-servo robot arm, a busy Arduino bench. Everything in it is meant to be read
 by him, in Dutch, and to teach by showing.
 
-**Known about his setup as of 2026-08 (his own words, via the owner):** he already uses
-**Claude regularly** — for Arduino code, 3D-printing tips, and **Fusion 360**. He models in
-Fusion 360, so he has real parametric CAD and knows it. Read `CLAUDE.md` §0 for what that
-changes: he is new to *GitHub*, not to Claude, and the repo's pitch is persistence, not
-capability.
+**Known about his setup as of 2026-08 (his own words, via the owner) — read `CLAUDE.md` §0
+for the full table:**
+
+- **Printers: Bambu Lab A1 mini + A1 with AMS Lite.** So the slicer is **Bambu Studio**. This
+  closes the long-standing "which slicer?" question — the printing guides can now name real
+  menus instead of saying "your slicer".
+- **He draws everything in Fusion 360** (free version): 2D for **laser cutting and CNC
+  milling**, 3D for the printers. He cuts and mills — a whole capability lane this repo has
+  never addressed.
+- **He already uses Claude weekly**, on the **free** tier, mixed with ChatGPT, Copilot and
+  Chaton. He is new to *GitHub*, not to Claude; the pitch is persistence, not capability.
+  Free tier also means: keep guides self-contained, do not assume long sessions.
 
 **It is complete for its purpose and it still grows.** A session that only walks him through
 what is already here is an excellent session. A session that adds a guide is also an
@@ -132,23 +139,44 @@ Five things nobody but the owner can answer. Each unblocks concrete work.
    temperature-tower, first-layer, part-cooling and lithophane guides can be rewritten
    click-by-click with the real menu names — a large jump in usefulness for someone who
    cannot translate "your slicer's retraction distance setting" into a menu path.
-2. **Drybox: design A or L?** `ideas/filament-drybox-logger.md` sits at `think-more` on
+1. **Drybox: design A or L?** `ideas/filament-drybox-logger.md` sits at `think-more` on
    exactly one question — alarm or logger. **A** is the traffic-light alarm (recommended:
    it does something visible on the bench); **L** is the passive humidity logger. Either
    answer flips the idea to `build` and a project follows.
-3. **The arm calibration measurement.** `arm/calibration.json` does not exist, and until it
+2. **The arm calibration measurement.** `arm/calibration.json` does not exist, and until it
    does, `projects/arm-pen-plotter/teach_and_replay.py` refuses to start by design. This is
    now the ONLY thing standing between a working arm and the repo's arm projects — the
    hardware side is already done (see `arm/README.md`). Follow
    `guides/arm-envelope-explained/`, copy `arm/calibration.example.json` to
    `arm/calibration.json`, fill in the measured min/max/center for each of the six servos,
    commit it. This unblocks the whole arm lane.
-4. **The stale-branch sweep.** Roughly 37 merged `claude/*` branches survive on origin,
+3. **The stale-branch sweep.** Roughly 37 merged `claude/*` branches survive on origin,
    left behind when the old agent fleet's dead sessions re-pushed branches GitHub had
    already auto-deleted. They are all merged and safe to delete by hand at
    `https://github.com/menno420/curious-research/branches`; each PR page keeps a "Restore
    branch" button. The sessions that could re-create them no longer exist, so once swept
    they stay gone. Cosmetic, not urgent.
+
+## Answered, and the work they unblocked
+
+- **Which slicer? → Bambu Studio.** He runs a **Bambu Lab A1 mini** and an **A1 with AMS
+  Lite**. Five printing guides (retraction, temperature-tower, first-layer, part-cooling,
+  lithophane) still describe settings generically and can now be rewritten with Bambu
+  Studio's real menu names. **This is the largest piece of unblocked work in the repo.**
+- **OpenSCAD or Fusion 360? → both, and he asked for the bridge himself.** He wrote, in his
+  own words, that he hopes to learn *"hoe ik een programma in python kan inladen in
+  fusion360"*. So the third path is not a proposal any more, it is a request:
+  `guides/fusion-python/` now teaches it, with a worked script. The existing `.scad` files
+  stay as they are — nothing is broken, and OpenSCAD is still the easiest way for Claude to
+  hand over a whole model. Fusion scripting is the better path when he wants it *in the tool
+  he actually draws in*.
+
+## Not yet addressed at all — laser and CNC
+
+He draws 2D in Fusion for **laser cutting and CNC milling**, and this repo has nothing about
+either. Every guide assumes a 3D printer. That is the biggest blind spot in the collection,
+and the Fusion scripting guide is the natural bridge: parametric 2D (finger-jointed boxes,
+hole patterns, panel layouts) is exactly the work that is miserable with a mouse.
 
 ## History — the machinery that used to be here
 
