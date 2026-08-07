@@ -5,7 +5,7 @@ Runs as the repo's only CI check (see .github/workflows/substrate-gate.yml).
 Standard library only, no install step.
 
 Checked:
-  - Markdown inline links      [text](path)
+  - Markdown inline links      [text](path)   -- in .md files only
   - HTML href/src attributes   href="path"  src='path'
 
 Skipped: absolute URLs (http://, https://, mailto:, //cdn), pure anchors
@@ -68,8 +68,17 @@ def strip_fences(text: str) -> str:
     return "\n".join(out)
 
 
-def targets(text: str) -> set[str]:
-    return set(MD_LINK.findall(text)) | set(HTML_ATTR.findall(text))
+def targets(text: str, markdown: bool) -> set[str]:
+    """Links in `text`. Markdown link syntax is only honoured in .md files.
+
+    An .html file is full of JavaScript, and `[]()` means nothing there --
+    `VEL[id](t)` is an array lookup and a call, not a link to "t". Scanning
+    HTML for Markdown links reports those as dead every time.
+    """
+    found = set(HTML_ATTR.findall(text))
+    if markdown:
+        found |= set(MD_LINK.findall(text))
+    return found
 
 
 def roots(source: Path) -> list[Path]:
@@ -82,11 +91,12 @@ def roots(source: Path) -> list[Path]:
 
 def broken(source: Path) -> list[str]:
     text = source.read_text(encoding="utf-8", errors="replace")
-    if source.suffix.lower() == ".md":
+    markdown = source.suffix.lower() == ".md"
+    if markdown:
         text = strip_fences(text)
     bases = roots(source)
     bad = []
-    for raw in sorted(targets(text)):
+    for raw in sorted(targets(text, markdown)):
         link = raw.strip()
         if not link or link.startswith("#") or EXTERNAL.match(link):
             continue
