@@ -12,6 +12,10 @@ Daarvoor is nu geen GitHub-account, clone of lokale installatie nodig.
 
 ## Direct beginnen via website en chat
 
+De openbare kennisbank heet
+**[`menno420/curious-research`](https://github.com/menno420/curious-research)**. Noem die exacte
+naam in het eerste bericht, zodat duidelijk is welke repository als context bedoeld wordt.
+
 ### 1. Open de werkplaatswebsite
 
 Ga naar <https://menno420.github.io/curious-research/> en open **GitHub + AI**. Die pagina legt

@@ -27,6 +27,21 @@ automatisch geheugen: je deelt de link of tekst in het gesprek dat je gebruikt.
 Een eigen GitHub-account, clone of Claude Code-installatie is voor het eerste gebruik niet
 nodig.
 
+## Hoe heet de kennisbank?
+
+De exacte GitHub-repository is:
+
+**[`menno420/curious-research`](https://github.com/menno420/curious-research)**
+
+Noem die naam in je eerste bericht. Zo weet de assistent welke openbare verzameling je bedoelt:
+
+```text
+Gebruik de openbare GitHub-repository menno420/curious-research als kennisbank voor mijn
+werkplaats. Lees eerst het werkplaatsprofiel en help me daarna stap voor stap met mijn vraag.
+Noem bevestigde feiten en aannames apart. Als je de repository of het profiel niet werkelijk
+kunt openen, zeg dat dan meteen.
+```
+
 ## Stappenplan
 
 ### 1. Geef de AI de actuele context
