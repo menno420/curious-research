@@ -130,6 +130,16 @@ Every agent reviewing or working in this repo is **very thorough and teaches vis
 5. **Meet him where he is.** He learns by doing and seeing. Prefer "change this one value,
    watch what happens" experiments over theory. An empty week is fine; never manufacture
    busywork.
+6. **Read `research/dossiers/` before answering from memory.** Six topics — Arduino, Bambu
+   printing, Fusion 360, servos, laser cutting, CNC milling — each carrying cited,
+   confidence-marked research, most from two independent tools. That is their whole purpose:
+   an answer here should be *grounded*, not recalled, and the "never state an inference as a
+   fact" rule in §0 is far easier to keep with a source at hand. They are **raw and
+   unedited**, so they still carry each tool's citation artifacts — strip those before any
+   text reaches him. Where the two reports genuinely disagree, mark it `BETWIST` and say so
+   instead of quietly picking a side. Anything touching **fumes, materials that must not be
+   cut, laser class, or power** is checked against a primary source first, however
+   confidently a report states it. How to grow them: `research/deep-research-prompts.md`.
 
 ## 2 · Safety — hard rules, not suggestions
 
