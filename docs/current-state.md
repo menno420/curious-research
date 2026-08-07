@@ -160,9 +160,12 @@ Five things nobody but the owner can answer. Each unblocks concrete work.
 ## Answered, and the work they unblocked
 
 - **Which slicer? → Bambu Studio.** He runs a **Bambu Lab A1 mini** and an **A1 with AMS
-  Lite**. Five printing guides (retraction, temperature-tower, first-layer, part-cooling,
-  lithophane) still describe settings generically and can now be rewritten with Bambu
-  Studio's real menu names. **This is the largest piece of unblocked work in the repo.**
+  Lite**. Acted on in `guides/bambu-studio/` — but NOT the way it first looked. The A1 series
+  auto-calibrates bed level, Z-offset, resonance and flow dynamics **before every print**, so
+  several tuning guides here are aimed at printers he does not own. Rather than renaming menus
+  across five English guides, one Dutch guide now says which of them still apply to him and
+  which are already done by his machine. Renaming menus inside those five is still available
+  work, but it is now the smaller half of the job.
 - **OpenSCAD or Fusion 360? → both, and he asked for the bridge himself.** He wrote, in his
   own words, that he hopes to learn *"hoe ik een programma in python kan inladen in
   fusion360"*. So the third path is not a proposal any more, it is a request:

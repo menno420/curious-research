@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Je Bambu doet het meeste al zelf — welke knoppen blijven van jou?</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --line:#d1d5db; --accent:#7c3aed; --accent-soft:#ede9fe;
+    --ok:#16a34a; --ok-soft:#dcfce7; --warm:#e0912f; --warm-soft:#fdf0dc;
+    --uit:#9ca3af; --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --line:#374151; --accent:#a78bfa; --accent-soft:#2e1065;
+      --ok:#4ade80; --ok-soft:#14532d; --warm:#eab308; --warm-soft:#422006;
+      --uit:#4b5563; --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px 16px 48px; background:var(--bg); color:var(--ink);
+         font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+         display:flex; flex-direction:column; align-items:center; }
+  h1 { font-size:1.3rem; margin:.2em 0 .3em; text-align:center; max-width:24em; }
+  .sub { color:var(--muted); margin:0 0 20px; text-align:center; max-width:38em; }
+  .stage { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+           padding:16px; width:100%; max-width:820px; }
+  svg { width:100%; height:auto; display:block; }
+
+  .lbl   { font:600 13px system-ui; fill:var(--ink); }
+  .klein { font:11px system-ui; fill:var(--muted); }
+  .doos  { fill:var(--card); stroke:var(--line); stroke-width:2; }
+  .balk  { fill:var(--uit); transition:fill .5s ease; }
+  .balk.bezig { fill:var(--warm); }
+  .balk.klaar { fill:var(--ok); }
+  .vink  { stroke:var(--ok); stroke-width:3.5; fill:none; stroke-linecap:round;
+           opacity:0; transition:opacity .4s ease; }
+  .vink.aan { opacity:1; }
+  .hand   { fill:var(--accent-soft); stroke:var(--accent); stroke-width:2.5; }
+  .handtxt{ font:700 12px system-ui; fill:var(--accent); }
+
+  .caption { min-height:6em; margin:14px auto 0; max-width:640px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption .stap { display:block; font:700 12px system-ui; letter-spacing:.08em;
+                   text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .controls { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+  button { font:600 14px system-ui; padding:9px 16px; border-radius:9px; cursor:pointer;
+           border:2px solid var(--accent); background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--accent); }
+  button:disabled { opacity:.4; cursor:default; }
+
+  .uitleg { max-width:680px; margin:24px auto 0; }
+  .kaart { background:var(--card); border-radius:12px; box-shadow:var(--shadow);
+           padding:16px 18px; margin-bottom:12px; border-left:5px solid var(--ok); }
+  .kaart.jouw { border-left-color:var(--accent); }
+  .kaart.let { border-left-color:var(--warm); background:var(--warm-soft); }
+  .kaart h2 { font-size:1rem; margin:0 0 6px; }
+  .kaart p { margin:0 0 8px; }
+  .kaart p:last-child { margin-bottom:0; }
+  .kaart ul { margin:0 0 8px; padding-left:1.2em; }
+  .kaart li { margin-bottom:5px; }
+  @media (prefers-reduced-motion: reduce) { .balk, .vink { transition:none; } }
+</style>
+</head>
+<body>
+
+<h1>Je Bambu doet het meeste al zelf</h1>
+<p class="sub">Vóór élke print stelt je A1 zichzelf af. Kijk wat hij doet — en wat er daardoor
+nog voor jou overblijft.</p>
+
+<div class="stage">
+<svg viewBox="0 0 820 380" role="img"
+     aria-label="De vier metingen die de printer zelf doet voor elke print, en daarnaast de keuzes die van jou blijven.">
+
+  <text class="lbl" x="30" y="28">Wat de printer zelf doet, vóór elke print</text>
+
+  <g id="metingen"></g>
+
+  <line x1="30" y1="238" x2="790" y2="238" stroke="var(--line)" stroke-width="1.5"/>
+
+  <text class="lbl" x="30" y="266">Wat van jou blijft</text>
+  <g id="jouwe"></g>
+</svg>
+
+<div class="caption" id="caption"></div>
+
+<div class="controls">
+  <button id="play">▶ Speel af</button>
+  <button id="opnieuw" class="ghost">↻ Opnieuw</button>
+</div>
+</div>
+
+<div class="uitleg">
+  <div class="kaart">
+    <h2>Waarom dit uitmaakt</h2>
+    <p>De meeste uitleg op internet — en een deel van de gidsen hier — is geschreven voor
+    printers die <b>niets</b> zelf afstellen. Daar ben je avonden kwijt aan testprintjes voor
+    dingen die jouw machine doet terwijl je koffie zet.</p>
+    <p>Zonde om dat werk te doen als het al gedaan is.</p>
+  </div>
+
+  <div class="kaart jouw">
+    <h2>Wat er dan nog wél van jou is</h2>
+    <ul>
+      <li><b>Alles wat met ontwerpen te maken heeft</b> — wanddikte, vulling, speling tussen
+      onderdelen, hoe je iets op het bed legt. Je printer beslist dit niet.</li>
+      <li><b>Temperatuur bij vreemd filament</b> — heeft het geen profiel, dan is een
+      temperatuurtoren nog steeds het beste gereedschap.</li>
+      <li><b>De eerste laag bijstellen</b> tijdens het printen, als je hem net te plat of net
+      te los vindt.</li>
+    </ul>
+  </div>
+
+  <div class="kaart let">
+    <h2>Gaat er tóch iets mis met de eerste laag?</h2>
+    <p>Kijk dan éérst naar iets mechanisch of iets viezigs, niet naar een instelling:</p>
+    <ul>
+      <li><b>Vies bed</b> — vet van je vingers verpest de hechting én de meting.</li>
+      <li><b>Vieze nozzle</b> — een klodder oud plastic drukt tegen het bed tijdens het
+      meten, en dan klopt de hele meting niet.</li>
+      <li><b>Losse schroefjes van de hotend</b> — bekend bij de A1-serie. Dan meet de sensor
+      onzin en zwerft je eerste laag, zonder dat jij iets fout doet.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const METINGEN = [
+    { naam:'Bed levelling',   uitleg:'meet of het bed scheef staat' },
+    { naam:'Z-offset',        uitleg:'zoekt de goede nozzlehoogte' },
+    { naam:'Trillingen',      uitleg:'meet hoe de printer resoneert' },
+    { naam:'Flow dynamics',   uitleg:'meet hoe het plastic eruit komt' }
+  ];
+
+  const JOUWE = [
+    { naam:'Wanddikte & vulling', uitleg:'een keuze, geen meting' },
+    { naam:'Speling',             uitleg:'past het of klemt het?' },
+    { naam:'Temperatuur',         uitleg:'bij vreemd filament' }
+  ];
+
+  const svg = document.querySelector('svg');
+  const gM = document.getElementById('metingen');
+  const gJ = document.getElementById('jouwe');
+
+  function el(n, a) {
+    const e = document.createElementNS(NS, n);
+    for (const k in a) e.setAttribute(k, a[k]);
+    return e;
+  }
+  function txt(n, a, s) { const e = el(n, a); e.textContent = s; return e; }
+
+  const X0 = 30, W = 760, RIJ_H = 46;
+
+  METINGEN.forEach((m, i) => {
+    const y = 50 + i * RIJ_H;
+    gM.appendChild(el('rect', { class:'doos', x:X0, y:y, width:W, height:36, rx:8 }));
+    gM.appendChild(el('rect', { class:'balk', id:'balk' + i, x:X0 + 6, y:y + 6,
+      width:0, height:24, rx:5 }));
+    gM.appendChild(txt('text', { class:'lbl', x:X0 + 18, y:y + 23 }, m.naam));
+    gM.appendChild(txt('text', { class:'klein', x:X0 + 190, y:y + 23 }, m.uitleg));
+    const v = el('path', { class:'vink', id:'vink' + i,
+      d:`M ${X0 + W - 46} ${y + 18} l 9 9 l 17 -19` });
+    gM.appendChild(v);
+  });
+
+  JOUWE.forEach((j, i) => {
+    const x = X0 + i * 258;
+    const y = 282;
+    gJ.appendChild(el('rect', { class:'hand', id:'hand' + i, x:x, y:y, width:242, height:56,
+      rx:9, opacity:0 }));
+    gJ.appendChild(txt('text', { class:'handtxt', id:'handt' + i, x:x + 14, y:y + 24,
+      opacity:0 }, j.naam));
+    gJ.appendChild(txt('text', { class:'klein', id:'handu' + i, x:x + 14, y:y + 42,
+      opacity:0 }, j.uitleg));
+  });
+
+  const caption = document.getElementById('caption');
+  const playBtn = document.getElementById('play');
+  const opnieuwBtn = document.getElementById('opnieuw');
+
+  let timers = [];
+  function clearAll() { timers.forEach(t => clearTimeout(t)); timers = []; }
+  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+  function zetCaption(stap, tekst) {
+    caption.innerHTML = '<span class="stap">' + stap + '</span>' + tekst;
+  }
+
+  function reset() {
+    clearAll();
+    METINGEN.forEach((_, i) => {
+      const b = document.getElementById('balk' + i);
+      b.setAttribute('width', 0);
+      b.classList.remove('bezig', 'klaar');
+      document.getElementById('vink' + i).classList.remove('aan');
+    });
+    JOUWE.forEach((_, i) => {
+      ['hand', 'handt', 'handu'].forEach(p =>
+        document.getElementById(p + i).setAttribute('opacity', 0));
+    });
+    zetCaption('klaar om te beginnen',
+      'Je drukt op Print. Voordat er ook maar één druppel plastic uit komt, doet je printer ' +
+      'eerst vier metingen.');
+    playBtn.disabled = false;
+    playBtn.textContent = '▶ Speel af';
+  }
+
+  function speel() {
+    reset();
+    playBtn.disabled = true;
+    playBtn.textContent = 'bezig…';
+
+    const DUUR = 900;
+    METINGEN.forEach((m, i) => {
+      later(i * DUUR, () => {
+        const b = document.getElementById('balk' + i);
+        b.classList.add('bezig');
+        b.setAttribute('width', 0);
+        // vul de balk in stapjes -- geen CSS-transitie op width, dat is niet overal betrouwbaar
+        const stappen = 18;
+        for (let s = 1; s <= stappen; s++) {
+          later(i * DUUR + (s * (DUUR - 200) / stappen), () => {
+            b.setAttribute('width', (W - 80) * (s / stappen));   // ruimte laten voor het vinkje
+          });
+        }
+        zetCaption('meting ' + (i + 1) + ' van 4',
+          '<b>' + m.naam + '</b> — ' + m.uitleg +
+          '. Bij een gewone printer is dit iets wat jij met de hand doet.');
+      });
+      later(i * DUUR + (DUUR - 150), () => {
+        const b = document.getElementById('balk' + i);
+        b.classList.remove('bezig');
+        b.classList.add('klaar');
+        document.getElementById('vink' + i).classList.add('aan');
+      });
+    });
+
+    const eind = METINGEN.length * DUUR;
+    later(eind + 200, () => {
+      zetCaption('klaar — en nu?',
+        'Vier metingen, elke print opnieuw, zonder dat jij iets doet. Dus wat blijft er over?');
+    });
+
+    JOUWE.forEach((_, i) => {
+      later(eind + 700 + i * 600, () => {
+        ['hand', 'handt', 'handu'].forEach(p =>
+          document.getElementById(p + i).setAttribute('opacity', 1));
+      });
+    });
+
+    later(eind + 700 + JOUWE.length * 600, () => {
+      zetCaption('dit blijft van jou',
+        'Precies de dingen die een <b>keuze</b> zijn, geen meting. Hoe dik je wanden worden, ' +
+        'hoeveel speling een onderdeel nodig heeft, wat je met vreemd filament doet. ' +
+        'Daar gaat geen sensor over.');
+      playBtn.disabled = false;
+      playBtn.textContent = '▶ Nog een keer';
+    });
+  }
+
+  playBtn.addEventListener('click', speel);
+  opnieuwBtn.addEventListener('click', reset);
+  reset();
+})();
+</script>
+</body>
+</html>
