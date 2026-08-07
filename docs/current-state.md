@@ -284,10 +284,38 @@ research. When they land:
 subscription. That changes the pitch from "your answers stop evaporating" to "…and Claude
 can read the whole workshop before it answers". The maker is on the free tier today.
 
-**Still available, largest first:** rewriting the five printing guides with Bambu Studio's
-real menu names (the smaller half of that job — see `guides/bambu-studio/` for why); a
-repeatability guide for the arm now that smooth motion exists; Dutch project pages so
-`Bouwprojecten` stops sending him to GitHub to read `.scad` source.
+### Owner direction 2026-08-07: **implementation guides, not more safety documentation**
+
+Verbatim: *"We should also not be too worried about safety documentation, what I need is
+implementation guides."*
+
+Read this correctly, because it is a steer on **effort**, not a licence to strip anything:
+
+- **The safety content already written stays**, and `CLAUDE.md` §2's hard rules stay binding.
+  Those are cheap to keep and expensive to be wrong about, and he did not ask for their
+  removal.
+- **The `lasersnijden` safety cards were a one-time base**, not a programme. "Never put PVC in
+  a laser" is written once and is then done.
+- **Effort now goes to "how do I actually do this".** When a safety fact genuinely belongs in
+  an implementation guide (the extraction running before the cut, the clamp before the move),
+  it rides *inside* the steps rather than becoming its own document.
+
+**Next work, implementation-first and largest first:**
+
+1. **Laser and CNC are still the biggest blind spot** (see the section below) and are now also
+   the biggest *implementation* gap. He draws 2D in Fusion for both, and there is no guide on
+   getting from a Fusion sketch to a cut part: export, units, kerf compensation, tabs, the
+   sheet layout. `guides/fusion-python/` is the natural foundation — parametric 2D
+   (finger-jointed boxes, hole patterns, panel layouts) is exactly the work that is miserable
+   with a mouse and pleasant with a script.
+2. **The `frezen` tab** — fill it as implementation (feeds, workholding, toolpaths, what
+   actually breaks a cutter), not as a hazard list.
+3. **The seven remaining guide translations** — these already *are* implementation guides;
+   order and traps are in the guides table above.
+4. Dutch project pages so `Bouwprojecten` stops sending him to GitHub to read `.scad` source.
+5. A repeatability guide for the arm, now that smooth motion exists.
+6. Rewriting the printing guides with Bambu Studio's real menu names — the smaller half of
+   that job; `guides/bambu-studio/` explains why.
 
 ## Answered, and the work they unblocked
 
