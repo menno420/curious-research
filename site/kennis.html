@@ -242,8 +242,62 @@ const KENNIS = {
 
   laser: {
     naam: 'Lasersnijden', icoon: '🔥',
-    intro: 'Nog leeg — het diepe onderzoek voor dit onderwerp moet nog gedraaid worden.',
-    secties: []
+    intro: 'Begin bij "wat er nooit in mag" — dat is het enige stuk waar een fout je gezondheid kost in plaats van je werkstuk.',
+    secties: [
+      { titel: 'Wat er nooit in mag', kaarten: [
+        { v:'Waarom mag PVC absoluut nooit in een laser?',
+          a:'Omdat het bij verhitting uiteenvalt in waterstofchloride: een giftig, bijtend gas dat met vocht zoutzuur wordt. Het vreet je longen aan, én je lagers, je elektronica en je lenzen. Bij onvolledige verbranding komen er ook dioxinen bij. Goede afzuiging maakt dit niet acceptabel — dit is de ene regel zonder uitzondering.',
+          zeker:'solid', bron:'https://www.troteclaser.com/static/ebook/trotec-ebook-handbook-for-engravers.pdf' },
+        { v:'Klopt het dat er "chloorgas" vrijkomt?',
+          a:'Niet precies, en het maakt uit. Je leest overal chloorgas, maar wat er gemeten is bij CO₂-laseren van PVC is vooral waterstofchloride — plus benzeen, dat kankerverwekkend is en in de verhalen op internet meestal ontbreekt. De conclusie verandert er niet door: er niet in. Maar weet wát je dan inademt.',
+          zeker:'solid', bron:'https://www.sciencedirect.com/science/article/abs/pii/003039929593956R' },
+        { v:'Hoe herken ik PVC als er geen etiket op zit?',
+          a:'Vaak niet — en dat is precies het probleem. Vinylfolie, kunstleer, kabelmantel, PVC-schuim en plakvinyl tellen allemaal mee. Ruikt het scherp en zuur, of zie je roest of groen uitgeslagen koper in de machine: meteen stoppen. Vraag bij elk technisch kunststof om de exacte handelsnaam. "Plastic plaat" is geen identificatie.',
+          zeker:'solid', bron:'https://www.troteclaser.com/static/ebook/trotec-ebook-handbook-for-engravers.pdf' },
+        { v:'Wat mag er nog meer niet in?',
+          a:'Teflon en andere fluorkunststoffen (kunnen waterstoffluoride geven), FR-4 en epoxy- of fenolplaat, brandvertragende of onbekende platen, en onbekend schuim. Nylon en urethaan kunnen cyanideverbindingen geven, polystyreen geeft styreen. ABS is niet overal verboden maar rookt sterk — alleen als je machine- én materiaalfabrikant het allebei expliciet toestaan.',
+          zeker:'solid', bron:'https://www.osha.gov/otm/section-2-health-hazards/chapter-1' },
+        { v:'En geïmpregneerd of geverfd hout?',
+          a:'Niet doen. Drukbehandeld, geïmpregneerd, brandvertragend, geverfd of onbekend verlijmd hout hoort er niet in — je weet niet wat de behandeling is en dus niet wat je verbrandt. Gewoon droog, harsarm massief hout of expliciet laser-grade multiplex.',
+          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' }
+      ]},
+      { titel: 'Rook, afzuiging en brand', kaarten: [
+        { v:'Mag een snijklus even alleen draaien?',
+          a:'Nee. Geen enkele. Papier, karton, schuim, hout, MDF, textiel en acrylaat kunnen binnen seconden vlam vatten, en ook de resten onder het rooster kunnen gaan branden. Blijf op armlengte of in zicht van de stopknop. Een camera in een andere kamer is geen toezicht. Trotec schrijft een CO₂-blusser binnen handbereik voor.',
+          zeker:'solid', bron:'https://www.troteclaser.com/static/pdf/sp500/8091_OM_SP500S_en-us_1.0.pdf' },
+        { v:'Hoeveel afzuiging heb je echt nodig?',
+          a:'Ga uit van het werkpunt in de handleiding van je machine, niet van wat een ventilator in vrije lucht haalt. Epilog noemt voor desktopmachines zo\'n 350–400 CFM, ongeveer 595–680 m³/h. Lange slangen, bochten en filters halen dat flink omlaag. Kort leidingwerk, brandwerend kanaal, en liever naar buiten dan recirculeren.',
+          zeker:'solid', bron:'https://support.epiloglaser.com/laser-machine/mini-helix/getting-started/setting-up-the-exhaust_mini-helix/' },
+        { v:'Als het niet meer ruikt, is het dan schoon?',
+          a:'Nee, en dit is de gevaarlijkste denkfout van het hele onderwerp. Geur zegt niets over wat er nog hangt. NIOSH mat bij CO₂-laseren onder meer benzeen, acrylonitril, styreen en deeltjes vanaf 0,3 µm, ruim boven de achtergrond. Laat de afzuiging na afloop nog even doorlopen voor je het deksel opent.',
+          zeker:'solid', bron:'https://stacks.cdc.gov/view/cdc/189415/cdc_189415_DS1.pdf' },
+        { v:'Helpt een mondkapje tegen de rook?',
+          a:'Niet als vervanging voor afzuiging. Bij een normaal gesloten machine hoort de techniek het werk te doen: eerst de afzuiging op orde, dan pas de rest. Zie je rook lekken, condens op het venster, of ruik je iets buiten de kast — stoppen en dát oplossen.',
+          zeker:'common', bron:'https://stacks.cdc.gov/view/cdc/189415/cdc_189415_DS1.pdf' }
+      ]},
+      { titel: 'Ogen en de laserklasse', kaarten: [
+        { v:'Heb ik een laserbril nodig?',
+          a:'Bij een dichte, gecertificeerde klasse-1-kast niet — die kast ís de beveiliging, ook al zit er een klasse-4-bron in. Maar een open diodeframe, een geopende servicestand of een verwijderde afscherming is wél klasse 4. Dan moet een bril aantoonbaar bij die exacte golflengte én sterkte horen. Een oranje bril uit een doos bewijst niets.',
+          zeker:'solid', bron:'https://www.gov.uk/government/publications/laser-radiation-safety-advice/laser-radiation-safety-advice' },
+        { v:'Waarom mag je een deurschakelaar nooit overbruggen?',
+          a:'Omdat je daarmee een beheerst klasse-1-apparaat verandert in een open hoogvermogenlaser — zonder afgeschermde bundelbaan en zonder waarschuwing. Bij fiber (1064 nm) is de bundel bovendien onzichtbaar, ook zijn weerkaatsing op blank metaal. En CO₂-voedingen kunnen tienduizenden volts voeren.',
+          zeker:'solid', bron:'https://www.troteclaser.com/static/pdf/speedmarker-700/8041-operating-manual-speedmarker-700_fiber-v3-en-us.pdf' }
+      ]},
+      { titel: 'Wat er wél goed in gaat', kaarten: [
+        { v:'Wat snijdt een CO₂-laser goed?',
+          a:'Hout, MDF, laser-multiplex, papier, karton, kurk, textiel, geschikt leer en acrylaat (PMMA). Als vuistregel voor acrylaat: ongeveer 10 watt per millimeter dikte. Dat is het klassieke werkpaard voor precies het soort platwerk dat jij in Fusion tekent.',
+          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
+        { v:'En zo\'n blauwe diodelaser van een paar honderd euro?',
+          a:'Die snijdt vooral hout, papier en donker, ondoorzichtig acrylaat. Doorzichtig acrylaat laat het blauwe licht gewoon door en snijdt dus niet. Voor metaal heb je een fiberlaser nodig, en die hobbymachines graveren vooral — het zijn geen plaatsnijmachines.',
+          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
+        { v:'Waarom mislukt goedkoop bouwmultiplex zo vaak?',
+          a:'Omdat er luchtgaten en harde lijmlagen in zitten die je niet ziet. De snede loopt prima tot hij bij zo\'n laag komt, blijft daar hangen, en verkoolt de rest terwijl je hem opnieuw laat gaan. Laser-grade multiplex is gelijkmatig verlijmd — dat is waar je voor betaalt.',
+          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
+        { v:'Hoe snel gaat 3 mm multiplex ongeveer?',
+          a:'Als startpunt, van xTool: rond 3 mm/s bij 10 watt, 6 mm/s bij 20 watt, en 12 à 13 mm/s bij 40 watt — telkens vol vermogen, één doorgang. Gebruik dat om te beginnen, niet als eindwaarde. Jouw plaat, jouw machine en jouw lens beslissen.',
+          zeker:'common', bron:'https://www.xtool.com/' }
+      ]}
+    ]
   },
 
   frezen: {
