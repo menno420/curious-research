@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python in Fusion 360 — laat het tekenwerk voor je doen</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --line:#d1d5db; --accent:#7c3aed; --accent-soft:#ede9fe;
+    --ok:#16a34a; --ok-soft:#dcfce7; --warm:#e0912f; --warm-soft:#fdf0dc;
+    --staal:#94a3b8; --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --line:#374151; --accent:#a78bfa; --accent-soft:#2e1065;
+      --ok:#4ade80; --ok-soft:#14532d; --warm:#eab308; --warm-soft:#422006;
+      --staal:#64748b; --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px 16px 48px; background:var(--bg); color:var(--ink);
+         font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+         display:flex; flex-direction:column; align-items:center; }
+  h1 { font-size:1.3rem; margin:.2em 0 .3em; text-align:center; max-width:24em; }
+  .sub { color:var(--muted); margin:0 0 20px; text-align:center; max-width:38em; }
+  .stage { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+           padding:16px; width:100%; max-width:820px; }
+  svg { width:100%; height:auto; display:block; }
+
+  .lbl  { font:600 13px system-ui; fill:var(--ink); }
+  .klein{ font:11px system-ui; fill:var(--muted); }
+  .mono { font:12px ui-monospace, Consolas, monospace; fill:var(--accent); }
+  .doos { fill:var(--card); stroke:var(--line); stroke-width:2; }
+  .plaat{ fill:var(--staal); stroke:var(--ink); stroke-width:1.5; }
+  .gat  { fill:var(--bg); stroke:var(--ink); stroke-width:1.2; }
+  .pijl { stroke:var(--accent); stroke-width:2.5; fill:none; marker-end:url(#p); }
+
+  .fase { opacity:0; transition:opacity .4s ease; }
+  .fase.aan { opacity:1; }
+
+  .caption { min-height:6.4em; margin:14px auto 0; max-width:640px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption .stap { display:block; font:700 12px system-ui; letter-spacing:.08em;
+                   text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .controls { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+  button { font:600 14px system-ui; padding:9px 16px; border-radius:9px; cursor:pointer;
+           border:2px solid var(--accent); background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--accent); }
+  button:disabled { opacity:.4; cursor:default; }
+  .bolletjes { display:flex; gap:6px; justify-content:center; margin-top:12px; }
+  .bol { width:9px; height:9px; border-radius:50%; background:var(--line); }
+  .bol.aan { background:var(--accent); }
+
+  .uitleg { max-width:680px; margin:24px auto 0; }
+  .kaart { background:var(--card); border-radius:12px; box-shadow:var(--shadow);
+           padding:16px 18px; margin-bottom:12px; border-left:5px solid var(--accent); }
+  .kaart h2 { font-size:1rem; margin:0 0 6px; }
+  .kaart p { margin:0 0 8px; }
+  .kaart p:last-child { margin-bottom:0; }
+  code { font:.88em ui-monospace, Consolas, monospace; background:var(--accent-soft);
+         color:var(--accent); padding:2px 6px; border-radius:5px; }
+  .waarschuwing { border-left-color:var(--warm); background:var(--warm-soft); }
+  @media (prefers-reduced-motion: reduce) { .fase { transition:none; } }
+</style>
+</head>
+<body>
+
+<h1>Python in Fusion 360 — laat het tekenwerk voor je doen</h1>
+<p class="sub">Je hoeft geen Python te kunnen schrijven. Je hoeft alleen te weten waar je het
+plakt. Druk op <b>Speel af</b>.</p>
+
+<div class="stage">
+<svg viewBox="0 0 820 320" role="img"
+     aria-label="Van een wens in gewone taal, via Python, naar geometrie in Fusion 360 — en dan een getal veranderen voor een nieuw model.">
+  <defs>
+    <marker id="p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+
+  <!-- 1: de wens -->
+  <g id="f1" class="fase">
+    <rect class="doos" x="18" y="30" width="230" height="86" rx="10"/>
+    <text class="klein" x="32" y="52">jij, in gewone taal</text>
+    <text class="lbl" x="32" y="74" style="font-size:12px">"een strookje met gaten,</text>
+    <text class="lbl" x="32" y="92" style="font-size:12px">elk 0,05 mm ruimer"</text>
+  </g>
+
+  <!-- 2: claude schrijft python -->
+  <g id="f2" class="fase">
+    <path class="pijl" d="M254 73 H296"/>
+    <rect class="doos" x="302" y="18" width="216" height="110" rx="10"/>
+    <text class="klein" x="316" y="38">Claude schrijft Python</text>
+    <text class="mono" x="316" y="60">PEN_MM = 5.0</text>
+    <text class="mono" x="316" y="78">SPELINGEN = [.10,.15,</text>
+    <text class="mono" x="316" y="96">   .20,.25,.30,.40]</text>
+    <text class="mono" x="316" y="118">for s in SPELINGEN:</text>
+  </g>
+
+  <!-- 3: plakken + run -->
+  <g id="f3" class="fase">
+    <path class="pijl" d="M524 73 H566"/>
+    <rect class="doos" x="572" y="30" width="230" height="86" rx="10"/>
+    <text class="klein" x="586" y="52">Fusion 360</text>
+    <text class="lbl" x="586" y="76" style="font-size:12px">plakken → <tspan
+      fill="var(--ok)">Run</tspan></text>
+    <text class="klein" x="586" y="96">Shift + S</text>
+  </g>
+
+  <!-- 4: geometrie -->
+  <g id="f4" class="fase">
+    <path class="pijl" d="M687 122 V162"/>
+    <text class="klein" x="118" y="180">en dit rolt eruit:</text>
+    <g id="plaatje"></g>
+  </g>
+
+  <!-- 5: een getal veranderen -->
+  <g id="f5" class="fase">
+    <rect class="doos" x="18" y="238" width="286" height="62" rx="10"
+          style="stroke:var(--accent); stroke-width:2.5"/>
+    <text class="klein" x="32" y="260">verander één getal…</text>
+    <text class="mono" x="32" y="284">SPELINGEN = [.05 … .40]  → 8×</text>
+  </g>
+</svg>
+
+<div class="caption" id="caption"></div>
+
+<div class="controls">
+  <button id="play">▶ Speel af</button>
+  <button id="opnieuw" class="ghost">↻ Opnieuw</button>
+</div>
+<div class="bolletjes" id="bolletjes"></div>
+</div>
+
+<div class="uitleg">
+  <div class="kaart">
+    <h2>Waarom dit meer is dan een trucje</h2>
+    <p>Zes gaten met steeds 0,05 mm verschil teken je met de muis in een kwartier. En als je
+    daarna bedenkt dat je ze anders wilt, mag je grotendeels opnieuw.</p>
+    <p>Met een script verander je één getal en druk je op <b>Run</b>. Dat is het hele idee:
+    niet moeilijker doen, maar het saaie werk wegnemen. Fusion blijft gewoon Fusion.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Werkt net zo goed voor je laser en je frees</h2>
+    <p>Dit voorbeeld maakt iets voor de printer, maar een script trekt net zo makkelijk een
+    2D-contour. Denk aan een kistje met vingerlassen waarvan alle lipjes automatisch kloppen,
+    of een plaat vol gaten op een raster. Precies het werk dat met de muis vervelend is en
+    waar één verkeerde maat je hele plaat kost.</p>
+  </div>
+
+  <div class="kaart waarschuwing">
+    <h2>⚠️ De valkuil waar iedereen in trapt</h2>
+    <p><b>Fusion rekent van binnen in centimeters</b>, niet in millimeters — ook al staat je
+    scherm op mm. Zeg je in een script <code>10</code>, dan denkt Fusion <b>10 cm</b>.</p>
+    <p>Daarom staat er overal <code>* MM</code> achter een maat. Vergeet je dat, dan komt er
+    iets uit dat tien keer te groot is. Je doet dan niets fout — dat is deze regel.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const STAPPEN = [
+    { fasen:['f1'], stap:'stap 1 van 5',
+      tekst:'Je zegt in <b>gewone taal</b> wat je wilt. Geen codetaal, geen commando\'s — ' +
+            'gewoon zoals je het aan een mens zou uitleggen.' },
+    { fasen:['f1','f2'], stap:'stap 2 van 5',
+      tekst:'<b>Claude schrijft de Python.</b> Dit is het stuk waarvan je misschien dacht dat ' +
+            'je het zelf moest kunnen. Dat hoeft niet.' },
+    { fasen:['f1','f2','f3'], stap:'stap 3 van 5',
+      tekst:'Jij plakt het in Fusion en drukt op <b>Run</b>. <b>Shift + S</b> opent het ' +
+            'scriptenvenster. Meer handelingen zijn het niet.' },
+    { fasen:['f1','f2','f3','f4'], stap:'stap 4 van 5', gaten:6,
+      tekst:'En daar staat je model. Zes gaten, elk precies 0,05 mm ruimer dan de vorige — ' +
+            'netjes verdeeld, zonder dat je één lijn hebt getekend.' },
+    { fasen:['f1','f2','f3','f4','f5'], stap:'stap 5 van 5', gaten:8,
+      tekst:'<b>Hier zit de winst.</b> Verander één getal, druk opnieuw op Run, en het ' +
+            'strookje deelt zichzelf opnieuw in. Acht gaten nu. Met de muis was dit ' +
+            'opnieuw beginnen geweest.' }
+  ];
+
+  const caption = document.getElementById('caption');
+  const bolletjes = document.getElementById('bolletjes');
+  const playBtn = document.getElementById('play');
+  const opnieuwBtn = document.getElementById('opnieuw');
+  const plaatje = document.getElementById('plaatje');
+
+  STAPPEN.forEach(() => {
+    const b = document.createElement('div');
+    b.className = 'bol';
+    bolletjes.appendChild(b);
+  });
+  const bollen = [...bolletjes.children];
+
+  function tekenPlaat(aantal) {
+    while (plaatje.firstChild) plaatje.removeChild(plaatje.firstChild);
+    if (!aantal) return;
+    const x0 = 118, y0 = 194, w = 560, h = 92;
+    const plaat = document.createElementNS(NS, 'rect');
+    plaat.setAttribute('class', 'plaat');
+    plaat.setAttribute('x', x0); plaat.setAttribute('y', y0);
+    plaat.setAttribute('width', w); plaat.setAttribute('height', h);
+    plaat.setAttribute('rx', 5);
+    plaatje.appendChild(plaat);
+
+    const vak = w / aantal;
+    for (let i = 0; i < aantal; i++) {
+      const r = 12 + i * 1.6;                 // elk gat iets ruimer
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('class', 'gat');
+      c.setAttribute('cx', x0 + (i + 0.5) * vak);
+      c.setAttribute('cy', y0 + h / 2);
+      c.setAttribute('r', r);
+      plaatje.appendChild(c);
+    }
+  }
+
+  let i = -1, timer = null;
+
+  function toon(n) {
+    i = n;
+    const s = STAPPEN[n];
+    ['f1','f2','f3','f4','f5'].forEach(id => {
+      document.getElementById(id).classList.toggle('aan', s.fasen.includes(id));
+    });
+    if (s.gaten) tekenPlaat(s.gaten);
+    caption.innerHTML = '<span class="stap">' + s.stap + '</span>' + s.tekst;
+    bollen.forEach((b, k) => b.classList.toggle('aan', k <= n));
+  }
+
+  function speel() {
+    stop();
+    playBtn.disabled = true;
+    playBtn.textContent = 'bezig…';
+    let n = 0;
+    toon(0);
+    timer = setInterval(() => {
+      n++;
+      if (n >= STAPPEN.length) {
+        stop();
+        playBtn.disabled = false;
+        playBtn.textContent = '▶ Nog een keer';
+        return;
+      }
+      toon(n);
+    }, 2600);
+  }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+  function reset() {
+    stop();
+    ['f1','f2','f3','f4','f5'].forEach(id => document.getElementById(id).classList.remove('aan'));
+    tekenPlaat(0);
+    bollen.forEach(b => b.classList.remove('aan'));
+    caption.innerHTML = '<span class="stap">klaar om te beginnen</span>' +
+      'Vijf stappen, van een zin in gewone taal naar geometrie in je scherm.';
+    playBtn.disabled = false;
+    playBtn.textContent = '▶ Speel af';
+    i = -1;
+  }
+
+  playBtn.addEventListener('click', speel);
+  opnieuwBtn.addEventListener('click', reset);
+  reset();
+})();
+</script>
+</body>
+</html>
