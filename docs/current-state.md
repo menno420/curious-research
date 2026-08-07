@@ -62,7 +62,10 @@ multicolor-keychain-factory, sound-reactive-desk-lamp); two are one-liners still
 the ritual (arm-print-removal, explain-my-slicer).
 
 **`arm/`** — `README.md` plus `calibration.example.json`, a 6-servo `min`/`max`/`center`
-template with every value still `PLACEHOLDER`. The measured file belongs **in** the repo
+template with every value still `PLACEHOLDER`. The hardware is now identified (2026-08-07):
+a 6-DOF aluminium kit on **6 × MG996R** analog servos, no controller or PSU included. What
+that implies for power sizing, the absence of position feedback, and the already-occupied
+gripper channel is written up in `arm/README.md` — read it before designing any arm work. The measured file belongs **in** the repo
 once it exists (servo angles are numbers, not personal data) and it is the clamp target
 every motion routine points at. It does not exist yet.
 

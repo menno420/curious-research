@@ -30,11 +30,25 @@
 //      far more current than the Arduino's onboard regulator can give. Powering
 //      servos from the Arduino 5 V pin will brown out the board (it resets or
 //      acts drunk) or fry it.
+//
+//      DO THE ARITHMETIC FOR YOUR OWN SERVOS. On an MG996R-class arm (the
+//      common 6-DOF aluminium kit) each servo is quoted at ~1.4 A official and
+//      up to ~2.5 A stalled at 6 V -- so six of them stalled together is on the
+//      order of 15 A, not the 2 A a phone charger gives you. In practice they
+//      never all stall at once, but the supply has to survive the moment two or
+//      three do. A 6 V supply in the 10 A class is the usual answer for this
+//      arm. A 5 V 2 A USB brick is NOT: it will sag, the servos will twitch,
+//      and you will chase a "software bug" that is really a power problem.
 //    * SHARED GROUND: the servo supply's ground (-) MUST connect to the
 //      Arduino's GND. Without a shared ground the signal wires have no common
 //      reference and the servos twitch randomly.
-//    * FUSE the servo supply's positive lead (a 3-5 A fuse is typical for six
-//      9g-class servos -- size it to your servos' stall spec).
+//    * FUSE the servo supply's positive lead. Size the fuse to YOUR servos and
+//      YOUR supply -- above the current the arm actually draws while moving,
+//      below what the supply can deliver, so a jam blows the fuse instead of
+//      cooking a servo. For six MG996R on a 10 A supply that lands around 10 A.
+//      A fuse sized for 9 g micro servos (3-5 A) will nuisance-blow on this
+//      arm; a fuse far above the supply's rating protects nothing. CHECK THIS
+//      YOURSELF before first power-up -- see CLAUDE.md section 2.
 //    * A REACHABLE POWER SWITCH on the servo supply, within arm's reach, so you
 //      can cut motor power instantly WITHOUT unplugging the USB.
 //    * Servo signal wires go to the Arduino PWM pins below. Servo + (red) goes
