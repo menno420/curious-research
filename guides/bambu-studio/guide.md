@@ -1,147 +1,139 @@
-# Je Bambu-printers doen het meeste al zelf
+# Bambu Studio — van foutbeeld naar één gerichte test
 
-**Wat je hier leert:** wat je **A1 mini** en je **A1 met AMS Lite** automatisch afstellen vóór
-elke print, en wat er daardoor nog wél voor jou overblijft.
+## Welk probleem lost dit op?
 
-> **Bekijk het eerst:** open [`index.html`](./index.html) — daar zie je in een halve minuut
-> welke knoppen jouw printer zelf omdraait, en welke van jou blijven.
+Veel online 3D-printeradvies begint bij handmatig bednivelleren, Z-offset en pressure advance.
+Dat is niet de goede start voor de A1-serie. Deze workflow scheidt wat de printer meet van de
+keuzes die jij nog steeds zelf maakt.
 
----
+Open [`index.html`](./index.html) voor de korte animatie van meten → kiezen → controleren.
 
-## Waarom deze pagina bestaat
+## Waarom dit voor jouw werkplaats telt
 
-De meeste uitleg over 3D-printen op internet — en ook een deel van de gidsen hier — is
-geschreven voor printers die **niets** zelf afstellen. Bij zo'n printer moet je met de hand
-het bed waterpas zetten, de hoogte van de nozzle instellen, en dan testprints doen om
-trillingen en materiaalstroom goed te krijgen.
+Het bevestigde printerpark staat in
+[`docs/workshop-profile.md`](../../docs/workshop-profile.md). Gebruik in Bambu Studio het echte
+printer-, plaat-, nozzle- en filamentprofiel. Verander niet vijf instellingen tegelijk: laat
+eerst de standaard kalibraties draaien en beoordeel daarna één zichtbaar probleem.
 
-**Jouw printers doen dat allemaal zelf. Vóór elke print. Elke keer.**
+De A1-serie gebruikt geen LiDAR-scan zoals sommige andere Bambu-modellen. Advies dat een
+LiDAR-kalibratielijn of handmatige Z-offset veronderstelt, hoort dus niet bij deze workflow.
 
-Dat is geen detail. Het betekent dat je een hoop testprints en gepriegel kunt overslaan waar
-anderen avonden aan kwijt zijn. Zonde om dat werk te doen als je machine het al voor je heeft
-gedaan.
+## Benodigdheden
 
----
+- Bambu Studio op Windows;
+- het juiste A1- of A1-mini-printerprofiel;
+- het juiste build-plate- en nozzleprofiel;
+- een bekend filamentprofiel, of het etiket en datablad van onbekend filament;
+- een klein representatief testonderdeel, geen productieprint van zes uur.
 
-## Wat de A1 en A1 mini zelf doen
+## Stappenplan
 
-Vóór elke print draait de printer een rijtje metingen af:
+### 1. Leg het foutbeeld vast vóór je iets wijzigt
 
-| Wat | Wat het betekent in gewone taal |
+Maak één overzichtsfoto en één close-up. Noteer:
+
+- printer: A1 of A1 mini;
+- plaatsoort en nozzlemaat;
+- materiaal, merk en kleur;
+- waar het defect zit: eerste laag, naad, brug, overhang, maatvoering of kleurwissel;
+- of hetzelfde bestand eerder wel goed ging.
+
+### 2. Controleer de vier profielen
+
+Kijk in Bambu Studio of geselecteerd zijn:
+
+1. het juiste **Printer**-profiel;
+2. de gemonteerde **Nozzle diameter**;
+3. de echte **Build Plate**;
+4. het passende **Filament**-profiel per AMS Lite-positie.
+
+**Stop hier** als een profiel niet overeenkomt met de machine. Een instellingentest op het
+verkeerde profiel leert niets.
+
+### 3. Laat de normale voorprintmetingen aan
+
+Laat bij een normale diagnose de automatische bedmeting en flow-dynamics-kalibratie
+ingeschakeld. Maak de plaat schoon volgens de aanwijzingen voor die plaat en verwijder
+filamentresten aan de nozzle vóór de meting.
+
+Gebruik geen papiertest of algemene handleiding om handmatig een Z-offset te zetten. Als de
+eerste laag slecht is, controleer eerst plaatkeuze, reinheid, nozzle, hotendmontage en of de
+automatische meting werkelijk is uitgevoerd.
+
+### 4. Classificeer het probleem vóór je aan een knop draait
+
+| Wat je ziet | Eerste test |
 |---|---|
-| **Bed levelling** | Meet of het bed scheef staat en rekent dat weg. |
-| **Z-offset** | Zoekt zelf de goede hoogte van de nozzle boven het bed. |
-| **Trillingsmeting** | Meet hoe de printer resoneert en past het printen daarop aan. |
-| **Flow dynamics** | Meet hoe het plastic uit de nozzle komt en corrigeert de druk. *(Bij andere printers heet dit "pressure advance", en moet je dat met testprints uitzoeken.)* |
+| Loslatende of onderbroken eerste laag | Reinig plaat en nozzle; print hetzelfde kleine bestand opnieuw met kalibratie. |
+| Draadjes tussen losse delen | Droogte en passend filamentprofiel controleren; daarna pas temperatuur/retractie testen. |
+| Doorzakkende brug of overhang | Oriëntatie en onderdeelkoeling vergelijken op een klein teststuk. |
+| Scheur bij gat of belasting | Oriëntatie en extra wanden testen vóór meer vulling. |
+| Ondermaatse passing | Een passingcoupon meten; niet het hele ontwerp op gevoel verschuiven. |
+| Veel purge bij AMS Lite | Aantal kleurwissels in Preview bekijken en het kleurontwerp per hoogte groeperen. |
 
-Die laatste twee zijn het opvallendst. Op een gewone printer zijn dat elk een avondje
-uitzoeken met testprintjes en een schuifmaat. Bij jou gebeurt het terwijl je koffie zet.
+### 5. Maak een A/B-test
 
-Wat je printer **niet** heeft: de lasermeting (LiDAR) die de duurdere Bambu's gebruiken om de
-eerste laag te scannen. De A1 doet het met een krachtsensor. Dat werkt prima — het is alleen
-handig om te weten dat "mijn Bambu scant de eerste laag" niet over jouw model gaat.
+Dupliceer het kleine testonderdeel. Houd model, materiaal, plaat en alle overige instellingen
+gelijk. Verander in versie B maar **één** hypothese, bijvoorbeeld:
 
----
+- één extra wand;
+- een andere oriëntatie;
+- één temperatuurstap binnen het filamentbereik;
+- een aangepaste supportafstand;
+- minder kleurwissels door een ander ontwerp.
 
-## Welke gidsen hier gaan dus wél en niet over jou
+Geef beide objecten in Bambu Studio een duidelijke naam, bijvoorbeeld `A_standaard` en
+`B_5-wanden`.
 
-Eerlijk zijn scheelt je tijd:
+### 6. Controleer Preview vóór Print
 
-| Gids | Voor jou? |
-|---|---|
-| [`first-layer`](../first-layer/) | **Grotendeels niet meer.** Hij legt uit hoe je met de hand de nozzlehoogte instelt. Dat doet jouw printer zelf. **Wél nuttig:** het stuk over hoe een goede eerste laag *eruitziet* — dat blijft waar. |
-| [`temperature-tower`](../temperature-tower/) | **Soms.** Bambu levert per filament een afgestemd profiel. Print je goedkoop of onbekend filament zonder profiel, dan is een temperatuurtoren nog steeds de snelste manier om het uit te zoeken. |
-| [`retraction-vs-stringing`](../retraction-vs-stringing/) | **Soms.** De profielen zijn meestal goed. Krijg je tóch draadjes met vreemd filament, dan is dit je uitleg. |
-| [`part-cooling`](../part-cooling/) | **Ja, als achtergrond.** De ventilator staat per filament goed ingesteld, maar begrijpen *waarom* PLA en PETG het tegenovergestelde willen helpt je als iets doorzakt. |
-| [`infill`](../infill/) | **Volledig ja.** Dit is geen afstelling maar een keuze van jou. Geen printer beslist dit voor je. |
-| [`how-print-clearance-works`](../how-print-clearance-works/) | **Volledig ja.** Hoeveel ruimte twee onderdelen nodig hebben om te passen — dat blijft jouw ontwerpkeuze. |
-| [`lithophane-night-light`](../lithophane-night-light/) | **Volledig ja.** Een project, geen afstelling. |
+Klik **Slice Plate** en open **Preview**. Controleer laag voor laag:
 
-**Kort:** de gidsen over *afstellen* zijn deels ingehaald door je machine. De gidsen over
-*ontwerpen en kiezen* gelden onverkort — die gaan over beslissingen, en die neemt je printer
-niet voor je.
+- begint het model op de plaat;
+- lopen wanden en topvlakken door;
+- staat support waar je hem verwacht;
+- hoeveel materiaal- en kleurwissels zijn er;
+- kloppen tijd- en filamentverschil tussen A en B.
 
----
+Start daarna zelf de print en bekijk de eerste lagen.
 
-## Wat er dan nog wél van jou is
+## Zo controleer je het resultaat
 
-### 1 · De eerste laag bijstellen tijdens het printen
+Noteer per A/B-paar:
 
-Vindt je printer de hoogte net niet mooi — te plat, of net te los — dan kun je hem tijdens het
-printen bijsturen. Op het schermpje van de printer zit een afstelling voor de Z-hoogte terwijl
-de print loopt; in Bambu Studio heet dat de eerste-laag-bijstelling.
+- foto van dezelfde plek;
+- maat met schuifmaat als passing of vervorming telt;
+- printtijd en materiaal uit Preview;
+- welk onderdeel brak, boog, paste of losliet.
 
-Kleine stapjes. Een paar honderdste millimeter is al veel.
+De test is geslaagd als één versie meetbaar beter is en je kunt zeggen **welke ene wijziging**
+het verschil waarschijnlijk veroorzaakte. Geen verschil is ook informatie: zet de instelling
+terug en test de volgende hypothese.
 
-### 2 · Temperatuur bij vreemd filament
+## Veelgemaakte fouten
 
-Heeft je filament een profiel in Bambu Studio — gebruik dat. Heeft het er geen, of ziet het
-resultaat er niet uit, dan is de [temperatuurtoren](../temperature-tower/) nog steeds het
-beste gereedschap dat er is.
+- Handmatig Z-offsetadvies van een ander printertype volgen.
+- Aannemen dat de A1 LiDAR gebruikt.
+- Printer-, plaat-, nozzle- of filamentprofiel niet controleren.
+- Vijf slicerwaarden tegelijk veranderen.
+- Meer infill kiezen terwijl laagoriëntatie of wanddikte de zwakke plek bepaalt.
+- Onbekend/nat filament proberen te repareren met alleen retractie.
+- Een AMS Lite-afvalprobleem pas na het slicen bekijken in plaats van al bij het ontwerp.
 
-### 3 · Alles wat met ontwerpen te maken heeft
+## Wanneer vraag je Claude om hulp?
 
-Wanddikte, vulling, speling tussen onderdelen, waar je steun neerzet, hoe je een onderdeel op
-het bed legt. Hier beslist je printer niets. Dit is waar je eigen inzicht het verschil maakt —
-en waar deze map het meest te bieden heeft.
+- *"Lees het werkplaatsprofiel. Welke drie oorzaken passen bij dit specifieke foutbeeld?"*
+- *"Maak een A/B-test in Bambu Studio met maar één veranderde instelling."*
+- *"Welke laagweergave in Preview bewijst dat mijn support/wand/kleurwissel klopt?"*
+- *"Vergelijk deze twee foto's en zeg welke meting jouw diagnose kan weerleggen."*
+- *"Welke Bambu-handleiding ondersteunt deze stap en wat is alleen praktijkadvies?"*
 
----
+## Bronnen en bewijsniveau
 
-## Als er iets misgaat, kijk éérst hier
-
-Bij een zelfafstellende printer is de oorzaak van een mislukte eerste laag zelden een
-instelling. Meestal is het iets mechanisch of iets viezigs:
-
-1. **Is het bed schoon?** Vetvlekken van vingers verpesten zowel de hechting *als* de meting.
-   Even met wat isopropylalcohol erover.
-2. **Is de nozzle schoon?** Zit er een klodder oud plastic aan, dan drukt die tegen het bed
-   tijdens het meten en klopt de hele meting niet meer.
-3. **Zitten de schroefjes van de hotend vast?** Bij de A1-serie is dit een bekende. Zitten ze
-   los, dan meet de krachtsensor onzin, en dan gaat je eerste laag zwerven zonder dat je iets
-   fout doet.
-
-Pas als die drie in orde zijn is het zinvol om aan instellingen te denken.
-
-**En anders:** schermfoto of gewone foto van de mislukte print, in Claude, met de vraag
-*"wat gaat hier mis?"*. Dat werkt bij dit soort dingen opvallend goed, omdat het meestal
-zichtbaar is.
-
----
-
-## De AMS Lite — over dat afvalhoopje
-
-Je A1 met AMS Lite kan meerdere kleuren. Wat niemand van tevoren vertelt: bij **elke**
-kleurwissel moet de printer eerst het oude plastic uit de nozzle duwen voordat de nieuwe kleur
-zuiver is. Dat wordt een klein torentje of hoopje naast je print.
-
-Dat is **geen storing**. Dat is natuurkunde: er zit maar één nozzle in, en die moet leeg
-voordat de volgende kleur eruit komt.
-
-Waar het op neerkomt:
-
-- **Veel kleurwissels = veel afval.** Een model dat per laag vier keer wisselt kost meer
-  weggegooid filament dan het model zelf weegt. Dat is niet overdreven.
-- **Minder wissels = minder afval.** Een ontwerp waarbij elke kleur zijn eigen stuk hoogte
-  heeft, wisselt maar een paar keer. Hetzelfde model, een fractie van het afval.
-
-Dat is iets om al bij het *ontwerpen* in je achterhoofd te houden, niet pas bij het slicen.
-
----
-
-## Iets om over na te denken
-
-Je printers stellen zichzelf af. Je arm doet dat niet — daar moet je elk gewricht met de hand
-opmeten (zie [`arm-envelope-explained`](../arm-envelope-explained/)).
-
-> **Waarom eigenlijk dat verschil?**
-
-Het is de moeite van het doordenken waard. Een printer weet waar zijn bed is doordat hij
-ertegenaan kan duwen en de tegendruk kan meten — hij heeft een **zintuig**. De servo's in je
-arm hebben dat niet: die kunnen wél een hoek aannemen, maar niet terugvertellen waar ze staan
-of waar ze ergens tegenaan lopen.
-
-Dat is het hele verschil tussen "stelt zichzelf af" en "moet met de hand opgemeten worden":
-niet slimmere software, maar **een sensor die er wel of niet is.**
-
-Wat zou je aan de arm moeten toevoegen om hem zichzelf te laten opmeten? Dat is een echte
-vraag, met echte antwoorden — en geen ervan is gratis.
+- Bambu Lab A1-product- en kalibratie-informatie: <https://bambulab.com/en-eu/a1> —
+  **Onderbouwd**; officiële pagina, maar bronweergave kon op 2026-08-07 niet volledig worden
+  uitgelezen in de linkcontrole.
+- Bambu Lab A1 mini-documentatie:
+  <https://wiki.bambulab.com/en/a1-mini/manual/intro-a1-mini> — **Onderbouwd**.
+- A/B-testen, foutclassificatie en één variabele tegelijk — **Praktijkadvies**; verifieer op
+  de eigen machine en leg het resultaat vast.

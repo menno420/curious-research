@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arduino zonder blokkeren — millis() in beeld</title>
+<style>
+:root{--bg:#f7f5ef;--card:#fff;--ink:#18212b;--muted:#65717d;--line:#d8dde2;--blue:#2563eb;--green:#15803d;--orange:#c2410c;--shadow:0 8px 28px #17203316}
+@media(prefers-color-scheme:dark){:root{--bg:#11161c;--card:#19212a;--ink:#eef2f7;--muted:#aab4c0;--line:#36414d;--blue:#60a5fa;--green:#4ade80;--orange:#fb923c;--shadow:0 8px 28px #0007}}
+*{box-sizing:border-box}body{margin:0;padding:28px 16px 48px;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,sans-serif}main{max-width:850px;margin:auto}h1{font-size:clamp(1.55rem,4vw,2.25rem);line-height:1.12;margin:.2em 0}.lead{color:var(--muted);max-width:65ch}.panel,.note{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-top:22px}.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.task{min-height:112px;border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:center;text-align:center;transition:.25s}.task b{font-size:1.05rem}.task small{color:var(--muted)}.task.active{border-color:var(--blue);transform:translateY(-4px);box-shadow:0 8px 20px #2563eb25}.task.blocked{border-color:var(--orange);background:#c2410c12}.task.done{border-color:var(--green);background:#15803d12}.clock{height:14px;background:var(--line);border-radius:99px;overflow:hidden}.clock span{display:block;height:100%;width:0;background:var(--blue);transition:width .55s}.caption{min-height:5.5em;margin:18px 0;color:var(--muted)}.caption b{color:var(--ink)}.controls{display:flex;gap:10px;flex-wrap:wrap}button,.button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 15px;font-weight:700;cursor:pointer;text-decoration:none}button.primary{background:var(--blue);border-color:var(--blue);color:#fff}code{background:var(--bg);padding:.12em .35em;border-radius:5px}.note h2{font-size:1.15rem;margin-top:0}.note li{margin:.45em 0}.good{color:var(--green);font-weight:750}.warn{color:var(--orange);font-weight:750}@media(max-width:650px){.loop{grid-template-columns:1fr 1fr}.task{min-height:92px}}
+</style>
+</head>
+<body><main>
+<h1>Een Arduino die meerdere dingen tegelijk blijft doen</h1>
+<p class="lead">Niet sneller programmeren, maar korter wachten. Deze animatie laat zien waarom <code>delay()</code> de hele lus stilzet en hoe een tijdcontrole met <code>millis()</code> ruimte laat voor knoppen, sensoren en beweging.</p>
+
+<section class="panel" aria-label="Animatie van de Arduino hoofdlus">
+  <div class="loop">
+    <div class="task" id="led"><b>LED</b><small>omschakelen</small></div>
+    <div class="task" id="button"><b>Knop</b><small>direct lezen</small></div>
+    <div class="task" id="sensor"><b>Sensor</b><small>meten</small></div>
+    <div class="task" id="serial"><b>Serial</b><small>rapporteren</small></div>
+  </div>
+  <div class="clock"><span id="bar"></span></div>
+  <div class="caption" id="caption" aria-live="polite"></div>
+  <div class="controls">
+    <button id="prev">◀ Terug</button><button class="primary" id="next">Volgende ▶</button><button id="play">Alles afspelen</button><button id="reset">↻ Opnieuw</button>
+  </div>
+</section>
+
+<section class="note">
+  <h2>Van animatie naar je werkbank</h2>
+  <ol>
+    <li>Vervang elke lange <code>delay()</code> door een eigen <code>vorigeTijd</code> en <code>interval</code>.</li>
+    <li>Gebruik de overloopbestendige vergelijking <code>nu - vorigeTijd &gt;= interval</code>.</li>
+    <li>Laat elke taak kort werk doen en meteen terugkeren naar <code>loop()</code>.</li>
+    <li>Controleer succes door tijdens het knipperen de knop in te drukken: de reactie hoort direct te blijven.</li>
+  </ol>
+  <p><span class="good">Wel:</span> onafhankelijke timers per taak. <span class="warn">Niet:</span> één nieuwe centrale wachtroutine die alles opnieuw blokkeert.</p>
+  <a class="button" href="https://github.com/menno420/curious-research/blob/main/guides/arduino-zonder-blokkeren/guide.md">Open de volledige gids en voorbeeldsketch</a>
+</section>
+</main>
+<script>
+const steps=[
+ {kind:'idle',text:'<b>1 · De hoofdlus.</b> Arduino loopt steeds langs alle taken. Zolang iedere taak kort is, wordt niets lang genegeerd.'},
+ {kind:'delay',text:'<b>2 · Met <code>delay(1000)</code>.</b> De LED-taak houdt de processor een volle seconde vast. Knop, sensor en Serial krijgen intussen geen beurt.'},
+ {kind:'check',text:'<b>3 · Met <code>millis()</code>.</b> De LED kijkt alleen of zijn interval verstreken is. Zo nee, dan gaat de lus meteen door.'},
+ {kind:'run',text:'<b>4 · Onafhankelijke ritmes.</b> De knop wordt elke ronde gelezen, de sensor op zijn eigen interval en de LED op weer een ander interval.'},
+ {kind:'verify',text:'<b>5 · De praktijktest.</b> Bedien de knop terwijl alle andere taken lopen. Een directe reactie bewijst dat je lus responsief blijft.'}
+];
+const ids=['led','button','sensor','serial'],caption=document.getElementById('caption'),bar=document.getElementById('bar');let step=0,timer;
+function clear(){ids.forEach(id=>document.getElementById(id).className='task');bar.style.width='0'}
+function show(n){clear();step=(n+steps.length)%steps.length;const s=steps[step];caption.innerHTML=s.text;if(s.kind==='delay'){document.getElementById('led').classList.add('blocked');ids.slice(1).forEach(id=>document.getElementById(id).classList.add('blocked'));requestAnimationFrame(()=>bar.style.width='100%')}else if(s.kind==='check'){document.getElementById('led').classList.add('active');bar.style.width='28%'}else if(s.kind==='run'){ids.forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('active'),i*120));bar.style.width='65%'}else if(s.kind==='verify'){ids.forEach(id=>document.getElementById(id).classList.add('done'));bar.style.width='100%'}}
+function stop(){clearInterval(timer);timer=null}document.getElementById('next').onclick=()=>{stop();show(step+1)};document.getElementById('prev').onclick=()=>{stop();show(step-1)};document.getElementById('reset').onclick=()=>{stop();show(0)};document.getElementById('play').onclick=()=>{stop();show(0);timer=setInterval(()=>{if(step===steps.length-1)stop();else show(step+1)},2300)};show(0);
+</script></body></html>

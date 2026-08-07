@@ -10,7 +10,7 @@ drukt op Run.
 
 ---
 
-## Waarom dit de moeite waard is
+## Welk probleem lost dit op?
 
 Je kunt alles wat hieronder staat ook met de muis. Zes gaten tekenen met steeds 0,05 mm
 verschil kost een kwartier. En als je daarna denkt *"eigenlijk wil ik ze 0,1 mm uit elkaar"*,
@@ -24,6 +24,14 @@ gewoon Fusion; je krijgt er alleen een assistent bij die het herhaalwerk doet.
 En het mooie: **Claude schrijft de Python voor je.** Jij hoeft alleen te weten waar je hem
 plakt. Dat is precies wat deze pagina uitlegt.
 
+## Waarom dit voor jouw werkplaats telt
+
+Je gebruikt Fusion als ontwerpbron voor printen, laser en CNC; zie het canonieke
+[`werkplaatsprofiel`](../../docs/workshop-profile.md). Een script is vooral waardevol bij
+reeksen, testcoupons, gatenpatronen en families van maten. Het afgeleide STL-, 3MF- of
+DXF-bestand blijft uitvoer: het Fusion-model of script is de plek waar je een ontwerpwijziging
+doet.
+
 ---
 
 ## Wat je nodig hebt
@@ -33,7 +41,7 @@ plakt. Dat is precies wat deze pagina uitlegt.
 
 ---
 
-## Stap voor stap
+## Stappenplan
 
 ### 1 · Open een Design
 
@@ -55,23 +63,27 @@ Een **add-in** blijft draaien zolang Fusion open staat. Wij willen een script.)*
 
 ### 3 · Maak een nieuw script
 
-1. Klik op de **+** bovenin het venster.
-2. Kies **Create script or add-in** uit het lijstje.
-3. In het venster dat opent:
+Fusion heeft in 2026 een nieuw en een oud dialoogvenster. Gebruik de route die je ziet:
+
+1. Klik in de werkbalk op het pictogram voor een nieuw script/add-in. In het oude venster is
+   dit de **+** en daarna **Create script or add-in**; in het nieuwe venster staat **Create**
+   bij de acties voor het geselecteerde type.
+2. Kies:
    - **Type:** `Script`
    - **Language:** `Python`
    - **Name:** `teststrip` *(of wat je wilt — geen spaties)*
-4. Klik **Create**.
+3. Klik **Create**.
 
 Fusion maakt nu een mapje aan met een leeg script erin. Je ziet het in de lijst verschijnen.
 
 ### 4 · Open het in de editor
 
-Je nieuwe script staat geselecteerd in de lijst. Klik op **Edit in code editor** (het knopje
-bovenaan het lijstje, of rechtermuisknop → dezelfde optie).
+Je nieuwe script staat geselecteerd in de lijst. Klik op **Edit** of het potloodpictogram voor
+de code-editor. Het oude venster kan **Edit in code editor** tonen.
 
-**Visual Studio Code** gaat open — de code-editor die Fusion daarvoor gebruikt. Die installeert
-Fusion zelf als je hem nog niet had.
+**Visual Studio Code** gaat open — de code-editor die Fusion daarvoor gebruikt. Staat die nog
+niet op de pc, dan toont Fusion volgens Autodesk eerst een installatiedialoog. Rond die af en
+klik daarna nogmaals op **Edit**.
 
 > Schrik niet van hoe het eruitziet. Je hoeft er niets in te doen behalve plakken en opslaan.
 
@@ -94,6 +106,17 @@ Anders: **Shift + S** → je script aanklikken → **Run**.
 
 **Klaar als:** er verschijnt een strookje met zes gaten in je scherm, en een venstertje dat
 vertelt welk gat welke speling heeft.
+
+## Zo controleer je het resultaat
+
+1. Meet in Fusion met **Inspect → Measure** de buitenmaat van het strookje.
+2. Controleer dat de breedte `78 mm` is en niet `78 cm`.
+3. Tel zes gaten en vergelijk de meldtekst met `SPELINGEN_MM` bovenin het script.
+4. Verander één waarde, sla op en draai opnieuw. Alleen de verwachte maat of het verwachte
+   aantal hoort te veranderen.
+
+De workflow is geslaagd als je de wijziging kunt voorspellen vóór je op **Run** klikt en de
+meting daarna klopt.
 
 ---
 
@@ -143,7 +166,7 @@ stuk en jij doet niets fout — dat is deze regel. Kom je hem tegen, dan weet je
 
 ---
 
-## Als er iets misgaat
+## Veelgemaakte fouten
 
 Het script vangt fouten op en laat ze in een venstertje zien in plaats van stilletjes niets te
 doen. Krijg je zo'n rode brij te zien:
@@ -160,6 +183,12 @@ Twee dingen die vaak simpelweg de oorzaak zijn:
 |---|---|
 | *"Dit script wil een Design om in te tekenen"* | Je had geen bestand open. **File → New Design**. |
 | Er gebeurt niets zichtbaars | Kijk of je hebt opgeslagen in VS Code (**Ctrl + S**) voor je op Run drukte. |
+
+- Het script uitvoeren zonder een **Design** open te hebben.
+- Oude geometrie laten staan en denken dat de nieuwe Run niets deed.
+- Millimeters rechtstreeks aan de API geven terwijl een methode interne centimeters verwacht.
+- Een door Claude geschreven script starten zonder eerst de instelbare maten bovenin te lezen.
+- Een DXF of STL als master wijzigen in plaats van het Fusion-bronmodel.
 
 ---
 
@@ -207,3 +236,22 @@ Schrijf een Fusion 360-script dat <wat je wilt> maakt, met de maten bovenaan zod
 ```
 
 Zeg erbij wat het moet passen, en in welke maten. Dat scheelt een ronde.
+
+## Wanneer vraag je Claude om hulp?
+
+- *"Controleer dit Fusion-script op de mm/cm-valkuil en wijs elke conversie aan."*
+- *"Laat dit script eerst alleen geometrie maken; voeg export pas toe nadat de maten kloppen."*
+- *"Maak alle werkplaatsmaten bovenaan instelbaar en overschrijf nooit stilzwijgend bestanden."*
+- *"Leg deze foutmelding in gewone taal uit en geef één controle vóór je code verandert."*
+- *"Kan dit beter met User Parameters dan met een script? Vergelijk onderhoud en hergebruik."*
+
+## Bronnen en bewijsniveau
+
+- Autodesk, scripts/add-ins beheren:
+  <https://help.autodesk.com/view/fusion360/ENU/?guid=SLD-MANAGE-SCRIPTS-ADD-INS> —
+  **Geverifieerd**, gecontroleerd 2026-08-07.
+- Autodesk, script maken, bewerken en uitvoeren:
+  <https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/WritingDebugging_UM.htm> —
+  **Geverifieerd**, gecontroleerd 2026-08-07.
+- De teststrip en voorgestelde toepassingen — **Experiment/Praktijkadvies**; controleer maten
+  in Fusion en daarna pas op de machine.

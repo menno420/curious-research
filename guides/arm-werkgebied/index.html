@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Het veilige werkgebied van de arm — waarom een begrenzer in software ertoe doet</title>
+<title>Het gemeten werkbereik van de arm — wat een softwarebegrenzer echt doet</title>
 <style>
   :root {
     --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
@@ -70,18 +70,18 @@
 </style>
 </head>
 <body>
-<h1>Het veilige werkgebied van de arm — en waarom een begrenzer ertoe doet</h1>
+<h1>Het gemeten werkgebied van de arm — en wat een begrenzer wél doet</h1>
 <p class="sub">Een <b>servo</b> is een motortje dat je een exacte hoek geeft. Jouw arm heeft er
 zes; hier kijken we alleen naar het schoudergewricht, en naar wat er gebeurt als een commando
 ergens heen wijst waar dat gewricht nooit mag komen.</p>
 
 <div class="stage-box">
-  <svg viewBox="0 0 760 380" aria-label="Animatie van een robotarm in zijaanzicht: zijn veilige hoekbereik, en hoe een begrenzer in software een commando buiten bereik tegenhoudt voordat de arm het bureau raakt">
+  <svg viewBox="0 0 760 380" aria-label="Vereenvoudigde animatie: een softwarebegrenzer snoeit een hoekgetal terug tot een gemeten bereik; dit is geen botsingsdetectie">
     <!-- bureau -->
     <line class="desk" x1="40" y1="330" x2="720" y2="330"/>
     <text class="small" x="46" y="352">het bureau — iets hards waar de arm tegenaan kan slaan</text>
 
-    <!-- taartpunt van het veilige bereik, bij de schouder -->
+    <!-- taartpunt van een gemeten hoekbereik, bij de schouder -->
     <path id="wedge" d="M 270 250 L 174.5 154.5 A 135 135 0 0 1 347.4 139.4 Z"/>
     <text id="minLbl" class="edgeLbl" x="120" y="150">min 45°</text>
     <text id="maxLbl" class="edgeLbl" x="356" y="132">max 125°</text>
@@ -137,33 +137,36 @@ ergens heen wijst waar dat gewricht nooit mag komen.</p>
   <h2>Wat je net zag</h2>
   <p><b>1.</b> Elk gewricht wordt gedraaid door één <b>servo</b> — een motortje dat je een
   bepaalde hoek geeft. Een echte arm heeft er zes; wij lieten er één zien.</p>
-  <p><b>2.</b> De groene taartpunt is het <b>werkgebied</b> van dat gewricht: elke hoek die hij
-  kan halen zonder zichzelf, het bureau of een draad te raken. Die echte min en max meet je één
-  keer op.</p>
+  <p><b>2.</b> De groene taartpunt stelt het <b>gemeten hoekbereik</b> voor. Je meet min en max
+  op deze arm met de huidige montage en houdt marge. Verandert gereedschap, last of kabelroute,
+  dan controleer je opnieuw.</p>
   <p><b>3.</b> Een commando voorbij de max (<span class="danger">170°</span>), met niets dat het
   controleert, duwt het gewricht regelrecht het bureau in. Zo strippen tandwielen en scheuren
   beugels.</p>
   <p><b>4.</b> Een <b>begrenzer</b> — <code>clamp(hoek, min, max)</code> — vergelijkt elk
   commando met de gemeten min/max en snoeit alles wat erbuiten valt terug tot de rand,
-  <i>voordat</i> de motor beweegt. Het foute getal bereikt de servo nooit.</p>
+  <i>voordat</i> die gecontroleerde opdracht wordt verstuurd. Het foute hoekgetal bereikt de
+  servo via die route niet; de software ziet geen obstakels.</p>
 
-  <h2>Veiligheid, echt waar</h2>
+  <h2>Randvoorwaarden voor een powered test</h2>
   <ul>
     <li><b>De begrenzer is alleen software.</b> Hij werkt alleen als min en max goed gemeten
     zijn én <b>elke</b> bewegingsroutine er ook echt doorheen gaat. Er gaat geen bewegingscode
     mee zonder de begrenzer in het pad.</li>
-    <li><b>De servo's krijgen hun stroom altijd van buitenaf</b> — een aparte voeding van
-    5&ndash;6&nbsp;V met gedeelde massa, gezekerd, met een schakelaar binnen handbereik. Nooit
-    de 5&nbsp;V-pin van de Arduino.</li>
-    <li><b>Er kijkt altijd iemand mee.</b> De arm beweegt alleen binnen zijn gekalibreerde
-    werkgebied, en alleen terwijl jij erbij staat, met je hand bij de schakelaar.</li>
+    <li><b>De servo's krijgen hun stroom altijd van buitenaf</b> — een aparte voeding binnen
+    de specificatie van het werkelijke servomodel, met gedeelde massa, passende beveiliging en
+    een bereikbare uitschakeling. Nooit de 5&nbsp;V-pin van de Arduino.</li>
+    <li><b>Er kijkt altijd iemand mee.</b> De softwareclamp bewijst geen hardwareveiligheid.
+    De huidige penplotter-sketch schrijft bovendien 90&deg; tijdens startup, vóór de limieten
+    binnen zijn. Houd de schakelaar bereikbaar en lees <code>arm/README.md</code>.</li>
   </ul>
 
   <h2>Wat deze animatie versimpelt</h2>
   <p>Hij laat alleen <b>hoeken</b> zien. Een echt gewricht vecht ook tegen zwaartekracht,
   massatraagheid en draden die blijven haken; een echte arm heeft zes servo's; en het echte
-  werkgebied is een ruimtelijk volume, geen platte taartpunt. Eerst meten, altijd begrenzen,
-  elke keer kijken.</p>
+  werkgebied is een ruimtelijk volume, geen platte taartpunt. De getoonde botsing is alleen een
+  illustratie: de begrenzer kent het bureau niet. Eerst meten, startup controleren, altijd
+  begrenzen en elke keer kijken.</p>
 </div>
 
 <script>
@@ -171,21 +174,20 @@ ergens heen wijst waar dat gewricht nooit mag komen.</p>
     { sh:0,  el:25,  cap:'<span class="stepnum">1</span><b>Even kennismaken.</b> Een <b>servo</b> is '
       + 'een motortje dat je naar een exacte hoek stuurt &mdash; bijvoorbeeld "60&deg;". Hier hebben de '
       + 'schouder en de elleboog er elk &eacute;&eacute;n (een echte arm heeft er zes; wij hebben het tot twee versimpeld).' },
-    { sh:0,  el:25,  cap:'<span class="stepnum">2</span><b>Het veilige bereik.</b> De groene taartpunt '
-      + 'is het <b>werkgebied</b> van dit gewricht &mdash; elke hoek die hij kan halen zonder zichzelf, '
-      + 'het bureau of een draad te raken. Kijk hoe hij van zijn gemeten min (45&deg;) naar zijn max '
-      + '(125&deg;) zwaait.' },
+    { sh:0,  el:25,  cap:'<span class="stepnum">2</span><b>Het gemeten werkbereik.</b> De groene taartpunt '
+      + 'stelt de vastgelegde min- en maxhoek voor één testconditie voor. De getallen 45&deg; en 125&deg; '
+      + 'zijn alleen illustratief en geen veiligheidsverklaring voor jouw arm.' },
     { sh:80, el:100, cap:'<span class="stepnum">3</span><b>Een fout commando.</b> Iets stuurt '
       + '"ga naar 170&deg;" &mdash; voorbij de max. Niets controleerde dat getal, dus de servo duwt '
-      + 'het gewricht zo langs veilig heen, het bureau in. Zo strippen tandwielen en scheuren '
+      + 'het gewricht voorbij het vastgelegde bereik, het bureau in. Zo kunnen tandwielen en beugels '
       + 'beugels.' },
     { sh:35, el:25,  cap:'<span class="stepnum">4</span><b>De begrenzer vangt het op.</b> Dezelfde '
       + '"170&deg;", nu door <code>clamp(hoek, min, max)</code> heen. Die snoeit 170 terug naar 125 '
-      + '&mdash; de rand van de taartpunt &mdash; <i>voordat</i> de motor beweegt. Het gewricht loopt '
-      + 'rustig naar de rand en stopt. Geen klap.' },
+      + '&mdash; de rand van de taartpunt &mdash; <i>voordat</i> deze opdracht wordt verstuurd. Dat '
+      + 'vangt een fout hoekgetal op; het detecteert geen tafel, draad of nieuwe last.' },
     { sh:0,  el:25,  cap:'<span class="stepnum">5</span><b>Waarom dit uitmaakt.</b> Meet per gewricht '
       + '&eacute;&eacute;n keer de echte min en max, zet ze in de begrenzer, en elk toekomstig commando gaat '
-      + 'door dat veilige werkgebied heen &mdash; een fout getal k&aacute;n de motor niet meer bereiken.' },
+      + 'door die ene begrensde verzendroute. Controleer daarnaast startup, montage en obstakels.' },
   ];
 
   const shoulderG = document.getElementById('shoulderG');
@@ -231,7 +233,7 @@ ergens heen wijst waar dat gewricht nooit mag komen.</p>
   }
   function runStage(s) {
     if (s === 0) { tween([{ sh:0, el:25, dur:700 }]); }
-    else if (s === 1) {                                   // zwaai het veilige bereik af
+    else if (s === 1) {                                   // zwaai het gemeten bereik af
       tween([{ sh:-45, el:25, dur:800 }, { sh:35, el:25, dur:1100 }, { sh:0, el:25, dur:700 }]);
     }
     else if (s === 2) {                                   // fout commando: klap op het bureau
