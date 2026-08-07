@@ -1,330 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Je werkplaats die terugpraat — alle gidsen</title>
-<meta name="description" content="Uitlegkaarten met animaties over 3D-printen, je robotarm en Arduino. Gewoon in je browser, niets installeren.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Je werkplaatsassistent — gidsen, projecten en naslag</title>
+<meta name="description" content="Nederlandse uitvoeringsgidsen voor Bambu Lab, Fusion 360, Arduino, robotarm, lasersnijden en CNC.">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
 </head>
-<body>
-<div class="wrap">
-
+<body><div class="wrap">
 <header>
   <p class="kicker">Voor jouw werkplaats</p>
-  <h1>Uitleg die je kunt <em>zien</em> bewegen</h1>
-  <p class="lead">Vijftien uitlegkaarten over 3D-printen, je robotarm en Arduino, vijf
-  bouwprojecten die klaarliggen, en een paar dingen die met opzet nog niet af zijn. Elke
-  uitlegkaart is een animatie van een halve minuut plus een stappenplan. Je hoeft niets te
-  installeren en je kunt niets kapotmaken — tik gewoon iets aan.</p>
+  <h1>Van ontwerp naar onderdeel, met een test ertussen</h1>
+  <p class="lead">Nederlandse, uitvoerbare routes voor jouw printers, Fusion 360, Arduino en robotarm. Elke gids zegt wat je nodig hebt, welke stappen je uitvoert en hoe je controleert of het werkt.</p>
 </header>
 
-<a class="hero" href="kennis.html" style="border-color:var(--ok)">
-  <span class="flag">📚</span>
-  <h2 style="color:var(--ok)">Naslag — korte antwoorden</h2>
-  <p>Iets snel opzoeken? Kies een onderwerp, klap een stukje open, lees drie zinnen. Geen
-  lappen tekst, en bij elk antwoord staat hoe zeker het is.</p>
-  <span class="go" style="color:var(--ok)">Openen →</span>
-</a>
-
 <a class="hero" href="guides/begin-hier/index.html">
-  <span class="flag">🇳🇱</span>
-  <h2>Begin hier</h2>
-  <p>Nooit eerder gezien? Start met deze. Twee minuten: wat dit is, wat je er vanavond mee
-  kunt, en hoe je zelf iets vraagt.</p>
-  <span class="go">Openen →</span>
+  <span class="flag">🧭</span><h2>Begin hier — laat Claude je werkplaats kennen</h2>
+  <p>Controleer in twee minuten welke context Claude al heeft, stel een bruikbare eerste vraag en bewaar alleen wat je zelf hebt getest.</p><span class="go">Start de rondleiding →</span>
 </a>
 
-<section>
-  <h2 class="sectie">🖨️ Je 3D-printers</h2>
-  <p class="sectie-uitleg">Let op: je A1 en A1 mini stellen zichzelf al af vóór elke print.
-  Begin daarom met de eerste kaart — die vertelt welke van de andere nog over jou gaan, en
-  welke geschreven zijn voor printers die je niet hebt.</p>
+<a class="hero" href="kennis.html" style="border-color:var(--ok)">
+  <span class="flag">📚</span><h2 style="color:var(--ok)">Kennisbank — met zichtbaar bewijsniveau</h2>
+  <p>Zoek een kort antwoord en zie meteen of het geverifieerd, onderbouwd, praktijkadvies, nog te bevestigen of experimenteel is.</p><span class="go" style="color:var(--ok)">Open de kennisbank →</span>
+</a>
 
-  <div class="rek">
+<section><h2 class="sectie">🖨️ Bambu Lab A1 en A1 mini</h2><p class="sectie-uitleg">Begin bij het juiste machine-, nozzle- en materiaalprofiel. Gebruik Preview en een kleine A/B-test voordat je een hele print opnieuw start.</p><div class="rek">
+  <a class="kaart" href="guides/bambu-studio/index.html"><span class="icoon">🎛️</span><h3>Bambu Studio: van foutbeeld naar test</h3><p>Een systematische diagnose voor de A1-serie, zonder instellingen voor printers die je niet hebt.</p><span class="merk nl">Uitvoeringsgids</span></a>
+  <a class="kaart" href="guides/first-layer/index.html"><span class="icoon">🧊</span><h3>Eerste laag op de A1-serie</h3><p>Controleer plaat, profiel en automatisch meten vóór je één proceswaarde test — zonder algemene Z-offsettruc.</p><span class="merk nl">Diagnose</span></a>
+  <a class="kaart" href="guides/retraction-vs-stringing/index.html"><span class="icoon">🕸️</span><h3>Stringing systematisch scheiden</h3><p>Sluit profiel, vocht en temperatuur uit vóór je de retraction van de direct-drive A1 wijzigt.</p><span class="merk nl">A/B-test</span></a>
+  <a class="kaart" href="guides/temperature-tower/index.html"><span class="icoon">🌡️</span><h3>Temperatuurreeks die echt verandert</h3><p>Maak identieke korte proeven en bewijs dat alleen de nozzletemperatuur wijzigt.</p><span class="merk nl">Meetworkflow</span></a>
+  <a class="kaart" href="guides/part-cooling/index.html"><span class="icoon">💨</span><h3>Onderdeelkoeling versus hechting</h3><p>Vergelijk brugvorm én laagsterkte terwijl je één fanparameter verandert.</p><span class="merk nl">Experiment</span></a>
+  <a class="kaart" href="guides/vulling/index.html"><span class="icoon">🍯</span><h3>Vulling en wanddikte</h3><p>Kies sterkte waar die echt vandaan komt en controleer de baan in Preview.</p><span class="merk nl">Nederlands</span></a>
+  <a class="kaart" href="guides/speling/index.html"><span class="icoon">🔩</span><h3>Speling tussen onderdelen</h3><p>Van klemmende passing naar een gemeten ontwerpwaarde voor printer en materiaal.</p><span class="merk nl">Nederlands</span></a>
+  <a class="kaart" href="guides/lithophane-night-light/index.html"><span class="icoon">🌙</span><h3>Lithofaan met passend frame</h3><p>Ga van foto via proefstrook en backlighttest naar een frame op werkelijk gemeten printmaat.</p><span class="merk nl">Print + Fusion</span></a>
+</div></section>
 
-    <a class="kaart" href="guides/bambu-studio/index.html">
-      <span class="icoon">🤖</span>
-      <h3>Je Bambu doet het meeste al zelf</h3>
-      <p>Vóór élke print stelt je A1 zichzelf af — bed, hoogte, trillingen, materiaalstroom.
-      Dus welke kaarten hieronder gaan nog écht over jou? <b>Lees deze eerst.</b></p>
-      <span class="merk nl">Nederlands</span>
-    </a>
+<section><h2 class="sectie">✏️ Ontwerp en productie</h2><p class="sectie-uitleg">Eén ontwerp kan naar printer, laser of frees. De fabricagemethode bepaalt geometrie, toleranties en teststuk.</p><div class="rek">
+  <a class="kaart" href="guides/fusion-python/index.html"><span class="icoon">🐍</span><h3>Python in Fusion 360</h3><p>Installeer en test een script in de huidige Fusion-interface, met een klein controleerbaar resultaat.</p><span class="merk nl">Fusion 360</span></a>
+  <a class="kaart" href="guides/lasersnijden-van-fusion-naar-onderdeel/index.html"><span class="icoon">🔥</span><h3>Fusion → DXF → laser</h3><p>Controleer schaal en lijnen, meet kerf met een coupon en snijd eerst een representatief proefstuk.</p><span class="merk nl">Lasersnijden</span></a>
+  <a class="kaart" href="guides/cnc-van-fusion-naar-eerste-snee/index.html"><span class="icoon">⚙️</span><h3>Fusion CAM → eerste CNC-snede</h3><p>Leg WCS, frees en opspanning vast; simuleer en doe een air cut vóór materiaalcontact.</p><span class="merk nl">CNC</span></a>
+</div></section>
 
-    <a class="kaart" href="guides/first-layer/index.html">
-      <span class="icoon">🧊</span>
-      <h3>De eerste laag</h3>
-      <p>De laag waar alles op staat. Hoe je ziet of hij goed is, en de twee knopjes die het
-      meteen goed maken.</p>
-      <span class="merk en">Engels</span>
-    </a>
+<section><h2 class="sectie">🔌 Arduino en hobby-elektronica</h2><p class="sectie-uitleg">Geen beginnerscursus bedraden, wel code en metingen die projecten responsiever en beter testbaar maken.</p><div class="rek">
+  <a class="kaart" href="guides/arduino-zonder-blokkeren/index.html"><span class="icoon">⏱️</span><h3>Zonder blokkeren met millis()</h3><p>Laat knop, sensor, LED en communicatie tegelijk doorlopen met onafhankelijke tijdcontroles.</p><span class="merk nl">Arduino</span></a>
+  <a class="kaart" href="projecten.html#filamentweger"><span class="icoon">⚖️</span><h3>Loadcell meten en kalibreren</h3><p>Bouw een filamentweger en beoordeel herhaalbaarheid zonder schijnprecisie.</p><span class="merk nl">Project</span></a>
+</div></section>
 
-    <a class="kaart" href="guides/retraction-vs-stringing/index.html">
-      <span class="icoon">🕸️</span>
-      <h3>Draadjes en haartjes</h3>
-      <p>Waarom je print spinrag krijgt tussen de onderdelen, en welke instelling dat stopt.</p>
-      <span class="merk en">Engels</span>
-    </a>
+<section><h2 class="sectie">🦾 6-DOF-robotarm</h2><p class="sectie-uitleg">Softwarelimieten helpen alleen binnen de route die ze gebruikt. Startup, echte servovariant, voeding, montage en obstakels moeten afzonderlijk worden gecontroleerd.</p><div class="rek">
+  <a class="kaart" href="guides/arm-werkgebied/index.html"><span class="icoon">📐</span><h3>Gewrichtslimieten meten</h3><p>Meet min en max met marge en begrijp wat een softwareclamp wel en niet bewijst.</p><span class="merk nl">Veiligheidsbasis</span></a>
+  <a class="kaart" href="guides/arm-herhaalbaarheid-meten/index.html"><span class="icoon">🎯</span><h3>Herhaalbaarheid meten</h3><p>Maak de spreiding van A → B → A zichtbaar en vergelijk wijzigingen met één variabele tegelijk.</p><span class="merk nl">Testworkflow</span></a>
+  <a class="kaart" href="projecten.html#penplotter"><span class="icoon">✍️</span><h3>Penplotter: eerst de startupcheck</h3><p>Lees het hele project en de bekende 90°-startupbeperking voordat je naar de broncode gaat.</p><span class="merk open">Nog bevestigen</span></a>
+  <a class="kaart" href="projecten.html#soepele-arm"><span class="icoon">🌊</span><h3>Soepele beweging</h3><p>Vergelijk directe doelen, lineaire stapjes en een S-curve onder dezelfde testvoorwaarden.</p><span class="merk nl">Experiment</span></a>
+</div></section>
 
-    <a class="kaart" href="guides/temperature-tower/index.html">
-      <span class="icoon">🌡️</span>
-      <h3>De temperatuurtoren</h3>
-      <p>Eén print die zelf uitzoekt op welke temperatuur jouw filament het mooist komt.</p>
-      <span class="merk en">Engels</span>
-    </a>
+<section><h2 class="sectie">🛠️ Bouwprojecten</h2><p class="sectie-uitleg">Lees eerst de gebruikersroute. Broncode en ontwerpbestanden komen pas na onderdelen, stappen en testcriterium.</p><div class="rek">
+  <a class="kaart" href="projecten.html#pasmunt"><span class="icoon">🪙</span><h3>Pasmunt</h3><p>Meet schuif- en perspassing voor jouw printer en materiaal.</p><span class="merk nl">Bouwroute</span></a>
+  <a class="kaart" href="projecten.html#filamentweger"><span class="icoon">⚖️</span><h3>Filamentweger</h3><p>Kalibreer een loadcell voor een praktische voorraadcontrole.</p><span class="merk nl">Bouwroute</span></a>
+  <a class="kaart" href="projecten.html#penplotter"><span class="icoon">✍️</span><h3>Arm-penplotter</h3><p>Leer waypoints en teken een lijn, met de bekende startupbeperking zichtbaar.</p><span class="merk open">Startup nog bevestigen</span></a>
+  <a class="kaart" href="projecten.html#soepele-arm"><span class="icoon">🌊</span><h3>Soepele armbeweging</h3><p>Plan gewrichten synchroon en meet het effect van een S-curve.</p><span class="merk nl">Bouwroute</span></a>
+  <a class="kaart" href="projecten.html#gereedschap"><span class="icoon">🧲</span><h3>Verwisselbaar gereedschap</h3><p>Maak één polsinterface voor magneet, grijper en toekomstige tools.</p><span class="merk nl">Bouwroute</span></a>
+</div></section>
 
-    <a class="kaart" href="guides/part-cooling/index.html">
-      <span class="icoon">💨</span>
-      <h3>Het koelventilatortje</h3>
-      <p>Het percentage achter doorzakkende overhangen en broos PETG. PLA en PETG willen
-      precies het tegenovergestelde.</p>
-      <span class="merk en">Engels</span>
-    </a>
+<section><h2 class="sectie">💬 Claude als werkplaatsassistent</h2><p class="sectie-uitleg">Claude kent de repositorycontext alleen als je de map of projectkennis beschikbaar maakt. Waardevolle chatuitkomsten worden pas duurzame kennis nadat je ze test, controleert en als bestand opslaat.</p><div class="rek">
+  <a class="kaart" href="guides/begin-hier/index.html"><span class="icoon">🧭</span><h3>Eerste gebruik</h3><p>Controleer de bekende hardware, ontbrekende gegevens en eerste echte vraag.</p><span class="merk nl">Claude Pro</span></a>
+  <a class="kaart" href="guides/what-can-claude-see/index.html"><span class="icoon">📷</span><h3>Van foto of fouttekst naar test</h3><p>Scheid zichtbare observaties, hypotheses en ontbrekende context vóór je een instelling wijzigt.</p><span class="merk nl">Diagnose</span></a>
+  <a class="kaart" href="guides/windows-gereedschap/index.html"><span class="icoon">🪟</span><h3>Windows-gereedschap per taak</h3><p>Installeer alleen wat een concrete Fusion-, Arduino- of repositorytaak nodig heeft en verifieer de installatie.</p><span class="merk nl">Werkplek</span></a>
+  <a class="kaart" href="https://github.com/menno420/curious-research/blob/main/docs/claude-usage-guide.md"><span class="icoon">🗂️</span><h3>Volledige Windows-installatie</h3><p>Download, installeer Claude Code, start in de juiste map en leg bevestigde kennis duurzaam vast.</p><span class="merk nl">Handleiding</span></a>
+</div></section>
 
-    <a class="kaart" href="guides/vulling/index.html">
-      <span class="icoon">🍯</span>
-      <h3>Vulling (infill)</h3>
-      <p>Hoeveel procent je écht nodig hebt — en waarom dikkere wanden veel meer helpen.</p>
-      <span class="merk nl">Nederlands</span>
-    </a>
+<div class="doos"><h2>Een goede vraag bevat een onderdeel en een resultaat</h2><p><strong>Goed:</strong> <code>Mijn A1-print trekt bij de linkerhoek los. Maak een test met één variabele en vertel wat ik in Preview moet controleren.</code></p><p><strong>Te breed:</strong> <code>Leg 3D-printen uit.</code></p></div>
+<div class="doos"><h2>Belangrijk: chat is geen automatisch geheugen</h2><p>Claude kan bestanden lezen en wijzigingen voorstellen wanneer de repository beschikbaar is. Een antwoord in chat werkt de map niet vanzelf bij. Bewaar alleen geteste resultaten, noteer omstandigheden en maak een back-up of publiceer de wijziging met GitHub.</p></div>
 
-    <a class="kaart" href="guides/speling/index.html">
-      <span class="icoon">🔩</span>
-      <h3>Speling tussen onderdelen</h3>
-      <p>Waarom twee geprinte delen klemmen, en het kleine gaatje ruimte dat het oplost.</p>
-      <span class="merk nl">Nederlands</span>
-    </a>
-
-    <a class="kaart" href="guides/lithophane-night-light/index.html">
-      <span class="icoon">🕯️</span>
-      <h3>Lithofaan-nachtlampje</h3>
-      <p>Van een foto naar een geprint paneeltje dat oplicht. Van begin tot eind, met gratis
-      webtools.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="sectie">🦾 Je robotarm</h2>
-  <p class="sectie-uitleg">Je arm loopt al. Dit gaat over wat daarna komt: hem netter laten
-  bewegen, en zijn grenzen vastleggen zodat software een verkeerd getal kan tegenhouden.</p>
-
-  <div class="rek">
-
-    <a class="kaart" href="guides/arm-werkgebied/index.html">
-      <span class="icoon">📐</span>
-      <h3>Het veilige bereik van de arm</h3>
-      <p>Hoe je per servo met de hand opmeet hoe ver hij mag, en hoe de software daarna elke
-      te grote beweging weigert.</p>
-      <span class="merk nl">Nederlands</span>
-    </a>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="sectie">💬 Samenwerken met Claude</h2>
-  <p class="sectie-uitleg">Hoe je iets vraagt, wat Claude van jouw foto's kan zien, en hoe
-  een verandering hier binnenkomt.</p>
-
-  <div class="rek">
-
-    <a class="kaart" href="guides/what-can-claude-see/index.html">
-      <span class="icoon">👀</span>
-      <h3>Wat ziet Claude eigenlijk?</h3>
-      <p>Maak een foto van je mislukte print of je foutmelding — en zie hoe daar een
-      oplossing uit komt.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-    <a class="kaart" href="guides/start-here/index.html">
-      <span class="icoon">🧭</span>
-      <h3>De rondleiding (origineel)</h3>
-      <p>De eerste rondleiding, in het Engels. <em>Begin hier</em> hierboven is de
-      Nederlandse versie.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-    <a class="kaart" href="guides/how-a-pr-flows/index.html">
-      <span class="icoon">🔁</span>
-      <h3>Hoe een verandering binnenkomt</h3>
-      <p>De lus waar alles hier op draait, in tien seconden animatie. Alleen nodig als je
-      zelf wilt gaan meeschrijven.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="sectie">🛠️ Bouwprojecten</h2>
-  <p class="sectie-uitleg">Vijf dingen die af zijn en klaarliggen om te bouwen. Elk project
-  heeft een stappenplan, en de ontwerpen zijn <b>parametrisch</b> — bovenin het bestand staan
-  de maten als losse getallen, dus je verandert er één en je hebt een ander object.</p>
-
-  <div class="rek">
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/tree/main/projects/tolerance-test-coin">
-      <span class="icoon">🪙</span>
-      <h3>Het pasmuntje</h3>
-      <p>Eén printje met gaatjes van oplopende maat. Meet in tien minuten uit hoeveel speling
-      <em>jouw</em> printer nodig heeft — daarna passen al je onderdelen.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/tree/main/projects/spool-weight-scale">
-      <span class="icoon">⚖️</span>
-      <h3>De filamentweger</h3>
-      <p>Een weegcel onder je spoel die eerlijk antwoord geeft op "haal ik deze print nog?".
-      Arduino-sketch en ijkstappen liggen klaar.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/tree/main/projects/arm-pen-plotter">
-      <span class="icoon">✍️</span>
-      <h3>De arm als tekenaar</h3>
-      <p>Je stuurt de arm met de hand naar een punt, drukt op opslaan, en hij speelt de reeks
-      daarna zelf af. Tekent heerlijk wiebelige lijnen.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/tree/main/projects/arm-soepele-beweging">
-      <span class="icoon">🌊</span>
-      <h3>Soepele beweging</h3>
-      <p>Je arm schokt omdat een servo maar twee snelheden kent: vol gas en stil. Deze sketch
-      laat hem optrekken en afremmen — met knoppen om aan te draaien.</p>
-      <span class="merk nl">Nederlands</span>
-    </a>
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/tree/main/projects/effector-mount">
-      <span class="icoon">🧲</span>
-      <h3>Verwisselbaar gereedschap</h3>
-      <p>Eén standaard plaatje aan het uiteinde van de arm, en daarop wat je maar wilt: een
-      magneet, of een grijper met twee vingers.</p>
-      <span class="merk en">Engels</span>
-    </a>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="sectie">🧩 Wat nog níet af is</h2>
-  <p class="sectie-uitleg">Met opzet. Dit zijn open vragen, geen huiswerk — er staat geen
-  klok op en er is geen fout antwoord. Ze staan hier omdat er niks leukers is dan een probleem
-  dat nog van jou kan worden.</p>
-
-  <div class="rek">
-
-    <a class="kaart" href="guides/arm-werkgebied/index.html">
-      <span class="icoon">📏</span>
-      <h3>De grenzen van de arm opmeten</h3>
-      <p>Je arm beweegt al — dit gaat over iets anders. Nergens staat opgeschreven hoe ver
-      elk gewricht veilig mág. Zolang die getallen er niet zijn, kan software een verkeerd
-      getal niet tegenhouden, en <b>weigeren de projecten hier te starten</b> — met opzet.
-      Handwerk: draaien, kijken, opschrijven.</p>
-      <span class="merk open">Open klus</span>
-    </a>
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/blob/main/ideas/filament-drybox-logger.md">
-      <span class="icoon">💧</span>
-      <h3>Droogbox: alarm of logboek?</h3>
-      <p>Een vochtsensor in je filamentbak. Maar wat moet hij dóen — een stoplichtje dat
-      rood wordt als het te vochtig is, of stilletjes meten en een grafiek opbouwen? Die keuze
-      is aan jou, daarna kan hij gebouwd worden.</p>
-      <span class="merk open">Open vraag</span>
-    </a>
-
-    <a class="kaart" href="https://github.com/menno420/curious-research/tree/main/ideas">
-      <span class="icoon">💡</span>
-      <h3>Nog veertien ideeën</h3>
-      <p>Van een sleutelhangerfabriek in twee kleuren tot een lamp die op geluid reageert.
-      Drie ervan zijn al doorgedacht en wachten alleen nog op iemand die begint. Het is een
-      menukaart, geen takenlijst.</p>
-      <span class="merk open">Menukaart</span>
-    </a>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="sectie">✏️ Fusion 360</h2>
-  <p class="sectie-uitleg">Je tekent er alles al in — 2D voor de laser en de frees, 3D voor de
-  printers. Dit gaat over het stuk dat je nog niet doet: Fusion het saaie tekenwerk laten
-  overnemen.</p>
-
-  <div class="rek">
-
-    <a class="kaart" href="guides/fusion-python/index.html">
-      <span class="icoon">🐍</span>
-      <h3>Python in Fusion 360</h3>
-      <p>Hoe je een script in Fusion laadt en draait. Jij beschrijft wat je wilt, Claude
-      schrijft de code, jij plakt en drukt op Run. Met een werkend voorbeeld erbij.</p>
-      <span class="merk nl">Nederlands</span>
-    </a>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="sectie">💻 Op je Windows-laptop</h2>
-  <p class="sectie-uitleg">Gratis programma's die handig zijn. Nadrukkelijk: je hebt hier
-  niets van nodig om te beginnen.</p>
-
-  <div class="rek">
-
-    <a class="kaart" href="guides/windows-gereedschap/index.html">
-      <span class="icoon">🧰</span>
-      <h3>Windows-gereedschap</h3>
-      <p>Welke gratis programma's er zijn, waar ze voor dienen, en directe downloadlinks —
-      met wat je (nog) niet nodig hebt.</p>
-      <span class="merk nl">Nederlands</span>
-    </a>
-
-  </div>
-</section>
-
-<div class="doos">
-  <h2>Staat er "Engels" op een kaart?</h2>
-  <p>De meeste gidsen zijn in het Engels geschreven, maar de <strong>animaties zijn
-  taalvrij</strong> — je ziet gewoon wat er gebeurt. Wil je de tekst in het Nederlands? Vraag
-  het, en je krijgt het uitgelegd:</p>
-  <p><code>Leg guides/infill uit in het Nederlands</code></p>
-</div>
-
-<div class="doos">
-  <h2>Zelf iets vragen</h2>
-  <ol>
-    <li>Ga naar <a href="https://claude.ai/">claude.ai</a> en maak een gratis account aan.</li>
-    <li>Begin een nieuw gesprek en plak deze regel erin:<br>
-      <code>Kijk in github.com/menno420/curious-research en leg me in het Nederlands uit wat ik hier kan doen</code></li>
-    <li>Stel daarna gewoon je vraag. In het Nederlands. Bijvoorbeeld:
-      <em>"Mijn print laat los van het bed, wat doe ik fout?"</em></li>
-  </ol>
-  <p>Je kunt ook een foto meesturen van een mislukte print. Dat werkt vaak het beste.</p>
-</div>
-
-<div class="doos">
-  <h2>En als je het zelf wilt bijhouden?</h2>
-  <p>Alles hierboven werkt zonder dat je ergens lid van hoeft te worden. Kijken, printen,
-  bouwen — je hebt niks nodig.</p>
-  <p>Maar er is één ding dat nu nog niet kan: <b>je eigen aantekeningen blijven niet
-  bewaard.</b> Vraag je Claude iets moois, dan is dat gesprek later weg. Met een eigen (gratis)
-  GitHub-account verandert dat: je metingen, je aangepaste ontwerpen en je eigen uitleg komen
-  hier gewoon bij te staan, en de volgende keer leest Claude ze terug.</p>
-  <p>Zin om dat te proberen? Zeg het gewoon:</p>
-  <p><code>Ik wil een eigen GitHub-account — help me daar stap voor stap doorheen</code></p>
-  <p>Geen haast. Het loopt niet weg.</p>
-</div>
-
-<footer>
-  <p>Alles hier staat open en in het openbaar op
-  <a href="https://github.com/menno420/curious-research">GitHub</a>.<br>
-  De animaties werken zonder internet — sla een pagina op en hij doet het nog steeds.</p>
-</footer>
-
-</div>
-</body>
-</html>
+<footer><p>Bronbestanden en wijzigingsgeschiedenis staan op <a href="https://github.com/menno420/curious-research">GitHub</a>. De HTML-gidsen blijven ook lokaal in een browser bruikbaar.</p></footer>
+</div></body></html>

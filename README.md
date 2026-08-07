@@ -1,88 +1,120 @@
 # curious-research 🔬
 
-> ### Een cadeau, voor jou 🎁
-> Iemand die jou kent heeft dit gemaakt als startpunt — een werkplaatsschriftje dat
-> **terugpraat**. Je twee 3D-printers, je 6-servo robotarm en je Arduino-geknutsel hebben nu
-> een maatje dat uitlegt door het te **laten zien**. Niets hier is een test, en je kunt niets
-> kapotmaken.
+> ## Een werkplaatsassistent als cadeau 🎁
 >
-> **👉 Eerste klik:** open **[`guides/begin-hier/`](guides/begin-hier/guide.md)** — twee
-> minuten, in het Nederlands: wat dit is, wat je er vanavond mee kunt, en hoe je binnenkomt.
->
-> **👉 Op je telefoon, zonder account:** **[menno420.github.io/curious-research](https://menno420.github.io/curious-research/)**
-> — alle uitleg-animaties op één pagina, in het Nederlands. Niets installeren, nergens
-> inloggen. Handig om erbij te pakken terwijl je bij de printer staat.
->
-> **👉 Op je Windows-laptop:** [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md)
-> — de gratis programma's die handig zijn, met directe downloadlinks. *(Je hebt er niets van
-> nodig om te beginnen.)*
->
-> *(English original of the tour: [`guides/start-here/`](guides/start-here/guide.md).)*
+> Deze map is gemaakt voor jouw Bambu-printers, Fusion 360-werk, Arduino-projecten en
+> 6-DOF-robotarm. Start Claude vanuit deze map en het hoeft die basiscontext niet bij iedere vraag
+> opnieuw te raden.
 
-**This repo is a research companion.** It exists to help you discover new ways to use your
-projects (the printers, the arm, the Arduino bench, and whatever comes next) and new, easier
-ways to let Claude help you improve what you build and what you know.
+## Begin hier
 
-It's not a normal code repo. It's a **workshop notebook that answers back**: you drop in
-questions and ideas, Claude turns them into experiments, designs, and — the house specialty —
-**animated visual guides** that show you how things work instead of telling you.
+1. Open [de Nederlandse rondleiding](guides/begin-hier/guide.md).
+2. Volg eenmalig [Claude gebruiken met deze repository](docs/claude-usage-guide.md) op je
+   Windows-pc en Claude Pro-account.
+3. Bekijk op de werkbank de
+   [website met gidsen, projecten en naslag](https://menno420.github.io/curious-research/).
 
-## Start here (day one, ~30 minutes, browser only)
+Een eigen GitHub-account is niet nodig om de map eerst te downloaden en lokaal met Claude Code
+te gebruiken.
 
-1. **Take the tour** → open [`guides/start-here/`](guides/start-here/guide.md) — a two-minute
-   animated welcome that maps out everything in here and walks your first 30 minutes. If you
-   open one thing, open this.
-2. **Watch the loop** → open [`guides/how-a-pr-flows/`](guides/how-a-pr-flows/guide.md) —
-   a 10-second animation of the one process everything here uses. Then run its "first PR in
-   3 minutes" exercise. That's the only mechanic you need.
-3. **Connect your Claude** → with the repo open in Claude (claude.ai or Claude Code), just
-   start asking. Good first messages, literally paste-able:
-   - *"Read CLAUDE.md and tell me what you can do for me in this repo."*
-   - *"I want to understand [anything — retraction stringing, how my robot arm's servos
-     work, what an Arduino interrupt is]. Make me one of the animated guides."*
-   - *"Here's an idea: [one line]. Add it to ideas/ and run the idea ritual on it."*
-4. **Browse the seeds** → [`ideas/`](ideas/) has starter ideas matched to your gear. Pick
-   whichever sounds fun; none of them are homework.
+## Wat Claude al over de werkplaats weet
 
-## The house rules (what makes this repo different)
+De ene bron van waarheid is [docs/workshop-profile.md](docs/workshop-profile.md). Daarin staan:
 
-- **Everything is taught visually and step-by-step.** Any agent working here is bound by
-  [`docs/teaching-style.md`](docs/teaching-style.md): thorough numbered walkthroughs, and
-  self-contained **animated HTML explainers** in [`guides/`](guides/) for anything with
-  moving parts. The guides folder is your growing personal textbook.
-- **You can't break it.** Nothing lands on `main` without passing the automatic gate, and
-  your own changes merge only when *you* click. Experiment freely.
-- **An empty week is fine.** Ideas are a menu, not a to-do list. "Built nothing, learned
-  one thing" is a perfectly good entry.
-- **Safety rules are real** (the arm, the printers, mains power): [`CLAUDE.md`](CLAUDE.md)
-  §2. Claude designs; you slice, you power, you watch.
+- Bambu Lab A1, A1 mini en AMS Lite met Bambu Studio;
+- Fusion 360 Personal Use, lasersnijden en CNC-frezen/routeren;
+- Arduino, sensoren en hobbyrobotica;
+- een zelfgebouwde 6-DOF-arm met MG996R-klasse servo's;
+- Windows, Nederlands als standaardtaal en weinig code-ervaring maar sterke technische
+  redeneervaardigheid;
+- expliciet welke machine-, materiaal-, servo- en voedingsdetails nog **niet** bevestigd zijn.
 
-## The map
+Hardwarefeiten horen alleen in dat profiel. Gidsen verwijzen ernaar in plaats van dezelfde
+gegevens te kopiëren.
 
-| Where | What |
+## Zo stel je een bruikbare vraag
+
+Goed:
+
+```text
+Mijn A1-print trekt linksvoor los. Lees eerst het werkplaatsprofiel, geef maximaal drie
+hypotheses en maak één kleine test waarbij maar één variabele verandert.
+```
+
+```text
+Ik wil dit Fusion-onderdeel uit plaat maken. Vergelijk laser en CNC voor deze geometrie en
+noem eerst welke machine-, materiaal- en tolerantiegegevens nog ontbreken.
+```
+
+Te breed:
+
+```text
+Leg 3D-printen uit.
+```
+
+Een foto helpt als er ook een overzicht, scherp detail en niet-zichtbare context bij zitten.
+Gebruik daarvoor [de beeld-naar-testgids](guides/what-can-claude-see/guide.md).
+
+## Chat is niet hetzelfde als duurzaam geheugen
+
+Claude kan de repository lezen wanneer je Claude Code in deze map start of de relevante
+bestanden aan een Claude Project toevoegt. Een chatantwoord werkt de repository niet automatisch
+bij. Waardevolle kennis wordt pas duurzaam als je:
+
+1. de voorgestelde proef zelf uitvoert;
+2. het resultaat en de omstandigheden controleert;
+3. Claude vraagt het in het juiste bestaande bestand te zetten;
+4. de wijziging naleest;
+5. de map back-upt of later via GitHub publiceert.
+
+Lokale automatische notities van Claude zijn geen online back-up en geen vervanging voor de
+bestanden in deze map.
+
+## De belangrijkste routes
+
+| Onderwerp | Startpunt |
 |---|---|
-| [`guides/`](guides/) | The visual textbook — animated explainers + step-by-step companions |
-| [`ideas/`](ideas/) | One file per idea; the ritual that grows them: [`docs/idea-ritual.md`](docs/idea-ritual.md) |
-| [`projects/`](projects/) | Finished builds, each with its docs — first one is live: [`projects/tolerance-test-coin/`](projects/tolerance-test-coin/) |
-| [`CLAUDE.md`](CLAUDE.md) | The house rules Claude reads first — teaching doctrine + safety |
-| [`docs/git-for-makers.md`](docs/git-for-makers.md) | Git in bench terms, no jargon |
-| [`guides/begin-hier/`](guides/begin-hier/guide.md) | 🇳🇱 **De Nederlandse rondleiding — begin hier** |
-| [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md) | 🇳🇱 Gratis programma's voor je Windows-laptop, met downloadlinks |
-| [`site/`](site/) | The public read-only website ([live](https://menno420.github.io/curious-research/)) — plain HTML/CSS, no build step |
-| [`arm/`](arm/) | The robot-arm lane — the calibration template every motion routine clamps to |
-| [`research/possibility-dossier.md`](research/possibility-dossier.md) | What the bench + Claude can actually do together, with honest ✅/🧪/🚫 marks |
-| [`research/dossiers/`](research/dossiers/) | **Grounded, cited research per topic** — read these before answering from memory. Raw and unedited on purpose; see the note below |
-| [`research/deep-research-prompts.md`](research/deep-research-prompts.md) | How to grow those dossiers: six complete prompts, and what to do when the answers come back |
+| Bambu Studio en printfouten | [Bambu Studio — van foutbeeld naar test](guides/bambu-studio/guide.md) |
+| Fusion automatiseren | [Een Python-script in Fusion laden](guides/fusion-python/guide.md) |
+| Arduino responsief houden | [Arduino zonder blokkerende wachttijden](guides/arduino-zonder-blokkeren/guide.md) |
+| Lasersnijden | [Fusion → DXF → kerfproef → onderdeel](guides/lasersnijden-van-fusion-naar-onderdeel/guide.md) |
+| CNC | [Fusion CAM → simulatie → air cut → eerste snede](guides/cnc-van-fusion-naar-eerste-snee/guide.md) |
+| Robotarm | [Bevestigde context en startupgedrag](arm/README.md) |
+| Bouwprojecten | [Nederlandse projectroutes](site/projecten.html) |
+| Korte antwoorden | [Kennisbank met bewijslabels](site/kennis.html) |
 
-> **About `research/dossiers/`.** Six topics — Arduino, Bambu printing, Fusion 360, servos,
-> laser cutting, CNC milling — each answered by a deep-research run, saved **exactly as
-> received**. Most topics have two independent reports (`<topic>.md` and
-> `<topic>-gemini.md`); where they disagree, that disagreement is the useful part.
->
-> They are **agent-facing raw material, not pages for him**. They are unedited on purpose,
-> which means they still carry each tool's citation artifacts — invisible marker characters
-> in one, `start_span`/`end_span` in the other. **Strip both before any text reaches
-> `site/kennis.html`**, and cut to Dutch card size rather than translating. The full
-> procedure is step 2–4 of `research/deep-research-prompts.md`.
+## Hoe vertrouwen zichtbaar blijft
 
-*This repo is public — it carries interests and projects, never personal data.*
+[docs/knowledge-policy.md](docs/knowledge-policy.md) definieert vijf niveaus:
+
+- **Geverifieerd** — de geopende primaire bron draagt de exacte claim;
+- **Onderbouwd** — betrouwbare secundaire of meerdere bronnen;
+- **Praktijkadvies** — nuttige makerroute, geen gegarandeerde specificatie;
+- **Nog bevestigen** — bron of werkplaatsmeting ontbreekt;
+- **Experiment** — expliciet te testen met een meetbaar resultaat.
+
+Ruwe deep-researchrapporten in `research/dossiers/` zijn bronmateriaal, geen automatisch
+goedgekeurde werkplaatskennis.
+
+## Kaart van de repository
+
+| Map/bestand | Functie |
+|---|---|
+| [`docs/workshop-profile.md`](docs/workshop-profile.md) | Canonieke eigenaar-, hardware- en softwarecontext |
+| [`CLAUDE.md`](CLAUDE.md) | Gedragsregels die Claude bij iedere sessie leest |
+| [`guides/`](guides/) | Nederlandstalige uitvoeringsgidsen met zelfstandige HTML-uitleg |
+| [`projects/`](projects/) | Bronbestanden, sketches en diepere projectdocumentatie |
+| [`site/`](site/) | Leesbare publieke ingang en kennisbank |
+| [`arm/`](arm/) | Robotarmkalibratie, bekende beperkingen en startupwaarschuwingen |
+| [`research/dossiers/`](research/dossiers/) | Ongewijzigde onderzoeksuitvoer met provenance-overzicht |
+| [`ideas/`](ideas/) | Bestaande ideeën; een menukaart, geen takenlijst |
+
+## Werkplaatsveiligheid zonder schijnzekerheid
+
+Claude kan ontwerpen, berekenen en testplannen maken. Jij controleert het werkelijke materiaal,
+de machinehandleiding, opspanning, voeding, nulpunten en uitschakeling en blijft bij een powered
+test. Een softwareclamp bewijst geen botsingsveiligheid. De huidige penplotter-sketch kan bij
+startup al 90° naar de servo's sturen; lees [arm/README.md](arm/README.md) vóór gebruik.
+
+Deze repository is openbaar. Bewaar projectcontext en meetwaarden, geen adressen, sleutels,
+privéfoto's of andere persoonsgegevens.

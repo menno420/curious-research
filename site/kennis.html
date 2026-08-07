@@ -46,12 +46,14 @@
   .weetje h4 { margin:0 0 6px; font-size:.98rem; color:var(--accent); line-height:1.35; }
   .weetje p { margin:0 0 10px; font-size:.93rem; color:var(--ink); }
   .weetje .voet { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .zeker {
+  .status {
     font:700 10px system-ui; letter-spacing:.04em; padding:3px 8px; border-radius:999px;
   }
-  .zeker.solid  { background:var(--ok-soft);     color:var(--ok); }
-  .zeker.common { background:var(--warm-soft);   color:var(--warm); }
-  .zeker.betwist{ background:var(--accent-soft); color:var(--accent); }
+  .status.verified     { background:var(--ok-soft);     color:var(--ok); }
+  .status.supported    { background:#e0f2fe;            color:#0369a1; }
+  .status.practical    { background:var(--warm-soft);   color:var(--warm); }
+  .status.confirm      { background:#fee2e2;            color:#b91c1c; }
+  .status.experimental { background:var(--accent-soft); color:var(--accent); }
   .weetje .bron { font-size:.82rem; color:var(--muted); }
   .weetje .bron a { color:var(--muted); }
 
@@ -78,7 +80,7 @@
   <p class="kicker">Naslag</p>
   <h1>Korte antwoorden, per onderwerp</h1>
   <p class="lead">Geen lappen tekst. Kies een onderwerp, klap een stukje open, lees drie zinnen
-  en klap het weer dicht. Bij elk antwoord staat <b>hoe zeker het is</b> en waar het vandaan
+  en klap het weer dicht. Bij elk antwoord staat <b>welk bewijsniveau het heeft</b> en waar het vandaan
   komt.</p>
 </header>
 
@@ -93,14 +95,16 @@
 
 <div class="doos" style="margin-top:34px">
   <h2>Hoe je dit leest</h2>
-  <p>Bij elk antwoord staat een kleurtje:</p>
+  <p>Het label gaat over de onderbouwing van precies dat antwoord:</p>
   <p>
-    <span class="zeker solid">ZEKER</span> — staat zo in de handleiding of op het datablad.<br>
-    <span class="zeker common">MEESTAL</span> — veel mensen melden het, maar het staat nergens officieel.<br>
-    <span class="zeker betwist">BETWIST</span> — hier zijn de meningen over verdeeld.
+    <span class="status verified">GEVERIFIEERD</span> — de geopende primaire bron draagt de claim.<br>
+    <span class="status supported">ONDERBOUWD</span> — betrouwbare secundaire of meerdere bronnen.<br>
+    <span class="status practical">PRAKTIJKADVIES</span> — nuttige start, zelf meten op jouw machine.<br>
+    <span class="status confirm">NOG BEVESTIGEN</span> — bron of werkplaatsmeting ontbreekt.<br>
+    <span class="status experimental">EXPERIMENT</span> — proef met meetbaar resultaat.
   </p>
-  <p>Dat onderscheid staat er met opzet. Je mag weten wanneer iets hard is en wanneer het
-  ervaring van anderen is.</p>
+  <p>Een bronlink alleen maakt iets niet geverifieerd. De volledige regels staan in
+  <a href="https://github.com/menno420/curious-research/blob/main/docs/knowledge-policy.md">het bewijsbeleid</a>.</p>
 </div>
 
 <div class="doos">
@@ -124,8 +128,9 @@
    Per weetje:
      v      = de vraag (de kop van het kaartje)
      a      = het antwoord, kort. Drie zinnen is genoeg.
-     zeker  = 'solid' | 'common' | 'betwist'
+     status = 'verified' | 'supported' | 'practical' | 'confirm' | 'experimental'
      bron   = link naar waar het vandaan komt (mag weg als er geen is)
+     check  = datum waarop een primaire bron echt is geopend (alleen bij verified)
 
    Onderzoek dat nog binnenkomt hoort in research/dossiers/ -- de prompts
    daarvoor staan in research/deep-research-prompts.md. Daarna hier inkorten
@@ -139,39 +144,47 @@ const KENNIS = {
     secties: [
       { titel: 'Wat een MG996R is', kaarten: [
         { v:'Hoeveel kracht heeft één servo?',
-          a:'Ongeveer 9,4 kg·cm bij 4,8 volt, en zo\'n 11 kg·cm bij 6 volt. Dat betekent: 9,4 kilo op één centimeter van de as, of ruwweg 1 kilo op 10 centimeter. Aan het eind van een uitgestrekte arm blijft daar dus veel minder van over dan het getal doet vermoeden.',
-          zeker:'solid', bron:'https://components101.com/motors/mg996r-servo-motor-datasheet' },
+          a:'Een secundaire MG996R-samenvatting noemt ongeveer 9,4 kg·cm bij 4,8 V en 11 kg·cm bij 6 V, maar “MG996R-klasse” bewijst niet dat jouw zes units die specificatie hebben. Stall torque is bovendien geen bruikbare continue armbelasting. Identificeer de variant en meet de complete arm voordat je een payloadgetal gebruikt.',
+          status:'confirm', bron:'https://components101.com/motors/mg996r-servo-motor-datasheet' },
         { v:'Hoeveel stroom trekt hij?',
-          a:'Rond 1,4 ampère volgens de fabrikant, en tot zo\'n 2,5 ampère als hij vastloopt. Zes stuks samen vastgelopen zit dus in de orde van 15 ampère. Daarom is een aparte voeding geen overdreven voorzichtigheid maar gewoon nodig.',
-          zeker:'solid', bron:'https://components101.com/motors/mg996r-servo-motor-datasheet' },
+          a:'Voor MG996R-klasse servo\'s circuleren sterk verschillende stroomcijfers. Een secundaire datasheetsamenvatting noemt circa 2,5 A bij blokkeren; dat bewijst niet wat jouw zes exemplaren trekken. Meet de piek van één servo en daarna de gezamenlijke beweging voordat je voeding of zekering op een internetgetal dimensioneert.',
+          status:'confirm', bron:'https://components101.com/motors/mg996r-servo-motor-datasheet' },
         { v:'Kan een servo vertellen waar hij staat?',
-          a:'Nee. Een gewone analoge servo neemt wél een hoek aan, maar geeft niets terug. Je weet dus altijd wat je hebt gevraagd, nooit wat er echt gebeurd is. Dat is de reden dat je de arm met de hand moet opmeten en dat "leren" bij ons werkt door stapjes te sturen en op te schrijven.',
-          zeker:'solid' },
+          a:'Voor de servo\'s in deze arm is geen externe positieterugmelding bevestigd. De besturing weet daarom welke hoek ze vroeg, maar niet automatisch of het gewricht daar werkelijk aankwam. Controleer type en bedrading voordat je concludeert dat feedback onmogelijk is; sommige aangepaste servo\'s voeren de potmeter apart uit.',
+          status:'confirm' },
         { v:'Hoe nauwkeurig is zo\'n arm nou echt?',
-          a:'Reken op enkele millimeters aan het uiteinde, niet op tienden. Elk gewricht heeft speling en een dode zone, en die tellen bij zes gewrichten op. Terugkeren naar een aangeleerd punt gaat wél veel beter dan een uitgerekend punt raken — daarom werken opnemen-en-afspelen goed en uitrekenen slecht.',
-          zeker:'common' }
+          a:'Daar staat nog geen geldig getal voor in deze repository. Speling, flex, montage en aanrijrichting stapelen zich over zes gewrichten op, maar de uitkomst moet aan de penpunt worden gemeten. Gebruik de herhaalbaarheidsgids voor meerdere benaderingsrichtingen en rapporteer spreiding in plaats van een internetnauwkeurigheid.',
+          status:'confirm', bron:'guides/arm-herhaalbaarheid-meten/index.html' }
       ]},
       { titel: 'Stroom en bedrading', kaarten: [
         { v:'Waarom niet gewoon de 5V van de Arduino?',
-          a:'Die pin komt uit een klein regelaartje dat een paar honderd milliampère aankan. Eén servo die even doortrekt is al te veel. Het bordje zakt in, herstart, of gaat stuk — en het gedrag lijkt sprekend op een softwarefout, dus je zoekt in de verkeerde hoek.',
-          zeker:'solid' },
+          a:'Een servo is een hoog-stroomverbruiker; Arduino waarschuwt dat zulke lasten niet via de 5V-pin horen. Gebruik een aparte voeding binnen de specificatie van de werkelijke servovariant, met gedeelde massa. Bordmodel, servomodel en voedingsgegevens zijn nog niet vastgelegd, dus neem geen algemene stroom- of zekeringswaarde over.',
+          status:'supported', bron:'https://docs.arduino.cc/learn/electronics/servo-motors' },
         { v:'Wat is "gedeelde massa" en waarom moet dat?',
-          a:'De min van je servovoeding moet aan de GND van de Arduino. Het stuursignaal is een spanning ten opzichte van massa; hebben beide kanten een andere massa, dan is er geen gemeenschappelijk nulpunt en gaan de servo\'s willekeurig trillen. Eén draadje, en het probleem is weg.',
-          zeker:'solid' },
+          a:'De min van de servovoeding en GND van de controller moeten een gemeenschappelijke signaalreferentie hebben volgens het gekozen bedradingsschema. Zonder die referentie is het stuursignaal niet betrouwbaar gedefinieerd. Dat verklaart niet automatisch iedere trilling: controleer ook spanningsval, bedrading, mechanica en code.',
+          status:'supported', bron:'https://docs.arduino.cc/learn/electronics/servo-motors' },
         { v:'Hoe herken ik dat de voeding tekortschiet?',
-          a:'Servo\'s die trillen of tikken zonder opdracht, een Arduino die spontaan herstart, of bewegingen die anders uitpakken naarmate er meer gewrichten tegelijk lopen. Dat patroon — erger naarmate er meer beweegt — wijst bijna altijd op stroom, niet op code.',
-          zeker:'common' }
+          a:'Servo\'s die trillen of tikken, een Arduino die herstart, of gedrag dat verslechtert zodra meer gewrichten tegelijk lopen zijn aanwijzingen voor spanningsval of onvoldoende piekvermogen. Het is geen bewijs: meet de voedingsrail tijdens dezelfde beweging en sluit bedrading, massa en code systematisch uit.',
+          status:'practical' }
       ]},
       { titel: 'Beweging', kaarten: [
         { v:'Waarom schokt de arm bij servo.write()?',
-          a:'Omdat er geen snelheidsinstelling bestaat. write(140) betekent "sta NU op 140 graden", en de servo geeft vol gas tot hij er is. Twee snelheden: alles of niets. Soepel bewegen moet dus uit je code komen, niet uit de servo.',
-          zeker:'solid' },
+          a:'Servo.write() geeft een nieuw doel door maar programmeert geen gezamenlijk snelheids- of acceleratieprofiel voor de zes assen. Hoe hard de echte servo reageert hangt van servo, belasting en voeding af. Maak tussenstappen en tijdprofielen in code en meet het effect; noem dat geen garantie tegen schokken.',
+          status:'practical', bron:'https://docs.arduino.cc/libraries/servo' },
         { v:'Hoe vaak moet ik een nieuwe hoek sturen?',
-          a:'Vijftig keer per seconde, dus elke 20 milliseconden. Dat is het tempo waarop een analoge servo luistert. Vaker sturen verandert niets — hij kijkt er niet naar. Veel langzamer en je gaat de losse stapjes zien.',
-          zeker:'solid' },
+          a:'De Arduino Servo-library gebruikt normaal een periodieke refresh rond 20 ms, maar de respons van de werkelijke servo en de rest van de sketch moeten worden gemeten. Sneller nieuwe doelen berekenen geeft niet automatisch snellere mechanische reactie. Begin met 20 ms en vergelijk respons, jitter en seriële belasting.',
+          status:'practical' },
         { v:'Waarom is soepel bewegen langzamer?',
           a:'Omdat optrekken en afremmen tijd kosten. Zet je de snelheidslimiet hoog genoeg, dan is er geen tijd meer om op te bouwen en lijkt netjes rekenen weer op knallen. Vloeiendheid is dus een ruil tegen snelheid, geen instelling die je gratis wint.',
-          zeker:'solid' }
+          status:'practical' }
+      ]},
+      { titel: 'Startup en begrenzen', kaarten: [
+        { v:'Betekent “geen kalibratie” dat de arm niet kan bewegen?',
+          a:'Nee. De laptoptool weigert gecontroleerde opdrachten zonder geldig kalibratiebestand, maar de huidige penplotter-sketch koppelt in setup() alle servo\'s aan en schrijft 90° vóór de limietenhandshake. Een reset kan dus beweging geven; 90° is niet als gezamenlijke startupstand bevestigd.',
+          status:'verified', bron:'https://github.com/menno420/curious-research/blob/main/projects/arm-pen-plotter/pen_plotter_arm.ino', check:'2026-08-07' },
+        { v:'Wat bewijst een clamp?',
+          a:'Alleen dat een doelhoek via die bedieningsroute numeriek tussen de vastgelegde min en max ligt. Een clamp ziet geen tafel, kabel, verwisseld gereedschap, doorbuiging of sketch die bij startup buiten die route schrijft. Het is hoekbegrenzing, geen botsingsdetectie.',
+          status:'practical', bron:'guides/arm-werkgebied/index.html' }
       ]}
     ]
   },
@@ -182,30 +195,30 @@ const KENNIS = {
     secties: [
       { titel: 'Wat de printer zelf doet', kaarten: [
         { v:'Wat stelt de A1 zelf af?',
-          a:'Vóór elke print meet hij of het bed scheef staat, zoekt hij de goede nozzlehoogte, meet hij hoe de printer trilt, en meet hij hoe het plastic uit de nozzle komt. Bij andere printers zijn dat vier klussen die je met de hand en met testprintjes doet.',
-          zeker:'solid', bron:'https://wiki.bambulab.com/en/a1-mini/manual/intro-a1-mini' },
+          a:'De A1-serie biedt automatische bednivellering, Z-offset, vibratiecompensatie en flowdynamiek-kalibratie. Welke controles voor een opdracht werkelijk draaien hangt af van de gekozen kalibratie-opties en workflow; neem niet aan dat elk onderdeel vóór iedere print opnieuw wordt gemeten.',
+          status:'supported', bron:'https://wiki.bambulab.com/en/a1-mini/manual/intro-a1-mini' },
         { v:'Heeft mijn A1 die lasermeting?',
           a:'Nee. De LiDAR die de eerste laag scant zit op de duurdere modellen. De A1 doet het met een krachtsensor: hij duwt en voelt de tegendruk. Werkt prima — maar uitleg over "mijn Bambu scant de eerste laag" gaat niet over jouw machine.',
-          zeker:'solid', bron:'https://wiki.bambulab.com/en/a1/manual/intro-a1' },
+          status:'supported', bron:'https://wiki.bambulab.com/en/a1/manual/intro-a1' },
         { v:'Wat moet ik dan nog wél zelf doen?',
           a:'Alles wat een keuze is in plaats van een meting: hoe dik je wanden worden, hoeveel vulling, hoeveel speling twee onderdelen nodig hebben, hoe je iets op het bed legt. Plus de temperatuur bij filament zonder profiel. Daar gaat geen sensor over.',
-          zeker:'solid' }
+          status:'practical' }
       ]},
       { titel: 'Als er iets misgaat', kaarten: [
         { v:'Mijn eerste laag hecht niet — waar kijk ik eerst?',
           a:'Niet naar instellingen. Eerst: is het bed schoon (vet van vingers verpest zowel de hechting als de meting), is de nozzle schoon (een klodder oud plastic drukt tegen het bed en verpest de meting), en zitten de schroefjes van de hotend vast. Die laatste is een bekende bij de A1-serie.',
-          zeker:'common', bron:'https://www.adpindustries.com/blog/bambu-lab-first-layer-calibration-guide/' },
-        { v:'Kan ik de eerste laag alsnog bijstellen?',
-          a:'Ja, tijdens het printen. Vind je hem net te plat of net te los, dan kun je de hoogte live bijsturen op het schermpje van de printer. Werk in kleine stapjes — een paar honderdste millimeter is al goed te zien.',
-          zeker:'solid' }
+          status:'practical', bron:'https://www.adpindustries.com/blog/bambu-lab-first-layer-calibration-guide/' },
+        { v:'Moet ik de Z-offset met de hand instellen?',
+          a:'Normaal niet. Laat de A1 zijn automatische bed- en nozzlemeting doen en zoek bij een slechte eerste laag eerst naar een vuile plaat, materiaal aan de nozzle, een verkeerd plaatprofiel of een los mechanisch deel. Pas geen algemene handleiding voor handmatige Z-offset toe op deze printer.',
+          status:'supported', bron:'https://wiki.bambulab.com/en/a1/manual/intro-a1' }
       ]},
       { titel: 'De AMS Lite', kaarten: [
         { v:'Waarom komt er zoveel afval uit bij meerdere kleuren?',
           a:'Er zit maar één nozzle in. Bij elke kleurwissel moet het oude plastic er eerst uit voordat de nieuwe kleur zuiver is, en dat wordt een hoopje naast je print. Dat is geen storing maar natuurkunde.',
-          zeker:'solid' },
+          status:'practical' },
         { v:'Hoe hou ik dat afval klein?',
           a:'Door bij het ontwerpen te denken in hoogtes in plaats van in vlakken. Een model waarbij elke kleur zijn eigen stuk hoogte heeft, wisselt een paar keer. Een model dat per laag vier keer wisselt kan meer weggooien dan de print zelf weegt.',
-          zeker:'common' }
+          status:'practical' }
       ]}
     ]
   },
@@ -216,26 +229,40 @@ const KENNIS = {
     secties: [
       { titel: 'Scripten', kaarten: [
         { v:'Waar zet ik een Python-script neer?',
-          a:'Tab UTILITIES → paneel ADD-INS → Scripts and Add-Ins, of gewoon Shift+S. Dan + → Create script or add-in → Script + Python → Create. Daarna "Edit in code editor", code erin plakken, opslaan, en terug in Fusion op Run.',
-          zeker:'solid', bron:'https://help.autodesk.com/view/fusion360/ENU/?guid=SLD-MANAGE-SCRIPTS-ADD-INS' },
+          a:'Open Utilities → Add-Ins → Scripts and Add-Ins. Maak via de werkbalk een nieuw Script in Python, open het met Edit, sla de code op en gebruik Run. Fusion heeft een nieuw en een oud dialoogvenster; de knopnamen kunnen iets anders staan, maar Autodesk documenteert beide routes.',
+          status:'verified', bron:'https://help.autodesk.com/view/fusion360/ENU/?guid=SLD-MANAGE-SCRIPTS-ADD-INS', check:'2026-08-07' },
         { v:'Wat is het verschil tussen een script en een add-in?',
           a:'Een script draait één keer en is daarna klaar. Een add-in blijft draaien zolang Fusion open staat en kan bijvoorbeeld een knop toevoegen. Voor "maak dit voor me" wil je een script.',
-          zeker:'solid', bron:'https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/WritingDebugging_UM.htm' },
+          status:'verified', bron:'https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/WritingDebugging_UM.htm', check:'2026-08-07' },
         { v:'Mijn object is tien keer te groot — wat nu?',
           a:'Dan zit je in de bekendste valkuil: de Fusion-API rekent van binnen in centimeters, niet in millimeters. Zeg je 10, dan bedoelt Fusion 10 cm. Vermenigvuldig elke maat met 0,1 en het klopt weer. Je doet niets fout — dat is deze regel.',
-          zeker:'solid' }
+          status:'supported', bron:'https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/Units_UM.htm' }
+      ]},
+      { titel: 'Naar productie', kaarten: [
+        { v:'Hoe exporteer ik een laserschets?',
+          a:'Houd één vlakke exportschets met alleen de bedoelde contouren, klik de schets in de Browser met rechts aan en kies Export DXF. Meet na import onmiddellijk één bekende referentiemaat; het DXF-bestand bewijst niet vanzelf dat schaal en eenheden goed zijn geïnterpreteerd.',
+          status:'verified', bron:'https://help.autodesk.com/view/fusion360/ENU/?caas=caas%2Fsfdcarticles%2Fsfdcarticles%2FHow-to-Save-Sketch-as-DXF-in-Fusion-360.html', check:'2026-08-07' },
+        { v:'Waar compenseer ik kerf?',
+          a:'Kies één centrale plek: een benoemde parameter in het ontwerp óf de offsetfunctie van de lasersoftware. Dubbele compensatie is moeilijk terug te vinden. Meet de waarde per machine, materiaalbatch, dikte en focus met een coupon.',
+          status:'experimental', bron:'guides/lasersnijden-van-fusion-naar-onderdeel/index.html' }
       ]}
     ]
   },
 
   arduino: {
     naam: 'Arduino', icoon: '🔌',
-    intro: 'Nog aan het vullen — het diepe onderzoek voor dit onderwerp loopt.',
+    intro: 'Praktische stappen voor sketches die meer dan één ding tegelijk moeten blijven doen.',
     secties: [
       { titel: 'Timing', kaarten: [
         { v:'Waarom is delay() vaak een probleem?',
-          a:'Omdat delay() alles stilzet. Tijdens die pauze kan je programma geen knop lezen, geen seriële poort afhandelen en geen tweede ding aansturen. Met millis() kijk je in plaats daarvan hoe laat het is en ga je door — dan kunnen er meerdere dingen tegelijk lopen.',
-          zeker:'solid' }
+          a:'Omdat delay() de normale voortgang van jouw sketch in loop() pauzeert. Tijdens die codepauze handel je daar geen knop, seriële logica of tweede taak af; interrupts zijn een aparte nuance. Met millis() controleer je verstreken tijd en laat je loop() kort doorlopen.',
+          status:'supported', bron:'https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay' },
+        { v:'Welke millis()-vergelijking blijft goed na overloop?',
+          a:'Gebruik nu - vorigeTijd >= interval met unsigned long-waarden. Vergelijk niet met nu >= vorigeTijd + interval; rekenen met het tijdsverschil is het robuuste patroon.',
+          status:'supported', bron:'https://docs.arduino.cc/language-reference/en/functions/time/millis/' },
+        { v:'Hoe plan ik meerdere taken?',
+          a:'Geef iedere taak een eigen interval, vorige tijd en toestand. Laat iedere beurt kort werk doen en meteen terugkeren naar loop(). Controleer met tijdstempels dat een knop of seriële opdracht responsief blijft terwijl andere taken lopen.',
+          status:'practical', bron:'guides/arduino-zonder-blokkeren/index.html' }
       ]}
     ]
   },
@@ -246,64 +273,106 @@ const KENNIS = {
     secties: [
       { titel: 'Wat er nooit in mag', kaarten: [
         { v:'Waarom mag PVC absoluut nooit in een laser?',
-          a:'Omdat het bij verhitting uiteenvalt in waterstofchloride: een giftig, bijtend gas dat met vocht zoutzuur wordt. Het vreet je longen aan, én je lagers, je elektronica en je lenzen. Bij onvolledige verbranding komen er ook dioxinen bij. Goede afzuiging maakt dit niet acceptabel — dit is de ene regel zonder uitzondering.',
-          zeker:'solid', bron:'https://www.troteclaser.com/static/ebook/trotec-ebook-handbook-for-engravers.pdf' },
+          a:'PVC en andere halogeenhoudende materialen staan in de machinehandleiding op de verbodslijst omdat schadelijke en corrosieve dampen kunnen ontstaan. Afzuiging maakt een verboden materiaal niet toegestaan. Gebruik alleen exact geïdentificeerd materiaal dat de handleiding van jouw machine toestaat.',
+          status:'verified', bron:'https://www.troteclaser.com/static/pdf/q-series/8060-Q400-operating-manual-EN.pdf', check:'2026-08-07' },
         { v:'Klopt het dat er "chloorgas" vrijkomt?',
           a:'Niet precies, en het maakt uit. Je leest overal chloorgas, maar wat er gemeten is bij CO₂-laseren van PVC is vooral waterstofchloride — plus benzeen, dat kankerverwekkend is en in de verhalen op internet meestal ontbreekt. De conclusie verandert er niet door: er niet in. Maar weet wát je dan inademt.',
-          zeker:'solid', bron:'https://www.sciencedirect.com/science/article/abs/pii/003039929593956R' },
+          status:'supported', bron:'https://www.sciencedirect.com/science/article/abs/pii/003039929593956R' },
         { v:'Hoe herken ik PVC als er geen etiket op zit?',
           a:'Vaak niet — en dat is precies het probleem. Vinylfolie, kunstleer, kabelmantel, PVC-schuim en plakvinyl tellen allemaal mee. Ruikt het scherp en zuur, of zie je roest of groen uitgeslagen koper in de machine: meteen stoppen. Vraag bij elk technisch kunststof om de exacte handelsnaam. "Plastic plaat" is geen identificatie.',
-          zeker:'solid', bron:'https://www.troteclaser.com/static/ebook/trotec-ebook-handbook-for-engravers.pdf' },
+          status:'practical', bron:'https://www.troteclaser.com/static/pdf/q-series/8060-Q400-operating-manual-EN.pdf' },
         { v:'Wat mag er nog meer niet in?',
-          a:'Teflon en andere fluorkunststoffen (kunnen waterstoffluoride geven), FR-4 en epoxy- of fenolplaat, brandvertragende of onbekende platen, en onbekend schuim. Nylon en urethaan kunnen cyanideverbindingen geven, polystyreen geeft styreen. ABS is niet overal verboden maar rookt sterk — alleen als je machine- én materiaalfabrikant het allebei expliciet toestaan.',
-          zeker:'solid', bron:'https://www.osha.gov/otm/section-2-health-hazards/chapter-1' },
+          a:'De Q400-handleiding sluit onder meer halogeenhoudende materialen, epoxy- en fenolharsen en onbekende materialen uit. De lijst verschilt per machine en afzuigsysteem. Controleer handelsnaam én veiligheidsblad en volg altijd de strengere regel van machine- of materiaalfabrikant.',
+          status:'verified', bron:'https://www.troteclaser.com/static/pdf/q-series/8060-Q400-operating-manual-EN.pdf', check:'2026-08-07' },
         { v:'En geïmpregneerd of geverfd hout?',
           a:'Niet doen. Drukbehandeld, geïmpregneerd, brandvertragend, geverfd of onbekend verlijmd hout hoort er niet in — je weet niet wat de behandeling is en dus niet wat je verbrandt. Gewoon droog, harsarm massief hout of expliciet laser-grade multiplex.',
-          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' }
+          status:'supported', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' }
       ]},
       { titel: 'Rook, afzuiging en brand', kaarten: [
         { v:'Mag een snijklus even alleen draaien?',
           a:'Nee. Geen enkele. Papier, karton, schuim, hout, MDF, textiel en acrylaat kunnen binnen seconden vlam vatten, en ook de resten onder het rooster kunnen gaan branden. Blijf op armlengte of in zicht van de stopknop. Een camera in een andere kamer is geen toezicht. Trotec schrijft een CO₂-blusser binnen handbereik voor.',
-          zeker:'solid', bron:'https://www.troteclaser.com/static/pdf/sp500/8091_OM_SP500S_en-us_1.0.pdf' },
+          status:'supported', bron:'https://www.troteclaser.com/static/pdf/sp500/8091_OM_SP500S_en-us_1.0.pdf' },
         { v:'Hoeveel afzuiging heb je echt nodig?',
           a:'Ga uit van het werkpunt in de handleiding van je machine, niet van wat een ventilator in vrije lucht haalt. Epilog noemt voor desktopmachines zo\'n 350–400 CFM, ongeveer 595–680 m³/h. Lange slangen, bochten en filters halen dat flink omlaag. Kort leidingwerk, brandwerend kanaal, en liever naar buiten dan recirculeren.',
-          zeker:'solid', bron:'https://support.epiloglaser.com/laser-machine/mini-helix/getting-started/setting-up-the-exhaust_mini-helix/' },
+          status:'supported', bron:'https://support.epiloglaser.com/laser-machine/mini-helix/getting-started/setting-up-the-exhaust_mini-helix/' },
         { v:'Als het niet meer ruikt, is het dan schoon?',
           a:'Nee, en dit is de gevaarlijkste denkfout van het hele onderwerp. Geur zegt niets over wat er nog hangt. NIOSH mat bij CO₂-laseren onder meer benzeen, acrylonitril, styreen en deeltjes vanaf 0,3 µm, ruim boven de achtergrond. Laat de afzuiging na afloop nog even doorlopen voor je het deksel opent.',
-          zeker:'solid', bron:'https://stacks.cdc.gov/view/cdc/189415/cdc_189415_DS1.pdf' },
+          status:'supported', bron:'https://stacks.cdc.gov/view/cdc/189415/cdc_189415_DS1.pdf' },
         { v:'Helpt een mondkapje tegen de rook?',
           a:'Niet als vervanging voor afzuiging. Bij een normaal gesloten machine hoort de techniek het werk te doen: eerst de afzuiging op orde, dan pas de rest. Zie je rook lekken, condens op het venster, of ruik je iets buiten de kast — stoppen en dát oplossen.',
-          zeker:'common', bron:'https://stacks.cdc.gov/view/cdc/189415/cdc_189415_DS1.pdf' }
+          status:'practical', bron:'https://stacks.cdc.gov/view/cdc/189415/cdc_189415_DS1.pdf' }
       ]},
       { titel: 'Ogen en de laserklasse', kaarten: [
         { v:'Heb ik een laserbril nodig?',
           a:'Bij een dichte, gecertificeerde klasse-1-kast niet — die kast ís de beveiliging, ook al zit er een klasse-4-bron in. Maar een open diodeframe, een geopende servicestand of een verwijderde afscherming is wél klasse 4. Dan moet een bril aantoonbaar bij die exacte golflengte én sterkte horen. Een oranje bril uit een doos bewijst niets.',
-          zeker:'solid', bron:'https://www.gov.uk/government/publications/laser-radiation-safety-advice/laser-radiation-safety-advice' },
+          status:'supported', bron:'https://www.gov.uk/government/publications/laser-radiation-safety-advice/laser-radiation-safety-advice' },
         { v:'Waarom mag je een deurschakelaar nooit overbruggen?',
           a:'Omdat je daarmee een beheerst klasse-1-apparaat verandert in een open hoogvermogenlaser — zonder afgeschermde bundelbaan en zonder waarschuwing. Bij fiber (1064 nm) is de bundel bovendien onzichtbaar, ook zijn weerkaatsing op blank metaal. En CO₂-voedingen kunnen tienduizenden volts voeren.',
-          zeker:'solid', bron:'https://www.troteclaser.com/static/pdf/speedmarker-700/8041-operating-manual-speedmarker-700_fiber-v3-en-us.pdf' }
+          status:'supported', bron:'https://www.troteclaser.com/static/pdf/speedmarker-700/8041-operating-manual-speedmarker-700_fiber-v3-en-us.pdf' }
       ]},
       { titel: 'Wat er wél goed in gaat', kaarten: [
         { v:'Wat snijdt een CO₂-laser goed?',
-          a:'Hout, MDF, laser-multiplex, papier, karton, kurk, textiel, geschikt leer en acrylaat (PMMA). Als vuistregel voor acrylaat: ongeveer 10 watt per millimeter dikte. Dat is het klassieke werkpaard voor precies het soort platwerk dat jij in Fusion tekent.',
-          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
+          a:'Veel CO₂-machines verwerken hout, geschikt plaatmateriaal, papier, textiel en PMMA, maar de exacte lijst en maximale dikte horen bij machine, lens en afzuiging. Gebruik een vermogen-per-millimeter-vuistregel hoogstens om een proef te plannen, nooit als toestemming of gegarandeerde instelling.',
+          status:'supported', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
         { v:'En zo\'n blauwe diodelaser van een paar honderd euro?',
           a:'Die snijdt vooral hout, papier en donker, ondoorzichtig acrylaat. Doorzichtig acrylaat laat het blauwe licht gewoon door en snijdt dus niet. Voor metaal heb je een fiberlaser nodig, en die hobbymachines graveren vooral — het zijn geen plaatsnijmachines.',
-          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
+          status:'supported', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
         { v:'Waarom mislukt goedkoop bouwmultiplex zo vaak?',
           a:'Omdat er luchtgaten en harde lijmlagen in zitten die je niet ziet. De snede loopt prima tot hij bij zo\'n laag komt, blijft daar hangen, en verkoolt de rest terwijl je hem opnieuw laat gaan. Laser-grade multiplex is gelijkmatig verlijmd — dat is waar je voor betaalt.',
-          zeker:'solid', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
+          status:'supported', bron:'https://www.troteclaser.com/en/resources/blog/diode-laser-vs-co2-laser-vs-fiber-laser-the-comparison-guide' },
         { v:'Hoe snel gaat 3 mm multiplex ongeveer?',
-          a:'Als startpunt, van xTool: rond 3 mm/s bij 10 watt, 6 mm/s bij 20 watt, en 12 à 13 mm/s bij 40 watt — telkens vol vermogen, één doorgang. Gebruik dat om te beginnen, niet als eindwaarde. Jouw plaat, jouw machine en jouw lens beslissen.',
-          zeker:'common', bron:'https://www.xtool.com/' }
+          a:'Neem de materiaalbibliotheek van jouw machine alleen als eerste proefpunt. Snijd daarna op een reststuk een kleine snelheid/vermogen-matrix en kies de snelste cel die volledig doorsnijdt zonder onnodig brede of verkoolde rand. Noteer machine, lens/focus en plaatbatch bij het resultaat.',
+          status:'experimental', bron:'https://support.xtool.com/article/872' }
+      ]},
+      { titel: 'Van Fusion naar passend deel', kaarten: [
+        { v:'Wat controleer ik direct na DXF-import?',
+          a:'Meet één bekende referentiemaat, zoek open of dubbele contouren en wijs snijden en graveren toe volgens jouw lasersoftware. Schaal nooit op het oog en neem geen universele lijnkleur aan.',
+          status:'practical', bron:'guides/lasersnijden-van-fusion-naar-onderdeel/index.html' },
+        { v:'Hoe vind ik een passende sleufmaat?',
+          a:'Snijd uit dezelfde materiaalbatch een coupon met meerdere sleufmaten rond de gemeten plaatdikte. Test met een bijpassende tong en noteer machine, focus en instellingen. De uitkomst geldt voor die combinatie, niet als algemene kerfconstante.',
+          status:'experimental', bron:'guides/lasersnijden-van-fusion-naar-onderdeel/index.html' },
+        { v:'Mag een verboden materiaal met sterke afzuiging toch?',
+          a:'Nee. Afzuiging verandert een uitgesloten of onbekend materiaal niet in een toegestaan materiaal. Identificeer handelsnaam en samenstelling en volg de verbodslijst van de eigen machinehandleiding; bij twijfel niet laseren.',
+          status:'verified', bron:'https://www.troteclaser.com/static/pdf/q-series/8060-Q400-operating-manual-EN.pdf', check:'2026-08-07' }
       ]}
     ]
   },
 
   frezen: {
     naam: 'Frezen', icoon: '🪚',
-    intro: 'Nog leeg — het diepe onderzoek voor dit onderwerp moet nog gedraaid worden.',
-    secties: []
+    intro: 'Van Fusion CAM naar een eerste gecontroleerde snede; machine- en gereedschapswaarden blijven specifiek voor jouw nog te bevestigen CNC.',
+    secties: [
+      { titel: 'Setup en nulpunt', kaarten: [
+        { v:'Waar begint een CNC-programma echt?',
+          a:'Bij de Setup: gekozen model, werkelijk stock, asrichting en WCS-oorsprong moeten dezelfde werkelijkheid beschrijven als de machine. Controleer de X-, Y- en Z-pijlen in Fusion en kies een stockpunt dat je fysiek reproduceerbaar kunt nullen.',
+          status:'verified', bron:'https://help.autodesk.com/view/fusion360/ENU/?guid=GUID-BEC5DEA9-AC3E-4FA8-998E-4AE8CD0D0B1E', check:'2026-08-07' },
+        { v:'Waarom modelleer ik klemmen?',
+          a:'Zodat simulatie ook de ruimte van frees en houder langs de opspanning kan beoordelen. Dat blijft een modelcontrole: vergelijk de echte klemlocatie, schroeflengte en stijfheid aan de machine.',
+          status:'practical', bron:'guides/cnc-van-fusion-naar-eerste-snee/index.html' }
+      ]},
+      { titel: 'Gereedschap en snede', kaarten: [
+        { v:'Hoe hangen voeding, toerental en snijkanten samen?',
+          a:'Spaandikte per tand = voeding ÷ (toerental × aantal snijkanten). Gebruik de formule om invoer op tegenstrijdigheden te controleren, maar kies de eerste waarde uit gegevens van de echte frees en begrens hem op machine, materiaal en stijfheid.',
+          status:'practical' },
+        { v:'Waarom is “langzamer voeren” niet altijd veiliger?',
+          a:'Als toerental gelijk blijft, wordt de spaandikte kleiner en kan de frees gaan wrijven in plaats van snijden. Dat geeft warmte, slijtage en bij kunststof mogelijk smelten. Verander één parameter per proef en beoordeel spanen, geluid, maat en rand.',
+          status:'practical' },
+        { v:'Welke baan komt als laatste?',
+          a:'Bij een vlak deel meestal de buitencontour, nadat pockets en gaten zijn gedaan. Gebruik tabs of een andere bewezen vasthoudmethode als het onderdeel anders loskomt; Autodesk biedt tabs in 2D Contour.',
+          status:'verified', bron:'https://help.autodesk.com/view/fusion360/ENU/?guid=GUID75B6821B-DE26-4E3B-AF10-4A54131CD9E4', check:'2026-08-07' }
+      ]},
+      { titel: 'Simulatie en eerste snede', kaarten: [
+        { v:'Is een botsingsvrije simulatie genoeg?',
+          a:'Nee. Autodesk meldt dat simulatie zonder volledig machinemodel de echte machinebeweging minder nauwkeurig weergeeft. Controleer stock, houder en waarschuwingen, maar doe daarna ook een controller-specifieke air cut boven het materiaal.',
+          status:'verified', bron:'https://help.autodesk.com/view/fusion360/ENU/?contextId=MFG-REF-SIMULATION', check:'2026-08-07' },
+        { v:'Wat controleer ik bij een air cut?',
+          a:'Asrichting, nulpunt, machinebereik, klemvrijheid, gereedschapslengte en onverwachte commando\'s — zonder het materiaal te raken. De exacte methode hangt van controller en machine af; improviseer geen onbekende Z-offset.',
+          status:'practical', bron:'guides/cnc-van-fusion-naar-eerste-snee/index.html' },
+        { v:'Wat beperkt Fusion Personal Use bij posten?',
+          a:'De Personal Use-versie gebruikt geen echte rapid moves in de uitvoer en ondersteunt geen automatische toolwissel in één gepost programma. Post bij meerdere gereedschappen afzonderlijke bestanden en voer wissel en opnieuw nullen bewust volgens de machineprocedure uit.',
+          status:'verified', bron:'https://help.autodesk.com/view/fusion360/ENU/?caas=caas%2Fsfdcarticles%2Fsfdcarticles%2FFusion-360-Free-License-Changes.html', check:'2026-08-07' }
+      ]}
+    ]
   }
 };
 
@@ -323,8 +392,10 @@ const KENNIS = {
     return o.secties.reduce((n, s) => n + s.kaarten.length, 0);
   }
 
-  const ZEKER_TEKST = { solid:'ZEKER', common:'MEESTAL', betwist:'BETWIST' };
-  const ZEKER_KLASSE = { solid:'solid', common:'common', betwist:'betwist' };
+  const STATUS_TEKST = {
+    verified:'GEVERIFIEERD', supported:'ONDERBOUWD', practical:'PRAKTIJKADVIES',
+    confirm:'NOG BEVESTIGEN', experimental:'EXPERIMENT'
+  };
 
   function bouwTabs() {
     tabs.innerHTML = '';
@@ -345,12 +416,13 @@ const KENNIS = {
     const d = document.createElement('div');
     d.className = 'weetje';
     const bron = w.bron
-      ? '<span class="bron">· <a href="' + w.bron + '" target="_blank" rel="noopener">bron</a></span>'
+      ? '<span class="bron">· <a href="' + w.bron + '" target="_blank" rel="noopener">bron</a>' +
+        (w.check ? ' · gecontroleerd ' + w.check : '') + '</span>'
       : '';
     d.innerHTML =
       '<h4>' + w.v + '</h4><p>' + w.a + '</p>' +
-      '<div class="voet"><span class="zeker ' + ZEKER_KLASSE[w.zeker] + '">' +
-      ZEKER_TEKST[w.zeker] + '</span>' + bron + '</div>';
+      '<div class="voet"><span class="status ' + w.status + '">' +
+      STATUS_TEKST[w.status] + '</span>' + bron + '</div>';
     return d;
   }
 
