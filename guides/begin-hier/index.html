@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Begin hier — je werkplaats die terugpraat</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --line:#d1d5db; --accent:#7c3aed; --accent-soft:#ede9fe;
+    --ok:#16a34a; --ok-soft:#dcfce7; --warm:#e0912f; --warm-soft:#fdf0dc;
+    --shelf:#9ca3af; --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --line:#374151; --accent:#a78bfa; --accent-soft:#2e1065;
+      --ok:#4ade80; --ok-soft:#14532d; --warm:#eab308; --warm-soft:#422006;
+      --shelf:#4b5563; --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, sans-serif; background:var(--bg); color:var(--ink);
+         display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+  h1 { font-size:1.35rem; margin:.2em 0 .1em; text-align:center; }
+  .sub { color:var(--muted); margin:0 0 18px; text-align:center; max-width:40em; }
+  .stage-box { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+               padding:18px; width:100%; max-width:820px; }
+  svg { width:100%; height:auto; display:block; }
+
+  .label { font:600 13px system-ui, sans-serif; fill:var(--ink); }
+  .small { font:11px system-ui, sans-serif; fill:var(--muted); }
+  .tiny  { font:9px system-ui, sans-serif; fill:var(--muted); }
+  .boxline { fill:var(--card); stroke:var(--line); stroke-width:2; }
+  .shelfbar { fill:var(--shelf); }
+
+  /* staged elements: hidden until their stage */
+  #bubbleG, #readG, #buildG, #saveG, #weeksG, #lostG {
+    opacity:0; transition:opacity .45s ease; }
+  .on { opacity:1 !important; }
+
+  #bubble { fill:var(--accent-soft); stroke:var(--accent); stroke-width:2; }
+  .scan { fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linecap:round; }
+  #scanline { transition:transform .6s ease; }
+  .newcard { fill:var(--ok-soft); stroke:var(--ok); stroke-width:2; }
+  .oldcard { fill:var(--warm-soft); stroke:var(--warm); stroke-width:1.8; }
+  #flyer { transition:transform .9s cubic-bezier(.5,0,.3,1); }
+  .ghost { fill:none; stroke:var(--muted); stroke-width:1.6; stroke-dasharray:4 4; }
+  .xmark { stroke:#dc2626; stroke-width:3; stroke-linecap:round; }
+
+  .caption { min-height:7.2em; margin:14px auto 0; max-width:680px; text-align:center; }
+  .caption b { color:var(--accent); }
+  .caption .step { display:block; font:700 12px system-ui; letter-spacing:.08em;
+                   text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .controls { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+  button { font:600 14px system-ui; padding:9px 16px; border-radius:9px; cursor:pointer;
+           border:2px solid var(--accent); background:var(--accent); color:#fff; }
+  button.ghostbtn { background:transparent; color:var(--accent); }
+  button:disabled { opacity:.4; cursor:default; }
+  .recap { max-width:680px; margin:26px auto 0; padding:16px 18px; background:var(--card);
+           border-radius:12px; box-shadow:var(--shadow); }
+  .recap h2 { font-size:1rem; margin:0 0 8px; }
+  .recap p { margin:0 0 10px; }
+  .recap p:last-child { margin-bottom:0; }
+  .dots { display:flex; gap:6px; justify-content:center; margin-top:12px; }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--line); }
+  .dot.active { background:var(--accent); }
+  @media (prefers-reduced-motion: reduce) {
+    #scanline, #flyer { transition:none; }
+    #bubbleG,#readG,#buildG,#saveG,#weeksG,#lostG { transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Begin hier — je werkplaats die terugpraat</h1>
+<p class="sub">Twee minuten. Druk op <b>Speel af</b> en kijk wat er gebeurt als je Claude
+iets vraagt over je printer, je Arduino of je robotarm.</p>
+
+<div class="stage-box">
+<svg viewBox="0 0 820 330" role="img" aria-label="Animatie: je vraag wordt een uitleg die bewaard blijft">
+
+  <!-- ============ jij + vraag ============ -->
+  <g id="bubbleG">
+    <circle cx="70" cy="120" r="20" fill="var(--muted)"/>
+    <path d="M46 168 a24 26 0 0 1 48 0 z" fill="var(--muted)"/>
+    <text class="small" x="70" y="200" text-anchor="middle">jij</text>
+    <rect id="bubble" x="112" y="78" width="196" height="66" rx="12"/>
+    <path d="M112 116 l-14 8 14 8 z" fill="var(--accent)"/>
+    <text class="label" x="128" y="104">"Mijn print heeft</text>
+    <text class="label" x="128" y="122">overal draadjes.</text>
+    <text class="label" x="128" y="140">Hoe los ik dat op?"</text>
+  </g>
+
+  <!-- ============ claude leest de map ============ -->
+  <g id="readG">
+    <rect class="boxline" x="340" y="72" width="150" height="120" rx="10"/>
+    <text class="label" x="415" y="96" text-anchor="middle">jouw werkplaats</text>
+    <text class="tiny"  x="415" y="112" text-anchor="middle">printers · arduino · arm</text>
+    <line x1="358" y1="126" x2="472" y2="126" stroke="var(--line)" stroke-width="7" stroke-linecap="round"/>
+    <line x1="358" y1="144" x2="472" y2="144" stroke="var(--line)" stroke-width="7" stroke-linecap="round"/>
+    <line x1="358" y1="162" x2="440" y2="162" stroke="var(--line)" stroke-width="7" stroke-linecap="round"/>
+    <g id="scanline">
+      <line class="scan" x1="352" y1="120" x2="478" y2="120"/>
+    </g>
+    <text class="small" x="415" y="210" text-anchor="middle">Claude leest alles</text>
+  </g>
+
+  <!-- ============ claude bouwt de uitleg ============ -->
+  <g id="buildG">
+    <g id="flyer">
+      <rect class="newcard" x="530" y="80" width="120" height="88" rx="9"/>
+      <text class="label" x="590" y="106" text-anchor="middle">Draadjes</text>
+      <text class="small" x="590" y="124" text-anchor="middle">uitleg + filmpje</text>
+      <text class="small" x="590" y="142" text-anchor="middle">+ 1 instelling</text>
+      <text class="tiny"  x="590" y="158" text-anchor="middle">in het Nederlands</text>
+    </g>
+  </g>
+
+  <!-- ============ de plank ============ -->
+  <g id="saveG">
+    <rect class="shelfbar" x="512" y="246" width="266" height="7" rx="3"/>
+    <text class="small" x="645" y="272" text-anchor="middle">bewaard — staat er morgen nog</text>
+  </g>
+
+  <!-- ============ weken later ============ -->
+  <g id="weeksG">
+    <rect class="oldcard" x="604" y="196" width="52" height="50" rx="6"/>
+    <text class="tiny" x="630" y="226" text-anchor="middle">1e laag</text>
+    <rect class="oldcard" x="660" y="196" width="52" height="50" rx="6"/>
+    <text class="tiny" x="686" y="226" text-anchor="middle">servo</text>
+    <rect class="oldcard" x="716" y="196" width="52" height="50" rx="6"/>
+    <text class="tiny" x="742" y="226" text-anchor="middle">koeling</text>
+    <text class="label" x="645" y="300" text-anchor="middle">jouw eigen boek — over jouw machines</text>
+  </g>
+
+  <!-- ============ het alternatief: gewone chat ============ -->
+  <g id="lostG">
+    <rect class="ghost" x="530" y="80" width="120" height="88" rx="9"/>
+    <line class="xmark" x1="556" y1="106" x2="624" y2="142"/>
+    <line class="xmark" x1="624" y1="106" x2="556" y2="142"/>
+    <text class="small" x="590" y="190" text-anchor="middle">gewone chat: weg</text>
+  </g>
+
+</svg>
+</div>
+
+<div class="caption" id="cap">
+  <span class="step">Klaar om te starten</span>
+  Druk op <b>Speel af</b>. Je ziet in vijf stappen wat er gebeurt als je hier een vraag stelt.
+</div>
+
+<div class="dots" id="dots"></div>
+
+<div class="controls">
+  <button id="play">▶ Speel af</button>
+  <button id="prev" class="ghostbtn" disabled>← Vorige</button>
+  <button id="next" class="ghostbtn">Volgende →</button>
+  <button id="replay" class="ghostbtn">↻ Opnieuw</button>
+</div>
+
+<div class="recap">
+  <h2>Wat je net zag</h2>
+  <p>Je stelt een gewone vraag over je eigen spullen. Claude leest deze hele map — je printers,
+  je Arduino, je robotarm, en alles wat hier al eerder is uitgelegd — en bouwt daar een uitleg
+  van: tekst die je kunt lezen, een filmpje dat het laat zien, en meestal één instelling die je
+  vanavond kunt proberen.</p>
+  <p><b>En dan het belangrijkste:</b> die uitleg <i>blijft bewaard</i>. In een gewone chat is je
+  antwoord weg zodra je het venster sluit. Hier komt het op de plank te staan. Na tien vragen heb
+  je tien uitleggen. Na een half jaar heb je een boek dat alleen over <i>jouw</i> machines gaat —
+  geschreven terwijl je gewoon aan het knutselen was.</p>
+  <p><b>Eerlijk erbij:</b> dit plaatje laat de opslag simpeler zien dan hij is. Er zit een
+  bewaarstap tussen (Claude maakt een voorstel, jij klikt op <b>Merge</b>). Dat is één klik, en
+  hij staat uitgelegd in <code>guides/how-a-pr-flows/</code>.</p>
+</div>
+
+<script>
+(function () {
+  var stages = [
+    { on: [],
+      step: "Klaar om te starten",
+      html: 'Druk op <b>Speel af</b>. Je ziet in vijf stappen wat er gebeurt als je hier een vraag stelt.' },
+    { on: ["bubbleG"],
+      step: "Stap 1 van 5",
+      html: 'Je vraagt gewoon wat je wilt weten — <b>in het Nederlands</b>, in je eigen woorden. Geen commando’s, geen codetaal. "Mijn print heeft overal draadjes" is een prima vraag.' },
+    { on: ["bubbleG","readG"],
+      step: "Stap 2 van 5",
+      html: 'Claude leest <b>je hele werkplaatsmap</b>: welke printers je hebt, je robotarm, je Arduino-spullen, en alles wat hier eerder is uitgelegd. Daarom past het antwoord bij <i>jouw</i> machines en niet bij die van een willekeurige video.' },
+    { on: ["bubbleG","readG","buildG"],
+      step: "Stap 3 van 5",
+      html: 'Claude bouwt er een <b>uitleg</b> van: leesbare tekst, een filmpje dat de beweging laat zien, en meestal <b>één instelling</b> die je vanavond kunt veranderen om het verschil te zien.' },
+    { on: ["readG","buildG","saveG"],
+      step: "Stap 4 van 5",
+      html: 'De uitleg gaat <b>op de plank</b> — hij wordt bewaard in deze map. Morgen staat hij er nog. Volgende maand ook. Je hoeft niets op te slaan; dat regelt Claude.' },
+    { on: ["readG","buildG","saveG","weeksG"],
+      step: "Stap 5 van 5",
+      html: 'Elke vraag legt er één bij — die groene is die van vandaag. Na een tijdje heb je <b>je eigen boek</b>: over jouw printers, jouw arm, jouw Arduino. Dat is het hele idee van deze map.' },
+    { on: ["readG","buildG","saveG","weeksG","lostG"],
+      step: "Waarom niet gewoon chatten?",
+      html: 'In een <b>gewone chat</b> was je antwoord blijven staan waar dat kruis nu staat — en weg zodra je het venster sluit. Volgende week begin je dan weer bij nul. Hier stapelt het op. <b>Dat is het enige echte verschil</b>, en het is een groot verschil.' }
+  ];
+
+  var all = ["bubbleG","readG","buildG","saveG","weeksG","lostG"];
+  var i = 0, timer = null;
+  var cap = document.getElementById("cap");
+  var dots = document.getElementById("dots");
+  var btnPlay = document.getElementById("play");
+  var btnNext = document.getElementById("next");
+  var btnPrev = document.getElementById("prev");
+  var btnReplay = document.getElementById("replay");
+
+  stages.forEach(function (_, n) {
+    var d = document.createElement("div");
+    d.className = "dot"; d.dataset.n = n;
+    dots.appendChild(d);
+  });
+
+  function render(n) {
+    i = n;
+    var s = stages[n];
+    all.forEach(function (id) {
+      document.getElementById(id).classList.toggle("on", s.on.indexOf(id) >= 0);
+    });
+
+    // the scan sweep, only while stage 2 is the active one
+    var sl = document.getElementById("scanline");
+    sl.style.transform = (n === 2) ? "translateY(44px)" : "translateY(0)";
+
+    // the new card flies down onto the shelf at stage 4
+    var fl = document.getElementById("flyer");
+    // lands on the LEFT end of the shelf, bottom flush with the shelf bar,
+    // so the card he just made sits beside the ones from earlier weeks
+    fl.style.transform = (n >= 4) ? "translate(193.4px, 141.8px) scale(.62)" : "translate(0,0) scale(1)";
+
+    cap.innerHTML = '<span class="step">' + s.step + "</span>" + s.html;
+    Array.prototype.forEach.call(dots.children, function (d, k) {
+      d.classList.toggle("active", k === n);
+    });
+    btnPrev.disabled = (n === 0);
+    btnNext.disabled = (n === stages.length - 1);
+  }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; } btnPlay.textContent = "▶ Speel af"; }
+
+  btnPlay.addEventListener("click", function () {
+    if (timer) { stop(); return; }
+    if (i === stages.length - 1) render(0);
+    btnPlay.textContent = "❚❚ Pauze";
+    timer = setInterval(function () {
+      if (i >= stages.length - 1) { stop(); return; }
+      render(i + 1);
+    }, 3400);
+  });
+  btnNext.addEventListener("click", function () { stop(); if (i < stages.length - 1) render(i + 1); });
+  btnPrev.addEventListener("click", function () { stop(); if (i > 0) render(i - 1); });
+  btnReplay.addEventListener("click", function () { stop(); render(0); });
+  dots.addEventListener("click", function (e) {
+    if (e.target.dataset.n !== undefined) { stop(); render(+e.target.dataset.n); }
+  });
+
+  render(0);
+})();
+</script>
+
+</body>
+</html>
