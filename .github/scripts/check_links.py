@@ -9,8 +9,16 @@ Checked:
   - HTML href/src attributes   href="path"  src='path'
 
 Skipped: absolute URLs (http://, https://, mailto:, //cdn), pure anchors
-(#section), and data: URIs. A link with a trailing #anchor or ?query is
-checked without it -- we verify the file exists, not the anchor.
+(#section), data: URIs, and fenced code blocks in Markdown (a link inside
+``` is an example, not a link). A link with a trailing #anchor or ?query
+is checked without it -- we verify the file exists, not the anchor.
+
+One special case: files under site/. The published site is assembled by
+.github/workflows/pages.yml as site/ + guides/ side by side, so
+site/index.html links to `guides/<naam>/index.html` -- a path that is
+correct live but does not exist under site/ in the repo. Those files
+therefore resolve against the DEPLOYED layout: site/ first, then the
+repo root.
 """
 
 from __future__ import annotations
@@ -28,6 +36,9 @@ MD_LINK = re.compile(r"\[[^\]]*\]\(\s*<?([^)\s>]+)>?[^)]*\)")
 HTML_ATTR = re.compile(r"""(?:href|src)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 
 EXTERNAL = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//)", re.IGNORECASE)
+FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
+
+SITE = REPO / "site"
 
 
 def files() -> list[Path]:
@@ -41,12 +52,39 @@ def files() -> list[Path]:
     return out
 
 
+def strip_fences(text: str) -> str:
+    """Blank out fenced code blocks so example links aren't checked."""
+    out, fence = [], None
+    for line in text.splitlines():
+        marker = FENCE.match(line)
+        if fence is None and marker:
+            fence = marker.group(1)[0]
+            continue
+        if fence is not None:
+            if marker and marker.group(1)[0] == fence:
+                fence = None
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
 def targets(text: str) -> set[str]:
     return set(MD_LINK.findall(text)) | set(HTML_ATTR.findall(text))
 
 
+def roots(source: Path) -> list[Path]:
+    """Where a relative link in this file may resolve from."""
+    if SITE in source.parents:
+        # Published layout: site/ contents at the web root, guides/ beside them.
+        return [source.parent, SITE, REPO]
+    return [source.parent]
+
+
 def broken(source: Path) -> list[str]:
     text = source.read_text(encoding="utf-8", errors="replace")
+    if source.suffix.lower() == ".md":
+        text = strip_fences(text)
+    bases = roots(source)
     bad = []
     for raw in sorted(targets(text)):
         link = raw.strip()
@@ -56,10 +94,10 @@ def broken(source: Path) -> list[str]:
         if not bare:
             continue
         if bare.startswith("/"):
-            resolved = REPO / bare.lstrip("/")
+            candidates = [REPO / bare.lstrip("/")]
         else:
-            resolved = source.parent / bare
-        if not resolved.exists():
+            candidates = [base / bare for base in bases]
+        if not any(c.exists() for c in candidates):
             bad.append(link)
     return bad
 

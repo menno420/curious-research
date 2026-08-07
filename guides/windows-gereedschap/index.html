@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows-gereedschap — wat heb ik nou echt nodig?</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --line:#d1d5db; --accent:#7c3aed; --accent-soft:#ede9fe;
+    --ok:#16a34a; --ok-soft:#dcfce7; --warm:#e0912f; --warm-soft:#fdf0dc;
+    --off:#9ca3af; --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --line:#374151; --accent:#a78bfa; --accent-soft:#2e1065;
+      --ok:#4ade80; --ok-soft:#14532d; --warm:#eab308; --warm-soft:#422006;
+      --off:#4b5563; --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:26px 16px 52px; background:var(--bg); color:var(--ink);
+         font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; }
+  h1 { font-size:1.35rem; margin:.2em 0 .2em; text-align:center; }
+  .sub { color:var(--muted); margin:0 auto 22px; text-align:center; max-width:38em; }
+
+  .box { background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:18px; }
+
+  /* ---- de kiezer ---- */
+  .vraag { font:700 13px system-ui; letter-spacing:.06em; text-transform:uppercase;
+           color:var(--muted); margin:0 0 12px; text-align:center; }
+  .keuzes { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; }
+  .keuze { font:600 14px system-ui; padding:9px 14px; border-radius:10px; cursor:pointer;
+           border:2px solid var(--line); background:transparent; color:var(--ink); }
+  .keuze[aria-pressed="true"] { border-color:var(--accent); background:var(--accent-soft);
+                                color:var(--accent); }
+
+  svg { width:100%; height:auto; display:block; margin:20px 0 4px; }
+  .lbl { font:600 12px system-ui; fill:var(--ink); }
+  .tny { font:10px system-ui; fill:var(--muted); }
+  .node rect { fill:var(--card); stroke:var(--off); stroke-width:2; transition:stroke .4s ease, fill .4s ease; }
+  .node.aan rect { stroke:var(--accent); fill:var(--accent-soft); }
+  .node { opacity:.4; transition:opacity .4s ease; }
+  .node.aan { opacity:1; }
+  .pijl { stroke:var(--off); stroke-width:2.5; fill:none; marker-end:url(#punt);
+          transition:stroke .4s ease, opacity .4s ease; opacity:.35; }
+  .pijl.aan { stroke:var(--accent); opacity:1; }
+
+  .uitkomst { margin-top:6px; text-align:center; color:var(--muted); min-height:3.2em; }
+  .uitkomst b { color:var(--accent); }
+
+  /* ---- de lijst ---- */
+  h2 { font-size:1.05rem; margin:34px 0 10px; padding-bottom:7px; border-bottom:2px solid var(--line); }
+  .tool { background:var(--card); border:1px solid var(--line); border-radius:12px;
+          padding:16px 18px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .tool.dim { opacity:.45; }
+  .tool h3 { margin:0 0 4px; font-size:1.02rem; color:var(--accent); }
+  .tool p { margin:0 0 8px; color:var(--muted); font-size:.95rem; }
+  .tool p:last-child { margin-bottom:0; }
+  .tool a { color:var(--accent); font-weight:600; word-break:break-word; }
+  .badge { display:inline-block; padding:3px 9px; border-radius:999px;
+           font:700 11px system-ui; margin-bottom:8px; }
+  .badge.ja { background:var(--ok-soft); color:var(--ok); }
+  .badge.mis { background:var(--warm-soft); color:var(--warm); }
+  .badge.nee { background:var(--accent-soft); color:var(--accent); }
+  .pad { font:.86rem ui-monospace, Consolas, monospace; background:var(--accent-soft);
+         color:var(--accent); padding:2px 6px; border-radius:5px; }
+
+  .waarschuwing { border-left:5px solid var(--warm); background:var(--warm-soft);
+                  border-radius:10px; padding:14px 16px; margin:16px 0; color:var(--ink); }
+  .waarschuwing b { display:block; margin-bottom:4px; }
+
+  ol { padding-left:1.3em; margin:0; }
+  ol li { margin-bottom:7px; }
+  ol li:last-child { margin-bottom:0; }
+
+  footer { margin-top:36px; padding-top:18px; border-top:1px solid var(--line);
+           text-align:center; color:var(--muted); font-size:.9rem; }
+  footer a { color:var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .node, .node rect, .pijl { transition:none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Windows-gereedschap</h1>
+<p class="sub">Alles hieronder is <b>gratis</b> en draait op Windows 10 en 11. Het
+belangrijkste eerst: <b>je hebt hier niets van nodig om te beginnen.</b> Vragen stellen aan
+Claude werkt gewoon in je browser.</p>
+
+<div class="box">
+  <p class="vraag">Wat wil je gaan doen?</p>
+  <div class="keuzes">
+    <button class="keuze" data-doel="vragen" aria-pressed="true">Alleen dingen vragen</button>
+    <button class="keuze" data-doel="printen" aria-pressed="false">Iets uit deze map printen</button>
+    <button class="keuze" data-doel="arduino" aria-pressed="false">Mijn arm of een sensor</button>
+  </div>
+
+  <svg viewBox="0 0 700 150" role="img" aria-label="Welke stappen je doorloopt, en welk programma bij elke stap hoort">
+    <defs>
+      <marker id="punt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="context-stroke"/>
+      </marker>
+    </defs>
+
+    <g class="node aan" id="n-browser">
+      <rect x="10" y="45" width="120" height="60" rx="10"/>
+      <text class="lbl" x="70" y="72" text-anchor="middle">Je browser</text>
+      <text class="tny" x="70" y="90" text-anchor="middle">vragen stellen</text>
+    </g>
+
+    <path class="pijl" id="p1" d="M136 75 H176"/>
+
+    <g class="node" id="n-scad">
+      <rect x="182" y="45" width="120" height="60" rx="10"/>
+      <text class="lbl" x="242" y="72" text-anchor="middle">OpenSCAD</text>
+      <text class="tny" x="242" y="90" text-anchor="middle">.scad → .stl</text>
+    </g>
+
+    <path class="pijl" id="p2" d="M308 75 H348"/>
+
+    <g class="node" id="n-slicer">
+      <rect x="354" y="45" width="120" height="60" rx="10"/>
+      <text class="lbl" x="414" y="72" text-anchor="middle">Je slicer</text>
+      <text class="tny" x="414" y="90" text-anchor="middle">.stl → printer</text>
+    </g>
+
+    <path class="pijl" id="p3" d="M480 75 H520"/>
+
+    <g class="node" id="n-arduino">
+      <rect x="526" y="45" width="164" height="60" rx="10"/>
+      <text class="lbl" x="608" y="72" text-anchor="middle">Arduino IDE</text>
+      <text class="tny" x="608" y="90" text-anchor="middle">sketch → bordje</text>
+    </g>
+  </svg>
+
+  <p class="uitkomst" id="uitkomst"></p>
+</div>
+
+<h2>De programma's</h2>
+
+<div class="tool" id="t-slicer">
+  <span class="badge ja">Heb je waarschijnlijk al</span>
+  <h3>1 · Je slicer</h3>
+  <p>De <b>slicer</b> <em>(= het programma dat een 3D-model omzet in laagjes en in de
+  instructies die je printer echt uitvoert)</em> kwam waarschijnlijk mee met je printer.
+  Gebruik gewoon die.</p>
+  <p>Weet je niet welke je hebt, of wil je een andere:</p>
+  <p>
+    <a href="https://bambulab.com/en/download/studio">Bambu Studio</a> <em>(voor Bambu-printers)</em> ·
+    <a href="https://www.prusa3d.com/page/prusaslicer_424/">PrusaSlicer</a> ·
+    <a href="https://ultimaker.com/software/ultimaker-cura/">Ultimaker Cura</a>
+    <em>(die laatste twee werken met bijna elke printer)</em>
+  </p>
+  <p><b>Klaar als:</b> je kunt een <span class="pad">.stl</span>- of
+  <span class="pad">.3mf</span>-bestand openen en op <b>Slice</b> klikken.</p>
+</div>
+
+<div class="tool" id="t-scad">
+  <span class="badge mis">Nodig zodra je iets uit deze map wilt printen</span>
+  <h3>2 · OpenSCAD</h3>
+  <p>De ontwerpen in <span class="pad">projects/</span> zijn <span class="pad">.scad</span>-bestanden:
+  <b>CAD waarbij het model een stukje tekst is</b> in plaats van iets wat je met de muis
+  boetseert. Precies daarom kan Claude ze voor je schrijven en aanpassen.</p>
+  <p><a href="https://openscad.org/downloads.html">openscad.org/downloads.html</a> → kies onder
+  <b>Windows</b> de <b>Installer (x86-64)</b>.</p>
+  <ol>
+    <li>Open een <span class="pad">.scad</span>-bestand.</li>
+    <li>Bovenin staan de instellingen. Verander gerust een getal.</li>
+    <li>Druk op <b>F6</b> <em>(Render — hij rekent het echte model uit; duurt even)</em>.</li>
+    <li>Klik <b>File → Export → Export as STL…</b> en sla het op.</li>
+    <li>Dat <span class="pad">.stl</span>-bestand open je in je slicer, en printen maar.</li>
+  </ol>
+  <p style="margin-top:8px"><b>Waarom dit leuk is:</b> verander één getal bovenin, druk op F6,
+  en je hebt een ander object. Dat is de makkelijkste manier om te zien wat "parametrisch
+  ontwerpen" betekent.</p>
+</div>
+
+<div class="tool" id="t-arduino">
+  <span class="badge mis">Nodig zodra je met de arm of een sensor werkt</span>
+  <h3>3 · Arduino IDE</h3>
+  <p>Nodig zodra je iets uit <span class="pad">projects/</span> naar een Arduino wilt sturen.
+  Er liggen al kant-en-klare sketches klaar <em>(<b>sketch</b> = zo heet een
+  Arduino-programmaatje)</em>.</p>
+  <p><a href="https://www.arduino.cc/en/software">arduino.cc/en/software</a> → kies
+  <b>Windows Win 10 and newer, 64 bits</b> (de gewone installer, niet de "ZIP file").</p>
+  <ol>
+    <li>Installeer en start het programma.</li>
+    <li>Steek je Arduino in de USB-poort.</li>
+    <li>Bovenin staat een uitklapmenu <b>"Select Board"</b> — klik erop en kies je bordje.</li>
+    <li>Open een sketch uit deze map.</li>
+    <li>Klik op het <b>pijltje naar rechts (→)</b> linksboven om hem te versturen.</li>
+  </ol>
+  <p style="margin-top:8px"><b>Klaar als:</b> onderin staat <b>"Done uploading"</b> in plaats
+  van een rode foutmelding.</p>
+
+  <div class="waarschuwing">
+    <b>⚠️ Lees dit vóór je een servo aansluit</b>
+    Servo's krijgen <b>hun eigen voeding van 5–6 volt</b>, met gedeelde massa en een
+    schakelaar die je kunt bereiken. <b>Nooit</b> via de 5V-pin van de Arduino — die levert te
+    weinig stroom en je Arduino kan eraan kapotgaan.
+  </div>
+</div>
+
+<div class="tool" id="t-extra">
+  <span class="badge nee">Puur gemak</span>
+  <h3>4 · 7-Zip en Notepad++</h3>
+  <p><a href="https://www.7-zip.org/download.html">7-Zip</a> (kies <b>Windows x64</b> bij de
+  bovenste <span class="pad">.exe</span>) pakt gedownloade mappen uit. Windows kan zelf ook
+  ZIP-bestanden uitpakken, dus dit is puur gemak.</p>
+  <p><a href="https://notepad-plus-plus.org/downloads/">Notepad++</a> (nieuwste versie →
+  <b>Installer 64-bit x64</b>) laat je even in een <span class="pad">.ino</span> of
+  <span class="pad">.scad</span> kijken zonder een heel programma te openen. Kladblok werkt ook.</p>
+</div>
+
+<h2>Wat je expliciet <em>niet</em> hoeft te installeren</h2>
+
+<div class="tool">
+  <p><b>Git</b> — hier lopen veel mensen op vast. Jij hebt het niet nodig. Claude regelt het
+  bewaren; jij klikt in je browser. Klaar.</p>
+  <p><b>Python</b> — de scripts in deze map draaien in Claude's eigen werkomgeving, niet op
+  jouw laptop.</p>
+  <p><b>Een code-editor zoals VS Code</b> — leuk als je nieuwsgierig bent, niet nodig.</p>
+  <p>Krijg je ergens het advies "installeer eerst X" en snap je niet waarom? Vraag gewoon:
+  <em>"heb ik dit echt nodig, of kan het zonder?"</em> Meestal kan het zonder.</p>
+</div>
+
+<h2>Als iets niet lukt</h2>
+
+<div class="tool">
+  <p>Dat is normaal, en het is geen teken dat je iets fout doet. Doe dit:</p>
+  <ol>
+    <li>Maak een <b>schermfoto</b> van wat er misgaat — toets <b>Windows + Shift + S</b>.</li>
+    <li>Sleep hem in het chatvenster bij Claude.</li>
+    <li>Typ erbij: <em>"dit gaat mis, wat moet ik doen?"</em></li>
+  </ol>
+  <p style="margin-top:8px">Je hoeft de foutmelding niet te begrijpen. Dat is het hele punt.</p>
+</div>
+
+<footer>
+  <p>Het volledige stappenplan staat ook als tekst op
+  <a href="https://github.com/menno420/curious-research/blob/main/guides/windows-gereedschap/guide.md">GitHub</a>.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var PLAN = {
+    vragen: {
+      nodes: ['n-browser'],
+      pijlen: [],
+      tools: ['t-slicer', 't-scad', 't-arduino', 't-extra'],
+      tekst: '<b>Niets installeren.</b> Je browser is genoeg. Ga naar claude.ai, ' +
+             'stel je vraag in het Nederlands, en stuur gerust een foto mee van een ' +
+             'mislukte print.'
+    },
+    printen: {
+      nodes: ['n-browser', 'n-scad', 'n-slicer'],
+      pijlen: ['p1', 'p2'],
+      tools: ['t-arduino', 't-extra'],
+      tekst: 'Je hebt <b>OpenSCAD</b> nodig (om er een printbaar bestand van te maken) en ' +
+             '<b>je slicer</b> — die heb je waarschijnlijk al. Twee programma\'s, één keer ' +
+             'installeren.'
+    },
+    arduino: {
+      nodes: ['n-browser', 'n-arduino'],
+      pijlen: [],
+      tools: ['t-slicer', 't-scad', 't-extra'],
+      tekst: 'Je hebt alleen de <b>Arduino IDE</b> nodig. Lees eerst de rode waarschuwing ' +
+             'over de servo-voeding — die is er niet voor de sier.'
+    }
+  };
+
+  var knoppen = Array.prototype.slice.call(document.querySelectorAll('.keuze'));
+  var uitkomst = document.getElementById('uitkomst');
+  var alleNodes = ['n-browser', 'n-scad', 'n-slicer', 'n-arduino'];
+  var allePijlen = ['p1', 'p2', 'p3'];
+  var alleTools = ['t-slicer', 't-scad', 't-arduino', 't-extra'];
+
+  function toon(doel) {
+    var plan = PLAN[doel];
+
+    knoppen.forEach(function (k) {
+      k.setAttribute('aria-pressed', String(k.dataset.doel === doel));
+    });
+
+    alleNodes.forEach(function (id) {
+      document.getElementById(id).classList.toggle('aan', plan.nodes.indexOf(id) !== -1);
+    });
+    allePijlen.forEach(function (id) {
+      document.getElementById(id).classList.toggle('aan', plan.pijlen.indexOf(id) !== -1);
+    });
+    alleTools.forEach(function (id) {
+      document.getElementById(id).classList.toggle('dim', plan.tools.indexOf(id) !== -1);
+    });
+
+    uitkomst.innerHTML = plan.tekst;
+  }
+
+  knoppen.forEach(function (k) {
+    k.addEventListener('click', function () { toon(k.dataset.doel); });
+  });
+
+  toon('vragen');
+})();
+</script>
+</body>
+</html>

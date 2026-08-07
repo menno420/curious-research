@@ -1,0 +1,64 @@
+# Publishes the read-only website to GitHub Pages.
+#
+# The site source is `site/` — plain HTML/CSS, no framework and no build
+# step, so any future session can edit it like any other file. The only
+# thing this workflow does beyond copying is drop `guides/` in next to
+# it, because the shelf page links straight at each guide's own
+# `index.html` and those live in `guides/`, not in `site/`.
+#
+# Result on the live site:
+#   /                            -> site/index.html   (the Dutch shelf)
+#   /guides/<naam>/index.html    -> the animated guide, unchanged
+#
+# ONE-TIME SETUP by the owner, or nothing publishes:
+#   Settings -> Pages -> Build and deployment -> Source = "GitHub Actions"
+# The site then lands at https://menno420.github.io/curious-research/
+name: pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "guides/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy midway; just queue the next one behind it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: assemble the site
+        run: |
+          mkdir -p _site
+          cp -r site/. _site/
+          cp -r guides _site/guides
+          # Markdown is for reading on GitHub, where it renders. Served
+          # raw over Pages it just downloads, so it stays out of the
+          # artifact — the guide.md companions and site/README.md alike.
+          find _site -name '*.md' -delete
+          echo "published pages:"
+          find _site -name 'index.html' | sort
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
