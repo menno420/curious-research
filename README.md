@@ -64,7 +64,7 @@ questions and ideas, Claude turns them into experiments, designs, and — the ho
 | [`docs/git-for-makers.md`](docs/git-for-makers.md) | Git in bench terms, no jargon |
 | [`guides/begin-hier/`](guides/begin-hier/guide.md) | 🇳🇱 **De Nederlandse rondleiding — begin hier** |
 | [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md) | 🇳🇱 Gratis programma's voor je Windows-laptop, met downloadlinks |
-| `bootstrap.py` + `.claude/` + `docs/` (the rest) | The [substrate-kit](https://github.com/menno420/substrate-kit) — the memory/quality machinery that keeps Claude sharp here (MIT, [`LICENSE-substrate-kit`](LICENSE-substrate-kit)). It maintains itself; you never need to touch it. |
+| [`arm/`](arm/) | The robot-arm lane — the calibration template every motion routine clamps to |
+| [`research/possibility-dossier.md`](research/possibility-dossier.md) | What the bench + Claude can actually do together, with honest ✅/🧪/🚫 marks |
 
-*Seeded 2026-07-13 with substrate-kit v1.15.0. This repo is public — it carries interests
-and projects, never personal data.*
+*This repo is public — it carries interests and projects, never personal data.*

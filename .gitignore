@@ -1,12 +1,5 @@
-# HANDOFF.md is regenerated at every session boot and is untracked BY DESIGN
-# (.claude/CLAUDE.md § "Orientation": "read it before re-deriving history from
-# git log/git show; never commit or edit it"). Without this entry it shows up
-# as an untracked file every single session and trips commit-hygiene checks.
-HANDOFF.md
-
 # NOTE — deliberately NOT ignored: arm/calibration.json. The owner's measured
-# servo envelope BELONGS in this repo, committed (see arm/README.md and
-# .sessions/2026-07-13-gitignore-calibration.md): Claude reads it to design
-# clamped motion, reviewers read it to confirm a motion PR stays inside the
-# envelope, and six servos' min/max/center angles are just numbers, not
-# personal data. Do not add it here.
+# servo envelope BELONGS in this repo, committed (see arm/README.md): Claude
+# reads it to design clamped motion, reviewers read it to confirm a motion PR
+# stays inside the envelope, and six servos' min/max/center angles are just
+# numbers, not personal data. Do not add it here.

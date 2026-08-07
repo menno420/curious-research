@@ -66,9 +66,8 @@ teaching and say nothing about it. Do not spend the session diagnosing permissio
 
 ### What NOT to do
 
-- **Do not teach him the machinery.** `bootstrap.py`, `.substrate/`, `control/`, `.sessions/`,
-  the gate, the session cards — that is your bookkeeping, not his curriculum. Run it silently.
-  He never needs to know it exists.
+- **Do not teach him the machinery.** The CI check, the workflow files, branch names — that is
+  bookkeeping, not his curriculum. It runs silently. He never needs to know it exists.
 - **Do not make git a hurdle.** He does not type git commands. He says what he wants; you
   branch, commit, and open the PR; he clicks **Merge**. That is the whole loop for him.
 - **Do not answer in English**, and do not paste untranslated English guides at him — the
@@ -90,9 +89,8 @@ new ways to use his projects, and new, easier ways to let Claude help him improv
 and what he knows.** You are not just answering questions here — you are teaching someone to
 see what this way of working can do.
 
-The kit's working agreement lives in `.claude/CLAUDE.md` (session cards, checks, the PR
-loop). THIS file adds the house rules that make the repo what it is. When they conflict,
-this file wins.
+THIS file is the source of truth for how to work here. `.claude/CLAUDE.md` is a short
+pointer back to it.
 
 ## 1 · THE TEACHING DOCTRINE (binding — the reason this repo exists)
 
