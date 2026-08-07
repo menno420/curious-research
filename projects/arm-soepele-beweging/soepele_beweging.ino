@@ -43,14 +43,17 @@
 //      daar niet JOUW opgemeten waarden staan, laat deze sketch de arm met
 //      opzet nauwelijks bewegen -- zie de opmerking bij die tabel. Elke hoek
 //      die naar een servo gaat loopt door clampDegrees(). Er is geen andere
-//      weg naar een servo toe. Dat is de hele veiligheidsopzet: een verkeerd
-//      getal KAN een motor niet bereiken.
-//      Opmeten: guides/arm-envelope-explained/guide.md
+//      weg naar een servo toe tijdens de normale bewegingsroute. Dit begrenst
+//      hoekgetallen; het detecteert geen botsingen en bewijst niet dat de
+//      startupstand veilig is.
+//      Opmeten: guides/arm-werkgebied/guide.md
 //
 //    * SERVOVOEDING IS EEN APARTE VOEDING, met gedeelde massa, een zekering en
 //      een schakelaar die je kunt bereiken. NOOIT de 5V-pin van de Arduino.
-//      Zes MG996R samen vastgelopen is in de orde van 15 A. De rekensom en de
-//      bedrading staan in ../arm-pen-plotter/pen_plotter_arm.ino.
+//      De gecombineerde piek- en blokkeerstroom is voor deze arm nog niet
+//      geverifieerd. Stel de exacte servovariant vast, controleer de primaire
+//      specificatie en meet onder begeleide belasting; neem geen generieke
+//      "MG996R"-waarde als voedingsontwerp over.
 //
 //    * ER KIJKT ALTIJD IEMAND MEE, met de hand bij de schakelaar. Niets hier is
 //      ooit "veilig als je even weg bent". Eerst stroom eraf, dan pas kijken
@@ -65,10 +68,11 @@
 
 const int JOINT_COUNT = 6;
 
-// De pinnen waar de signaaldraden (meestal oranje of geel) op zitten.
+// LEGACY PLACEHOLDERS: bord, pinondersteuning en fysieke volgorde zijn nog niet
+// op de echte arm bevestigd. Niet bekrachtigen voordat deze mapping klopt.
 const int SERVO_PIN[JOINT_COUNT] = { 3, 5, 6, 9, 10, 11 };
 
-// De namen, puur zodat de meldingen op de seriële monitor leesbaar zijn.
+// Ook deze namen zijn schema-aannames; bevestig de zes fysieke actuatoren.
 const char* JOINT_NAME[JOINT_COUNT] = {
   "basis", "schouder", "elleboog", "pols_kantel", "pols_draai", "grijper"
 };
@@ -76,19 +80,20 @@ const char* JOINT_NAME[JOINT_COUNT] = {
 // ---------------------------------------------------------------------------
 //  DE GRENZEN. Dit is het belangrijkste blok in het hele bestand.
 //
-//  Zolang hier de startwaarden staan (85/95, een spleet van 10 graden rond het
-//  midden) beweegt de arm bijna niet. Dat is EXPRES. Zo kun je de sketch veilig
-//  uitproberen -- je ziet hem netjes optrekken en afremmen binnen een paar
-//  graden -- zonder dat een fout getal de arm ergens in kan rammen.
+//  De waarden 85/95 zijn alleen placeholders rond een onbevestigde 90 graden.
+//  Ze beperken de grootte van de testbeweging, maar maken die stand NIET veilig
+//  voor deze montage. Koppel geen servovoeding aan voordat min, max en home per
+//  gewricht op de echte arm zijn gecontroleerd.
 //
-//  Vervang ze door je eigen opgemeten waarden (guides/arm-envelope-explained/)
-//  en de arm gebruikt zijn volle veilige bereik. Meet met marge: blijf een paar
+//  Vervang ze door je eigen opgemeten waarden (guides/arm-werkgebied/)
+//  en de normale route gebruikt dat gemeten numerieke bereik. Meet met marge: blijf een paar
 //  graden weg van waar het gewricht mechanisch klem loopt.
 // ---------------------------------------------------------------------------
 const int JOINT_MIN[JOINT_COUNT] = { 85, 85, 85, 85, 85, 85 };
 const int JOINT_MAX[JOINT_COUNT] = { 95, 95, 95, 95, 95, 95 };
 
-// De ruststand waar de arm bij het aanzetten naartoe gaat.
+// De startupstand waar de arm direct na attach() naartoe wordt gestuurd.
+// 90 graden is een PLACEHOLDER en niet als veilige gezamenlijke stand bewezen.
 const int JOINT_HOME[JOINT_COUNT] = { 90, 90, 90, 90, 90, 90 };
 
 // ---------------------------------------------------------------------------
@@ -96,15 +101,12 @@ const int JOINT_HOME[JOINT_COUNT] = { 90, 90, 90, 90, 90, 90 };
 // ---------------------------------------------------------------------------
 
 // Hoe snel mag het snelste gewricht maximaal? In graden per seconde.
-//   30  = plechtig langzaam, mooi om naar te kijken
-//   60  = rustig en beheerst (goede startwaarde)
-//   120 = vlot
-//   300 = ongeveer wat de servo zelf doet als je write() gebruikt -- schokkerig
+// De getallen hieronder zijn experimentele softwarewaarden, niet de gemeten
+// snelheid van deze arm. Begin laag na een gecontroleerde startup.
 float maxSnelheid = 60.0;
 
-// Hoe vaak sturen we een nieuwe hoek? Een gewone analoge servo luistert 50 keer
-// per seconde (elke 20 ms). Vaker sturen is weggegooid werk: de servo kijkt er
-// simpelweg niet naar. Langzamer dan ~25 Hz ga je de losse stapjes zien.
+// Begininterval voor nieuwe doelhoeken. De Arduino Servo-library ververst rond
+// 20 ms; de werkelijke mechanische respons van deze servo's moet worden gemeten.
 const unsigned long UPDATE_MS = 20;   // 20 ms = 50 Hz
 
 // Zet dit op false om te zien wat de S-bocht nou eigenlijk doet: dan wordt er
@@ -130,7 +132,7 @@ unsigned long laatsteUpdate = 0;
 // ---------------------------------------------------------------------------
 //  DE CLAMP. Elke hoek die naar een servo gaat komt hier eerst langs.
 //  clampDegrees(200, 20, 120) -> 120. Een te groot getal wordt teruggeknipt
-//  naar de rand van wat veilig is, in plaats van doorgestuurd.
+//  naar de gemeten numerieke rand. Dit ziet geen obstakels of startupbeweging.
 // ---------------------------------------------------------------------------
 int clampDegrees(float waarde, int laag, int hoog) {
   int afgerond = (int)(waarde + 0.5);      // netjes afronden, niet afkappen
@@ -260,11 +262,13 @@ void setup() {
     if (JOINT_MAX[i] - JOINT_MIN[i] > 20) grenzenIngevuld = true;
   }
   if (!grenzenIngevuld) {
-    Serial.println(F("LET OP: de grenzen staan nog op de veilige startwaarden."));
-    Serial.println(F("De arm beweegt daarom maar een paar graden. Dat hoort zo."));
-    Serial.println(F("Meet je eigen bereik op: guides/arm-envelope-explained/"));
+    Serial.println(F("LET OP: de grenzen staan nog op ONBEVESTIGDE placeholders."));
+    Serial.println(F("De beweging is klein, maar 90 graden is niet bewezen veilig."));
+    Serial.println(F("Meet je eigen bereik op: guides/arm-werkgebied/"));
   }
 
+  Serial.println(F("STARTUP: servo's worden nu gekoppeld en naar JOINT_HOME gestuurd."));
+  Serial.println(F("JOINT_HOME moet vooraf op deze echte arm zijn gecontroleerd."));
   for (int i = 0; i < JOINT_COUNT; i++) {
     servo[i].attach(SERVO_PIN[i]);
     huidigeHoek[i] = clampDegrees(JOINT_HOME[i], JOINT_MIN[i], JOINT_MAX[i]);

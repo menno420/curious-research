@@ -1,7 +1,8 @@
 {
-  "_README": "TEMPLATE ONLY. Copy to arm/calibration.json and replace every value with YOUR OWN hand-measured numbers before any motion code runs. See arm/README.md and guides/arm-envelope-explained/guide.md.",
+  "_README": "TEMPLATE ONLY. Copy to arm/calibration.json and replace every value with YOUR OWN measured numbers before controlled operation. This file does not prevent startup movement in other sketches. See arm/README.md and guides/arm-werkgebied/guide.md.",
   "_units": "degrees",
-  "_fields": "min = safe lowest angle, max = safe highest angle, center = neutral rest pose. All measured with a safety margin backed off from the physical stop.",
+  "_fields": "min/max = measured numeric operating bounds with margin; center = a measured reference pose. These values are not collision detection or a hardware-safety guarantee.",
+  "_joint_mapping": "The six names below are software placeholders from the existing project. Confirm which physical actuator and pin each name maps to before entering measurements; the actual 6-DOF mapping is not yet documented.",
   "measured_by": "",
   "measured_on": "",
   "joints": {

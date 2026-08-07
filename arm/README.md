@@ -1,100 +1,86 @@
-# arm/ — the robot arm lane
+# Robotarm — bevestigde context, kalibratie en startupgedrag
 
-This folder holds the arm's calibration and (later) its motion routines. Keep everything about
-the arm in this lane.
+De canonieke werkplaatsgegevens staan in
+[`docs/workshop-profile.md`](../docs/workshop-profile.md). Deze map bewaart alleen de
+arm-specifieke meetgegevens die de bewegingsprojecten nodig hebben.
 
-## What this arm actually is (known as of 2026-08-07)
+## Wat is bevestigd?
 
-A **6-DOF robot-arm kit, assembled from parts** — the widely-cloned "6DOF Robot Mechanical
-Arm Kit" pattern sold under many names, on **MG996R-class standard servos**.
+- Een zelfgebouwde 6-DOF-robotarm met zes `MG996R`-klasse hobbyservo's.
+- De arm is door de maker zelf gebouwd; huidige controller, pinvolgorde en operationele toestand
+  zijn nog niet opnieuw bevestigd.
+- De exacte servovariant, voeding, verdeling, zekeringwaarden en externe positieterugmelding zijn
+  nog niet schriftelijk bevestigd.
+- De bestaande softwarelabels `base`, `shoulder`, `elbow`, `wrist_tilt`, `wrist_rotate` en
+  `gripper` zijn een oude schema-aanname. Of deze zes labels en hun volgorde overeenkomen met de
+  werkelijke 6-DOF-opbouw is nog niet bevestigd.
 
-| | |
-|---|---|
-| **Servos** | **6 × MG996R** analog, ~55 g each, 180° nominal |
-| **Torque** | ~9.4 kg·cm at 4.8 V, ~11 kg·cm at 6 V |
-| **Current** | ~1.4 A quoted official, **up to ~2.5 A stalled at 6 V, each** |
-| **Structure** | metal brackets, cup bearings at the joints |
-| **Joint 6** | the gripper/claw is one of the six — not a spare channel |
+Gebruik daarom geen verkoopcijfers alsof zij aan deze zes servo's zijn gemeten. Het ruwe
+onderzoek staat in [`research/dossiers/servos.md`](../research/dossiers/servos.md) en
+[`research/dossiers/servos-gemini.md`](../research/dossiers/servos-gemini.md); claims die
+hieruit worden overgenomen krijgen opnieuw een label volgens
+[`docs/knowledge-policy.md`](../docs/knowledge-policy.md).
 
-### It is already built, wired and moving — start from there
+## Wat lost kalibratie op?
 
-**This is the single most important thing for any session to know.** The arm is not a box of
-parts waiting for a first power-up. It has been assembled, wired and driven under program
-control from a laptop over USB. Observed on the bench:
+`calibration.json` legt per gewricht een gemeten minimale hoek, maximale hoek en middenstand
+vast. De penplotterworkflow gebruikt die waarden om ieder aangevraagd hoekgetal naar het
+gemeten bereik terug te snoeien.
 
-- an **enclosed switching power supply** — the metal-cased kind with a cooling fan, mains in
-  one end and a **screw-terminal block** out the other. Real bench power, correctly separate
-  from the controller, exactly as §2 requires.
-- a small **power-distribution board** with screw terminals between the supply and the servos;
-- a **driver/controller board** with the servo leads converging on it;
-- a laptop on USB, driving the arm.
+Dat helpt tegen **numerieke opdrachten buiten het gemeten bereik**. Het detecteert niet:
 
-So **do not** write him a "how to power your arm" or "how to make it move the first time"
-guide. He is past both. He solved the hard electrical problem before this repo said a word
-about it. Pitch everything at what comes *after* first motion: repeatability, envelope limits,
-useful work. Ask before assuming anything about board models or supply ratings — the exact
-parts have not been confirmed in writing, only seen.
+- of een servo de gevraagde hoek werkelijk heeft bereikt;
+- een nieuw werkstuk, gereedschap, kabel of obstakel in de baan;
+- doorbuiging, speling, belasting of een losse koppeling;
+- een verkeerde meting;
+- beweging die firmware al tijdens het opstarten veroorzaakt.
 
-### Three things that are easy to get wrong
+Daarom heet dit gecontroleerde bediening, geen bewijs van hardwareveiligheid.
 
-1. **Power sizing, if it ever gets rebuilt.** Six MG996R stalled together is on the order of
-   **15 A**. They never all stall at once, but the supply must survive two or three doing it.
-   A **6 V supply in the 10 A class** is the usual answer; a 5 V 2 A USB brick is not, and its
-   sag looks exactly like a software bug. Full arithmetic in
-   [`projects/arm-pen-plotter/pen_plotter_arm.ino`](../projects/arm-pen-plotter/pen_plotter_arm.ino).
-2. **Analog servos cannot report their position.** You cannot backdrive a joint by hand and
-   read the angle out. This is *why* teach mode in
-   [`projects/arm-pen-plotter/`](../projects/arm-pen-plotter/) works by **jogging** — you nudge
-   a joint in small commanded steps and snapshot the numbers you sent. Any future design that
-   assumes position feedback is not buildable on this hardware without adding encoders.
-3. **The gripper channel is already spoken for.** The end-effector work in
-   [`projects/effector-mount/`](../projects/effector-mount/) assumes a servo for its tool.
-   On this arm that means either *replacing* the stock claw on joint 6, or adding a **7th**
-   servo and channel. Decide which before printing.
+## Belangrijke startupwaarschuwing voor de penplotter
 
-Sources for the electrical numbers, and the accuracy you can honestly expect from this servo
-class, are in [`research/possibility-dossier.md`](../research/possibility-dossier.md).
+De huidige [`pen_plotter_arm.ino`](../projects/arm-pen-plotter/pen_plotter_arm.ino) doet in
+`setup()` voor alle zes gewrichten het volgende:
 
-`arm/calibration.example.json` is a **TEMPLATE**. Before ANY motion code runs, copy it to
-`arm/calibration.json` and fill every joint's `min` / `max` / `center` from YOUR OWN
-measurements — the how-to is in
-[`guides/arm-envelope-explained/guide.md`](../guides/arm-envelope-explained/guide.md).
+1. de servo koppelen met `attach()`;
+2. het interne bereik voorlopig op 90°–90° zetten;
+3. `servo.write(90)` versturen;
+4. pas daarna wachten op gemeten limieten vanaf de laptop.
 
-## Your real `arm/calibration.json` belongs in the repo — commit it
+Een reset of het openen van de seriële verbinding kan dus **eerst een 90°-opdracht geven**.
+Negentig graden is niet op deze arm als veilige gezamenlijke startupstand geverifieerd. De
+latere weigering van een `S`-commando zonder limieten maakt die eerste opdracht niet ongedaan.
 
-Once you have measured your own arm and filled in real numbers, **commit `arm/calibration.json`.**
-It is not a secret and it is not personal — it's six servos' worth of `min` / `max` / `center`
-angles, just numbers. Keeping it in the repo is what makes this whole workflow work:
+Gebruik dit project daarom niet alsof het een hardware-interlock heeft. De besturingsworkflow
+vereist kalibratie vóór gecontroleerde beweging, maar de fysieke arm kan bij startup toch
+bewegen. Een toekomstige codewijziging moet dit startupgedrag op de echte arm oplossen en
+testen voordat de documentatie een sterkere garantie mag geven.
 
-- **Claude reads it to design motion for *your* arm.** The clamp that keeps the arm safe is only
-  right if it knows your true limits — and it can only know them if the file is here.
-- **A reviewer reads it to confirm a motion change stays inside your envelope.** Nobody can check
-  a file they can't see.
+## Kalibratiebestand maken op Windows
 
-So the file follows the normal template pattern — like `.env.example` → `.env` — except here the
-filled-in file is *meant* to be shared:
+1. Zet de servovoeding uit.
+2. Open `arm` in Windows Verkenner.
+3. Selecteer `calibration.example.json` en druk **Ctrl+C**, daarna **Ctrl+V**.
+4. Hernoem de kopie naar `calibration.json`.
+5. Meet één gewricht tegelijk volgens
+   [`guides/arm-werkgebied/guide.md`](../guides/arm-werkgebied/guide.md).
+6. Bevestig eerst welk fysiek gewricht bij ieder bestaand softwarelabel en pinindex hoort.
+7. Vul alleen werkelijk gemeten `min`, `max` en `center` in.
+8. Laat geen `_status: PLACEHOLDER` staan.
+9. Bewaar machinegegevens zonder naam, adres of andere persoonlijke informatie.
 
-1. Copy the template: `cp arm/calibration.example.json arm/calibration.json`
-2. Fill every joint's `min` / `max` / `center` from **your own** hand measurements — the
-   step-by-step (and an animation) is in
-   [`guides/arm-envelope-explained/`](../guides/arm-envelope-explained/): open its `index.html`
-   and press **Replay** first.
-3. **Commit it.** From then on it is the arm's source of truth for
-   [`projects/arm-pen-plotter/`](../projects/arm-pen-plotter/) and any future motion routine.
+**Documentatie gereed als:** ieder gewricht drie herleidbare waarden heeft en
+`min < center < max` geldt. Markeer ze als experiment totdat een gecontroleerde startup bestaat
+en de waarden onder toezicht rustig zijn getest zonder brommen, persen, kabelspanning of botsen.
 
-**Never commit fake or placeholder numbers.** The tools refuse to run on the template's
-`PLACEHOLDER` values on purpose — wrong limits are dangerous. Commit the file only once the
-numbers are really yours.
+## Regels voor bewegingsprojecten
 
-> **What never goes in this public repo:** genuinely personal data — full names, photos,
-> addresses, account handles. Servo angles are not personal data; *you* are. Keep the numbers,
-> leave yourself out — `measured_by` is fine as a first name or nickname, nothing that identifies
-> you.
-
-## The safety rules (repeat — binding)
-
-- The arm moves **only inside the calibrated envelope**, only via routines that **clamp** every
-  command to that envelope (`clamp(angle, min, max)`), and only with a **human watching**.
-- Servo power is a **separate fused 5–6 V supply** with shared ground and a reachable switch —
-  **never** the Arduino's 5 V pin.
-- **No motion code merges here without the clamp in the path.**
+- Nieuwe bewegingen gaan via één centrale begrenzer en beginnen langzaam, één gewricht tegelijk.
+- De maker kijkt mee en houdt de voedingsschakelaar bereikbaar.
+- Servo's gebruiken een aparte voeding binnen de specificatie van de werkelijke servovariant,
+  met gedeelde massa, passende beveiliging en bereikbare uitschakeling; nooit de 5V-pin van het
+  Arduino-bord. De huidige voedingsgegevens zijn nog niet vastgelegd.
+- Een gewijzigde arm, grijper, kabelroute of montage maakt een oude kalibratie verdacht: opnieuw
+  controleren en zo nodig opnieuw meten.
+- Placeholder- of internetwaarden worden nooit als werkplaatsmeting vastgelegd.
+- Documentatie noemt expliciet het startupgedrag van de gebruikte sketch.

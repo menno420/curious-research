@@ -8,10 +8,9 @@
 //   neodymium magnet. The arm carries it to a small steel/iron part, the magnet
 //   grabs it, the arm moves it, and you pull the part off by hand at the far end.
 //   There are NO servos, NO wires, NO electronics — the magnet does all the work
-//   and holds even with the arm powered off. That makes it the safest possible
-//   first tool: nothing can clamp, pinch, or surprise you. The only real question
-//   is "is the magnet strong enough for THIS part?" — and you answer that by
-//   TESTING before you trust a lift.
+//   and holds even with the arm powered off. Passive does NOT mean risk-free:
+//   the magnet can pinch, attract unexpected metal, damage sensitive items or
+//   drop a load. Test the exact magnet, part and orientation before any lift.
 //
 // HOW TO USE IT (makers)
 //   1. Keep this file in the SAME folder as mount_standard.scad (it pulls it in).
@@ -24,8 +23,8 @@
 //   "it lifts fine" is YOUR call to verify.
 //
 // SAFETY (arm rails + lifting)
-//   No motion code lives here. The arm moves only inside its calibrated envelope,
-//   via clamped routines, with a human watching. A lift is load-bearing:
+//   No motion code lives here. This passive model cannot guarantee arm startup
+//   or motion safety; powered use needs a reviewed route and supervision. A lift is load-bearing:
 //   CHECK THE MAGNET HOLDS YOUR PART — at the height and speed you'll use —
 //   BEFORE trusting the arm to carry it. Neodymium magnets are brittle and pinch
 //   skin; keep them away from cards, drives, and pacemakers.
@@ -39,9 +38,8 @@ use <mount_standard.scad>
 //                  "12 x 3 mm". Cheap in bags of 10-20.
 // press-fit      : a pocket a hair SMALLER than the magnet so it wedges in and
 //                  stays with no glue. Loose? A drop of glue fixes it.
-// payload        : weight the arm can actually carry at arm's length. Small hobby
-//                  arms manage ~50-200 g, and the TOOL's own weight counts against
-//                  that. Keep the picked part light.
+// payload        : the load this exact arm/tool combination can carry under the
+//                  tested conditions. No payload value is established here.
 
 
 // =============================================================================
@@ -53,10 +51,10 @@ magnet_d      = 12.0;   // magnet DIAMETER (mm). Common discs: 10, 12, 15, 20.
 magnet_h      =  3.0;   // magnet HEIGHT / thickness (mm).
 
 // -- Press-fit tightness --
-magnet_fit    = 0.15;   // how much SMALLER the pocket is than the magnet (mm).
-                        // 0.10-0.20 = a firm press-fit on most printers. Won't go
-                        // in? Raise it (e.g. 0.25) or sand the magnet. Drops out?
-                        // Lower it, or add a drop of glue.
+magnet_fit    = 0.15;   // EXPERIMENTAL: amount subtracted from magnet_d (mm).
+                        // Larger positive = SMALLER/tighter pocket. Won't go in?
+                        // Lower this value. Too loose? Raise it in small steps or
+                        // use a separately validated retention method.
 
 // -- Cup + stem --
 cup_wall      = 1.8;    // wall thickness around the magnet (mm).

@@ -19,10 +19,9 @@
 //
 // HOW TO USE IT (makers)
 //   1. Keep this file in the SAME folder as mount_standard.scad (it pulls it in).
-//   2. Pick your servo: set  servo_type = "MG90S";  (metal-gear 9 g, the default)
-//      or  "MG996R";  for the bigger/stronger one. Read the SERVO note below —
-//      do NOT use an SG90: its plastic gears strip when a gripper stalls.
-//   3. Measure YOUR servo and edit the body/shaft/tab numbers for that type.
+//   2. Select the closest geometry profile with servo_type. This does NOT prove
+//      compatibility, strength, voltage or current behaviour.
+//   3. Measure YOUR servo and edit the body/shaft/tab numbers for that unit.
 //   4. Press F5 to preview, F6 to render, then export/slice and print.
 //   5. CHECK THE GEAR MESH BY HAND before any power (README, step 2): turn the
 //      pinion, watch both racks slide opposite ways, jaws move together, nothing
@@ -46,13 +45,13 @@
 //   * A gripper is LOAD-BEARING: a dropped part is on the human to prevent.
 //     Confirm the jaws actually hold YOUR object, by hand, at the bench, BEFORE
 //     any arm lift (README ⚠ callout).
-//   * Servo power is a SEPARATE, FUSED 5-6 V supply with shared ground and a
-//     reachable switch — NEVER the Arduino's 5 V pin. A gripping servo can stall
-//     and gulp far more current than the board can give.
+//   * Use a separate servo supply within the exact unit's specified voltage
+//     range, sized and protected from verified specifications plus measurement;
+//     share signal ground and keep a cutoff reachable. Never use Arduino 5 V.
 //   * Bench-test the servo ALONE with gripper_test.ino first. Arm-mounted motion
 //     goes ONLY through the clamped path (projects/arm-pen-plotter/
 //     teach_and_replay.py against arm/calibration.json) — never a raw servo
-//     write. That calibration file does not exist yet, so no arm motion runs.
+//     write. That controls normal commands only; it does not prove startup safety.
 // =============================================================================
 
 use <mount_standard.scad>
@@ -80,18 +79,15 @@ use <mount_standard.scad>
 // =============================================================================
 
 // -- WHICH SERVO ---------------------------------------------------------------
-// MG90S  = metal-gear 9 g class, ~2.2 kg-cm. The DEFAULT: gentle, light, enough
-//          for small parts, and its metal gears survive the odd stall.
-// MG996R = the STRONGER option, ~10 kg-cm, but 55 g of weight hanging at the end
-//          of the arm (that eats your payload) and a bigger stall-current draw.
-// SG90   = DO NOT USE for a gripper. Its PLASTIC gears STRIP when the servo
-//          stalls against the object it's gripping — and a gripper stalls by
-//          design. (Straight from ideas/printed-end-effectors.md.)
-servo_type = "MG90S";     // "MG90S" (default) or "MG996R". Not "SG90".
+// MG90S and MG996R are only two editable GEOMETRY profiles. Model labels and
+// clone names do not guarantee dimensions or electrical/mechanical behaviour.
+// The MG996R profile is selected because the arm is described as MG996R-class;
+// confirm that an extra servo exists and measure the actual unit before use.
+servo_type = "MG996R";     // illustrative profile; measure every dimension below
 
-// A hard guard: refuse to silently build for an SG90.
+// The current model contains only these two geometry tables.
 assert(servo_type == "MG90S" || servo_type == "MG996R",
-       "servo_type must be \"MG90S\" or \"MG996R\" — SG90 strips its gears on a gripper.");
+       "servo_type must match one of the two editable geometry profiles.");
 
 // -- SERVO BODY DIMENSIONS (measure YOURS; these are typical starting values) --
 // The two value sets below are picked by servo_type. Reach for calipers and
@@ -142,8 +138,8 @@ finger_width = 8.0;     // finger width across (mm).
 finger_th    = 5.0;     // finger thickness — the gripping wall (mm).
 finger_h     = 14.0;    // how tall the jaw stands in Z (mm) — the contact height.
 wall         = 2.0;     // general wall thickness for the cradle + guides (mm).
-clearance    = 0.25;    // print-fit gap for sliding/inserted parts (mm). PLA/PETG
-                        // swell a little; 0.2-0.3 is a usual sliding fit.
+clearance    = 0.25;    // EXPERIMENTAL print-fit gap (mm). Validate on the chosen
+                        // printer, material, orientation and mechanism.
 
 // -- SOFT GRIP PADS (optional) -------------------------------------------------
 tpu_pad     = true;     // true = recess a shallow pocket in each jaw's inner face

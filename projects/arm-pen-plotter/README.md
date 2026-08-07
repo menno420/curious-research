@@ -1,242 +1,166 @@
-# Arm pen-plotter — the arm draws wobbly line art (and that's the charm)
+# Arm-penplotter — waypoints aanleren en terugspelen
 
-> The 6-servo arm holds a printed, floating pen and draws simple line art on paper.
-> The honest promise is **charming, wobbly lines** — not printer-perfect ones. The
-> canonical version of exactly this ([BrachioGraph](https://www.brachiograph.art/))
-> proudly ships *"adorably wiggly"* drawings, and that wiggle is the whole aesthetic.
+## Wat is dit?
 
-Grown from [`ideas/arm-pen-plotter.md`](../../ideas/arm-pen-plotter.md) (ritual verdict: **build**).
+De 6-DOF-arm draagt een zwevende penhouder. Met de Python-tool jog je één gewricht tegelijk,
+bewaar je de zes gewrichtshoeken als waypoint en speel je de reeks langzaam terug. Het doel is
+een korte, karaktervol wiebelige lijn — geen printerprecisie.
 
-**Bench words** (one line each): **servo** = a motor you command to an exact angle;
-**jog** = nudge one joint a small step at a time by eye; **waypoint** = a saved snapshot
-of all six joint angles you can replay; **clamp** = software that trims any angle back
-inside the safe range you measured, *before* it reaches a motor; **envelope** = that safe
-range per joint; **compliance / float** = the pen holder gives a few mm so pen pressure
-stays even on an uneven surface.
+De centrale context en nog onbekende armgegevens staan in
+[`docs/workshop-profile.md`](../../docs/workshop-profile.md). De veiligheids- en
+kalibratieafspraken staan in [`arm/README.md`](../../arm/README.md).
 
----
+## Bekende startupbeperking — lees dit vóór bekrachtigen
 
-## The one rule that comes before everything
+> **De besturingsworkflow vereist kalibratie vóór gecontroleerde bediening. Dat betekent niet
+> dat de fysieke arm zonder kalibratie niet kan bewegen.**
 
-> **No calibration file, no motion.** The tool here literally refuses to run until *you*
-> have measured your arm and created `arm/calibration.json`. The clamp that keeps the arm
-> safe is only as good as *your* measured numbers — and nobody else's numbers are safe for
-> your arm. **Claude cannot do this step for you.** It is measured by hand, on your bench.
+De laptoptool weigert gecontroleerde opdrachten als `arm/calibration.json` ontbreekt of nog
+placeholders bevat. De huidige Arduino-sketch doet tijdens `setup()` echter al het volgende:
 
-And the powered-move rules, every single time:
+1. alle zes servo's koppelen met `attach()`;
+2. de interne limieten voorlopig op 90°–90° zetten;
+3. eenmaal `write(90)` naar iedere servo sturen;
+4. pas daarna op gemeten limieten van de laptop wachten.
 
-- **Servo power is a separate, fused 5–6 V supply** with a shared ground and a **reachable
-  switch** — **never** the Arduino's 5 V pin. (Why: a stalling servo pulls far more current
-  than that pin can give; it browns out or fries the board.)
-- **Keep a hand on that switch during every powered move.** If anything looks, sounds, or
-  smells wrong, cut power first and ask questions after.
-- **A human watches every move.** Nothing here is ever "safe unattended."
+Een boardreset of het openen van een seriële verbinding kan dus vóór de kalibratiehandshake een
+90°-opdracht veroorzaken. Negentig graden is **niet** als gezamenlijke veilige startupstand voor
+deze arm geverifieerd. Gebruik de sketch niet voor powered startup voordat pinvolgorde,
+werkelijke rusthouding en een aangepaste startupstrategie onder toezicht op de echte arm zijn
+getest. Dit document claimt geen hardwareveiligheid.
 
----
+## Waarom bouwen?
 
-## What's in this folder
+Dit is een compacte integratietest voor mechanica, gewrichtslimieten, Python, seriële
+communicatie en herhaalbaarheid. Je ziet onmiddellijk of een wijziging het gedrag verbetert.
 
-| File | What it is |
+## Benodigde onderdelen en gereedschappen
+
+- de bestaande 6-DOF-arm met MG996R-klasse servo's;
+- Arduino, USB-kabel en Windows-pc met Arduino IDE en Python;
+- pen, papier en een geprinte zwevende penhouder;
+- een externe servovoeding die past bij de **werkelijke servovariant en belasting**, met
+  gedeelde massa, passende zekering en bereikbare uitschakeling;
+- gemeten min-, max- en middenwaarden per gewricht.
+
+De exacte MG996R-variant, voedingsspanning, gemeten piekstroom en mechanische limieten zijn nog
+niet vastgelegd. Neem daarom geen universele stroomwaarde of voorbeeldhoek over als bewezen
+eigenschap van deze arm.
+
+## Bestanden
+
+| Bestand | Functie |
 |---|---|
-| [`teach_and_replay.py`](./teach_and_replay.py) | The teach-mode tool: jog the arm, record waypoints, replay them slowly. Refuses to run without `arm/calibration.json`; clamps every value it sends. |
-| [`pen_plotter_arm.ino`](./pen_plotter_arm.ino) | The Arduino sketch. Receives your safe limits at startup and **clamps again on-board** (belt and braces). |
-| [`pen_holder.scad`](./pen_holder.scad) | The printable floating pen holder (source only — you render the STL locally). |
-| [`index.html`](./index.html) | An animated explainer of how teach-mode works — open it in a browser, press **Replay**. |
+| [`teach_and_replay.py`](./teach_and_replay.py) | Laptoptool voor joggen, waypoints bewaren en begrensd terugspelen. |
+| [`pen_plotter_arm.ino`](./pen_plotter_arm.ino) | Arduino-ontvanger; begrenst gecontroleerde `S`-opdrachten na de limietenhandshake. Bevat de hierboven beschreven startupbeperking. |
+| [`pen_holder.scad`](./pen_holder.scad) | Parametrische bron voor de zwevende penhouder. |
+| [`index.html`](./index.html) | Vereenvoudigde animatie van teach-and-replay; geen veiligheidsbewijs. |
 
----
+## Bouwstappen
 
-## Step-by-step: your first wobbly line
+### 1. Meet de arm met servovoeding uit
 
-Do these **in order**. Calibration is Step 1 on purpose — the drawing steps physically
-cannot run before it.
+Volg [`guides/arm-werkgebied/guide.md`](../../guides/arm-werkgebied/guide.md). Noteer per
+gewricht de mechanisch bruikbare min en max met marge, plus een middenstand die op deze montage
+is gecontroleerd. Let ook op kabelroute, bureaurand, gereedschap en last.
 
-### Step 1 — Measure your arm and create `arm/calibration.json` (YOUR file)
+Maak daarna op Windows je eigen bestand:
 
-This is the hand-measuring step, and it's yours. Full walkthrough with the safety rules
-and the animation:
-[`guides/arm-envelope-explained/guide.md`](../../guides/arm-envelope-explained/guide.md).
-
-1. Open the envelope guide's animation first so the idea clicks:
-
-   ```
-   guides/arm-envelope-explained/index.html
-   ```
-
-   (Double-click it to open in your browser, press **Replay**.)
-
-2. With the **servo power switched OFF**, gently move each joint by hand to find its safe
-   min and max — back off a few degrees from where it just reaches its own frame, the desk,
-   or a wire. Write down min / max / center for all six joints. The guide walks every step.
-
-3. Copy the template to your own calibration file:
-
-   ```
-   cp arm/calibration.example.json arm/calibration.json
-   ```
-
-4. Open `arm/calibration.json` and replace every `PLACEHOLDER` value with your measured
-   numbers, and fill in `measured_by` and `measured_on`. (The tool refuses to run while any
-   placeholder remains — that's on purpose.)
-
-5. **Commit `arm/calibration.json`** once your real numbers are in. It's just servo angles —
-   not personal data — and committing it is how Claude and reviewers learn your arm's true
-   limits. See [`arm/README.md`](../../arm/README.md) for why. (Keep your identity out of it —
-   `measured_by` can be a first name or nickname.)
-
-**Verify:** run the tool with no arm connected. It should print your limits in the banner
-and *not* complain about calibration:
-
-```
-python3 projects/arm-pen-plotter/teach_and_replay.py
+```powershell
+Copy-Item arm\calibration.example.json arm\calibration.json
 ```
 
-If it prints "NO CALIBRATION FILE" or "TEMPLATE placeholder values", go back to Step 1.4.
-Type `quit` to leave for now.
+Vervang alle placeholders. Zet bij `measured_by` alleen initialen of een werkplaatsalias en noteer bij
+`measured_on` de meetdatum.
 
-### Step 2 — Flash the Arduino sketch
+### 2. Test de laptoptool zonder hardware
 
-1. Open `projects/arm-pen-plotter/pen_plotter_arm.ino` in the Arduino IDE.
+```powershell
+python projects\arm-pen-plotter\teach_and_replay.py
+```
 
-2. **Read the wiring comment block at the top of that file before wiring anything.** The
-   short version, and the part to **check yourself**:
+Zonder `--port` voert de tool een dry-run uit. Controleer dat:
 
-   > External fused 5–6 V servo supply · shared ground to the Arduino GND · a fuse on the
-   > supply's + lead · a reachable switch · servo signal wires to pins 3, 5, 6, 9, 10, 11 ·
-   > **never the Arduino 5 V pin.**
+- het eigen kalibratiebestand wordt geladen;
+- ongeldige of te grote hoeken naar de gemeten grens worden teruggebracht;
+- `rec`, `save` en `replay` met twee oefenwaypoints werken;
+- een ontbrekend of onvolledig kalibratiebestand de gecontroleerde workflow blokkeert.
 
-3. Confirm the servo pin order in the sketch matches how you plugged them in:
+Deze test zegt nog niets over startup van de fysieke arm.
 
-   ```
-   // 0 base   1 shoulder   2 elbow   3 wrist_tilt   4 wrist_rotate   5 gripper
-   const int SERVO_PINS[NUM_JOINTS] = { 3, 5, 6, 9, 10, 11 };
-   ```
+### 3. Pas en print de penhouder
 
-4. Upload the sketch (the **Upload** arrow button). With the Serial Monitor at **115200**
-   baud you should see:
+1. Meet de pendiameter en de werkelijke aansluiting aan de pols.
+2. Pas `pen_d`, montage-afmetingen en zo nodig `travel` aan in `pen_holder.scad`.
+3. Render naar STL, slice in Bambu Studio en controleer de doorsnede in Preview.
+4. Print eerst de kleinste montageproef als de polsinterface nog niet gemeten is.
+5. Controleer dat de pen een paar millimeter vrij kan veren zonder zijdelingse blokkade.
 
-   ```
-   READY pen_plotter_arm -- send L limits, then S moves.
-   ```
+### 4. Beoordeel startup voordat de servovoeding aan gaat
 
-**Check this yourself (powered wiring):** before you switch on the servo supply, verify by
-eye that the fuse is in the + lead, the grounds are shared, and the switch is within reach.
-This is powered hardware — Claude flags it, you verify it.
+Controleer pinvolgorde, gedeelde massa, zekering, uitschakeling en servovariant. Vergelijk de
+werkelijke huidige gewrichtsstanden met de 90°-opdracht in `setup()`. Ontwerp en test eerst een
+startupstrategie die niet naar een onbevestigde stand springt; dit is een noodzakelijke
+vervolgwijziging voordat de huidige sketch powered wordt gebruikt.
 
-### Step 3 — Print and fit the floating pen holder
+### 5. Leer pas daarna één korte lijn aan
 
-1. Render the STL from the source. OpenSCAD isn't available in the environment that
-   generated these files, so you make the STL yourself (about a minute):
+Als startup op de echte arm aantoonbaar is opgelost en gecontroleerd:
 
-   - Open `projects/arm-pen-plotter/pen_holder.scad` in **OpenSCAD**.
-   - Set `pen_d` to *your* pen's measured barrel diameter, then press **F6** (full render).
-   - **File → Export → Export as STL…**
+```powershell
+python projects\arm-pen-plotter\teach_and_replay.py --port COM3
+```
 
-2. Slice and print it (you slice, you start it, you watch it — nothing here prints
-   unattended). It prints as **two loose parts**: the rail-with-mount and the pen sleeve.
+Vervang `COM3` door de poort uit Apparaatbeheer of de Arduino IDE.
 
-3. Drop the sleeve into the rail — it should slide up and down freely by the `travel`
-   amount. Clip the mount to your arm's end, fit the pen, and pinch the side screw so the
-   tip pokes ~2–3 mm below the rail at rest. Start in **gravity** float mode (the pen's own
-   weight is the down-force); only switch `float_mode` to `"spring"` if a light pen skips.
+1. Begin zonder gereedschapslast, met lage bewegingen en iemand bij de uitschakeling.
+2. Jog naar het beginpunt en gebruik `rec`.
+3. Jog een korte afstand naar het eindpunt en gebruik opnieuw `rec`.
+4. Gebruik `save` en daarna `replay`.
+5. Stop bij brommen, vastlopen, onverwachte richting, reset of kabelspanning.
 
-**Verify:** press the pen tip up with a finger — it should float up a few mm and settle
-back down under its own weight. That float is what rides the uneven paper.
+## Hoe controleer je succes?
 
-### Step 4 — Teach one straight line, then replay it
+- Software: zonder geldige kalibratie worden geen gecontroleerde laptopopdrachten uitgevoerd.
+- Protocol: vóór de limietenhandshake worden gecontroleerde `S`-opdrachten geweigerd.
+- Hoekroute: iedere gecontroleerde opdracht wordt op laptop én Arduino begrensd.
+- Mechanica: de pen beweegt tussen twee waypoints zonder botsing of klemmen.
+- Resultaat: er staat één lijn op papier en de waypoints zijn opgeslagen.
+- Startup: dit punt is pas geslaagd nadat de 90°-sprong uit de huidige workflow is verwijderd of
+  op de echte arm als onderdeel van een gecontroleerde strategie is gevalideerd.
 
-Now the payoff. Do this powered, hand on the switch, watching.
+## Veelgemaakte fouten
 
-1. Start the tool, pointing it at your Arduino's serial port (`/dev/ttyUSB0` on Linux,
-   something like `COM3` on Windows):
+- “De laptoptool weigert” verwarren met “de hardware blijft stil”.
+- Voorbeeldhoeken of limieten van een andere arm kopiëren.
+- Een MG996R-stroomwaarde als universele specificatie gebruiken zonder exacte variant en bron.
+- De Arduino vanuit de 5V-pin van het board voeden.
+- Kabelroute, penkracht en bureaurand buiten de limietmeting laten.
+- Meerdere verbeteringen tegelijk testen, zodat het effect niet meer toewijsbaar is.
 
-   ```
-   python3 projects/arm-pen-plotter/teach_and_replay.py --port /dev/ttyUSB0
-   ```
+## Mogelijke verbeteringen
 
-   It prints the safety banner, sends your safe limits to the board, and drops you into a
-   `teach>` prompt.
+1. Eerst een begeleid geteste startup zonder sprong implementeren.
+2. Met [`guides/arm-herhaalbaarheid-meten`](../../guides/arm-herhaalbaarheid-meten/guide.md)
+   de spreiding van één lijn meten.
+3. Pas daarna snelheid, penkracht of compensatie één voor één aanpassen.
+4. SVG-import of inverse kinematica pas toevoegen nadat rechte lijn en vierkant reproduceerbaar
+   zijn.
 
-2. Jog the arm to the **start of your line**, pen just touching the paper. Nudge one joint
-   at a time (every nudge is clamped to your safe range):
+## Wanneer vraag je Claude?
 
-   ```
-   j shoulder 3
-   ```
+- *"Lees de setup van `pen_plotter_arm.ino` en maak een testplan voor startup zonder sprong.
+  Wijzig nog geen code totdat ik mijn werkelijke ruststanden heb gegeven."*
+- *"Controleer mijn kalibratiebestand op tegenstrijdigheden, maar verzin geen veilige hoeken."*
+- *"Maak van mijn A→B→A-metingen een vergelijking met één veranderde variabele."*
+- *"Welke observatie bewijst dat dit voeding, speling of softwaretiming is?"*
 
-   ```
-   j elbow -2
-   ```
+## Bewijsstatus
 
-   (Use `set <joint> <angle>` for an absolute angle, `pose` to see all six, `help` for the
-   full list.)
-
-3. When the pen tip is where the line should **start**, record that waypoint:
-
-   ```
-   rec
-   ```
-
-4. Jog to the **end** of the line, keeping the pen down, then record again:
-
-   ```
-   rec
-   ```
-
-5. Save your two waypoints:
-
-   ```
-   save
-   ```
-
-6. Replay them slowly — hand on the switch, watch the whole move:
-
-   ```
-   replay
-   ```
-
-   The arm eases from the first waypoint to the second, drawing your line. It will **wobble**.
-   That's not a bug — that's the machine. **Celebrate the wobble.**
-
-**Verify:** you have a drawn line on the paper and a saved `waypoints.json`. That's the
-whole pipeline proven end to end: calibration → clamp → serial → pen-down → move.
-
-> Want to practise with no hardware first? Run without `--port` for a **dry-run**: it prints
-> every move (and every clamp) instead of sending it. Great for learning the commands.
->
-> ```
-> python3 projects/arm-pen-plotter/teach_and_replay.py
-> ```
-
----
-
-## Honest expectations (read before you're disappointed)
-
-This is an SG90/MG996R-class hobby arm. Servo slop **stacks** along the arm — a fraction of
-a degree at the shoulder becomes millimetres of wiggle at the pen tip. Lines come out
-visibly shaky and wavy. That is the identity of this machine, the same as BrachioGraph's
-*"adorably wiggly"* output — not a defect to code away. First win: **one straight line**.
-Then a square, then a circle. Portraits are out of scope for this servo class (the fine
-detail is below the machine's resolution — it'd come out as mush).
-
-## The road ahead (not built yet — this is the roadmap)
-
-- **Step 4½ — tune the calibration curve.** As you draw squares and circles, the same
-  commanded angle won't land in quite the same spot each way a joint reverses (that's
-  *backlash* and *deadband*). A per-servo calibration curve
-  ([numpy.polyfit](https://github.com/evildmp/BrachioGraph/blob/master/docs/explanation/hardware-limitations.rst))
-  bakes in each joint's real quirks. A future script will fit it from measured points.
-- **Step 5 — SVG → path → motion.** Draw a shape in Inkscape → `Path > Object to Path` →
-  a Python script parses the points → scales them to your paper rectangle → runs each point
-  through your calibration → streams **clamped** serial commands, pen-up between strokes.
-  [ikpy](https://github.com/Phylliade/ikpy) (validated in simulation first) comes in only
-  once a straight line already works — never hand-derive 6-DOF inverse kinematics on day one.
-
-Both of those are *described here as the plan*, on purpose — they ship as their own small,
-reviewable changes later, each with the clamp in the path.
-
-## Safety recap (binding)
-
-- No motion without `arm/calibration.json` **and** the clamp in the path. Both are enforced
-  in code — the tool refuses without the file, and the one send function clamps every value.
-- External fused 5–6 V supply · shared ground · reachable switch · **never** the Arduino 5 V pin.
-- A human watches every powered move, hand on the switch. Nothing here is safe unattended.
+- De beschreven volgorde `attach()` → `write(90)` → limietenhandshake is
+  **Geverifieerd** in [`pen_plotter_arm.ino`](./pen_plotter_arm.ino).
+- Dat 90° veilig is, is **Nog bevestigen** en mag niet worden aangenomen.
+- Dat softwareclamps hardwarebotsingen voorkomen, is onjuist: ze begrenzen alleen de hoeken in
+  de routes die de clamp daadwerkelijk gebruiken.
+- De verwachte wiebelige lijnkwaliteit is **Praktijkadvies** voor een hobbyservoarm en moet met
+  de herhaalbaarheidstest op deze arm worden gekwantificeerd.
