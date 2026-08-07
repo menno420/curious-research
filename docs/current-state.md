@@ -34,27 +34,50 @@ excellent session. Neither is the failure mode; manufacturing busywork is.
 
 ## What is here
 
-**13 guides** in `guides/`, each a folder with an animated `index.html` and a step-by-step
+**18 guides** in `guides/`, each a folder with an animated `index.html` and a step-by-step
 `guide.md` companion (indexed in `guides/README.md`):
 
 | Guide | What it teaches | Lang |
 |---|---|---|
 | `begin-hier` | The Dutch front door — what this place is and what to try tonight | 🇳🇱 |
 | `windows-gereedschap` | Free Windows downloads, with direct links (no `index.html` — it is a link list, nothing moves) | 🇳🇱 |
-| `start-here` | The original English welcome tour | 🇬🇧 |
+| `bambu-studio` | **Read this before any tuning guide.** What his A1 already does for him, and which guides therefore still apply | 🇳🇱 |
+| `fusion-python` | Loading a Python script into Fusion 360 — he asked for this one himself | 🇳🇱 |
+| `vulling` | What % to actually use, and why walls matter more *(translation of `infill`)* | 🇳🇱 |
+| `speling` | Why parts jam, and the gap that fixes it *(translation of `how-print-clearance-works`)* | 🇳🇱 |
+| `arm-werkgebied` | The arm's safe envelope and the clamp *(translation of `arm-envelope-explained`)* | 🇳🇱 |
+| `start-here` | The original English welcome tour (Dutch version: `begin-hier`) | 🇬🇧 |
 | `how-a-pr-flows` | The change → review → merge loop, animated. The quality bar for every explainer | 🇬🇧 |
 | `what-can-claude-see` | Turning a photo or an error message into a fix | 🇬🇧 |
 | `first-layer` | First-layer adhesion — the foundation every print stands on | 🇬🇧 |
 | `retraction-vs-stringing` | Why prints grow hairs and how to stop it | 🇬🇧 |
 | `temperature-tower` | One print that finds your filament's best nozzle heat | 🇬🇧 |
 | `part-cooling` | The fan % behind droopy overhangs and brittle PETG | 🇬🇧 |
-| `infill` | What % to actually use, and why walls matter more | 🇬🇧 |
-| `how-print-clearance-works` | Why parts jam, and the gap that fixes it | 🇬🇧 |
+| `infill` | English original of `vulling` | 🇬🇧 |
+| `how-print-clearance-works` | English original of `speling` | 🇬🇧 |
 | `lithophane-night-light` | Photo → glowing printed panel, end to end | 🇬🇧 |
-| `arm-envelope-explained` | Measuring the arm's safe envelope, and the clamp that enforces it | 🇬🇧 |
+| `arm-envelope-explained` | English original of `arm-werkgebied` | 🇬🇧 |
 
-The nine English guides predate the Dutch rule. They stay as they are — **summarise them in
-Dutch when he opens one.** Every new guide is written in Dutch.
+**Translation is underway (owner directive 2026-08-07): translate the English guides properly
+into Dutch, and leave the originals where they are correct.** Three are done. The order is
+taken from `guides/bambu-studio/`, not from how important a topic is in 3D printing generally
+— that table was written for his actual machines and it inverts the obvious ranking. Remaining,
+in order: `lithophane-night-light` · `part-cooling` · `what-can-claude-see` ·
+`temperature-tower` and `retraction-vs-stringing` (both conditional — only for filament without
+a Bambu profile) · `first-layer` **partially**, since the A1 auto-levels and auto-sets Z-offset,
+so only the "what a good first layer *looks like*" half still applies to him ·
+`how-a-pr-flows` last, and arguably never — `CLAUDE.md` says do not teach him the machinery.
+
+**Two traps found while translating, worth carrying forward:**
+- A guide can be reached from **more than one shelf tile**. `arm-envelope-explained` had two,
+  and the second carries an `Open klus` badge rather than a language badge. Check for
+  duplicates before repointing; a single find-and-replace gets this wrong.
+- Verify the animation survived translation by **fingerprint, not by eye**: strip strings and
+  comments from both scripts and compare the remaining lines, then `node --check`. An early
+  attempt at this stripped both files to zero lines and reported "identical", which is a green
+  number computed from nothing.
+
+Until a guide is translated, **summarise it in Dutch when he opens it.**
 
 **5 buildable projects** in `projects/`:
 
@@ -100,8 +123,28 @@ every motion routine points at. It does not exist yet.
   short cards, a real number each, a source URL, a confidence mark, and a mandatory
   "myths and outdated advice" section. **Read this before commissioning any research** — the
   format is what makes the answers browsable rather than a wall of text.
-- `dossiers/` — where the raw research lands, in English, unedited, dated. Safety-relevant
-  claims get verified against a primary source before they reach him.
+- `dossiers/` — **populated 2026-08-07: 11 files, all six topics.** Six ChatGPT reports
+  (`<topic>.md`) and five Gemini reports (`<topic>-gemini.md`); the sixth Gemini run,
+  **`lasersnijden`, was never produced**, so the topic with the highest physical risk is the
+  one with **no corroboration**. 211 cards total, graded 167 SOLID / 41 COMMON / 3 DISPUTED.
+  Every file carries a provenance header.
+
+  Three things a session must know before using them:
+  - **The contract said keep raw research in English. ChatGPT returned Dutch.** Saved as
+    received. The rule should probably be relaxed to "as received"; the "cut, do not
+    translate" step into `site/kennis.html` is unaffected.
+  - **Both tools leak citation artifacts, and only one leaks visibly.** ChatGPT emits
+    `cite…turn…` runs wrapped in **invisible private-use characters** (U+E201/U+E202, 879 of
+    them); Gemini emits `start_span`/`end_span`, which PDF extraction turns into markdown-link
+    shapes. **Strip both before any text reaches the site.** They are deliberately not stripped
+    from the raw files — those are labelled unedited and a silent edit would make that a lie.
+  - **Gemini's citations are not machine-checkable from these files.** PDF extraction truncates
+    long URLs mid-path, so a dead-looking link there may be an extraction artifact. Of the
+    ChatGPT set, 149 URLs checked: 132 live, 15 bot-blocked, **1 genuinely dead** — and that one
+    is in `lasersnijden.md`.
+
+  Safety-relevant claims — fumes, materials that must not be cut, laser class, power — get
+  verified against a primary source before they reach him. **That verification has not started.**
 
 **`site/`** — the read-only public website, live at
 https://menno420.github.io/curious-research/. Plain HTML/CSS/JS, no build step, published by
@@ -132,6 +175,42 @@ requires that exact status-check context, and a required check that never report
 every PR pending forever. `auto-merge-enabler.yml` arms GitHub-native auto-merge on
 `claude/*` PRs so they land themselves on green.
 
+`check_links.py` deliberately **skips `research/dossiers/`** — those files are verbatim
+third-party output kept unedited, and both research tools leak citation artifacts, one of
+them link-shaped. The skip is a path prefix, so a future `guides/dossiers/` would still be
+checked. Reasoning is in the script's docstring.
+
+### PUBLISHING IS UNRELIABLE — read this before you touch `site/`
+
+`MEASURED 2026-08-07.` **A merge does not publish the site.** PR #68 changed `site/index.html`
+— squarely inside `pages.yml`'s push path filter — merged at 12:47:23Z, and **zero** `pages`
+runs followed. The consequence was live and silent: `/guides/vulling/index.html` returned 404
+while the shelf still pointed at the old guide. Every check green, no error anywhere, wrong
+site.
+
+**Cause:** GitHub suppresses workflow runs for events triggered by `GITHUB_TOKEN`, and
+`auto-merge-enabler.yml` lands `claude/*` PRs with exactly that token. The `schedule` safety
+net added in PR #65 is best-effort — GitHub does not guarantee scheduled runs and they are
+routinely delayed or dropped.
+
+**Until this is fixed, after every merge that touches `site/**` or `guides/**`:**
+
+```
+curl -s -X POST -H "Authorization: Bearer $GITHUB_PAT" \
+  -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/menno420/curious-research/actions/workflows/pages.yml/dispatches \
+  -d '{"ref":"main"}'
+```
+
+Then verify the live URL actually changed — do not assume the dispatch worked.
+
+**The owner has ruled out adding a `ROUTINE_PAT`** (2026-08-07), so the fix is not a new
+secret. The live candidate is to **merge with the account PAT instead of auto-merge**: a merge
+attributed to a real user is not suppressed, and that credential already exists. If a session
+confirms that, the durable fix is to stop arming auto-merge on PRs that touch `site/` or
+`guides/` and merge them via the API instead. Beyond that, moving the site off GitHub Pages
+onto Railway is an owner-stated goal and would retire this whole failure mode.
+
 ## Open questions — waiting on the owner
 
 Five things nobody but the owner can answer. Each unblocks concrete work.
@@ -149,11 +228,6 @@ Five things nobody but the owner can answer. Each unblocks concrete work.
      geometry — keeping Claude's ability to author designs AND the tool he already knows.
      Not yet tried here; would need a guide and one worked example.
 
-1. **Which slicer does he use?** Cura, PrusaSlicer, OrcaSlicer, or Bambu Studio. Every
-   printing guide currently describes settings generically. With the answer, the retraction,
-   temperature-tower, first-layer, part-cooling and lithophane guides can be rewritten
-   click-by-click with the real menu names — a large jump in usefulness for someone who
-   cannot translate "your slicer's retraction distance setting" into a menu path.
 1. **Drybox: design A or L?** `ideas/filament-drybox-logger.md` sits at `think-more` on
    exactly one question — alarm or logger. **A** is the traffic-light alarm (recommended:
    it does something visible on the bench); **L** is the passive humidity logger. Either
