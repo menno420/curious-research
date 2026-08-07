@@ -91,12 +91,25 @@ gripper channel, is written up in `arm/README.md` — read it before designing a
 once it exists (servo angles are numbers, not personal data) and it is the clamp target
 every motion routine points at. It does not exist yet.
 
-**`research/possibility-dossier.md`** — the cited map of what the bench and Claude can do
-together, with honest ✅/🧪/🚫 marks.
+**`research/`** — the grounded-knowledge lane.
+- `possibility-dossier.md` — the cited map of what the bench and Claude can do together.
+- `deep-research-prompts.md` — six ready-to-paste deep-research prompts (Arduino, Bambu
+  printing, Fusion 360, servos, laser cutting, CNC milling) with a fixed output contract:
+  short cards, a real number each, a source URL, a confidence mark, and a mandatory
+  "myths and outdated advice" section. **Read this before commissioning any research** — the
+  format is what makes the answers browsable rather than a wall of text.
+- `dossiers/` — where the raw research lands, in English, unedited, dated. Safety-relevant
+  claims get verified against a primary source before they reach him.
 
-**`site/`** — the read-only public website: a Dutch shelf page linking all 13 guides, so he
-can watch the animations on his phone with no GitHub account. Plain HTML/CSS/JS, no build
-step, published to GitHub Pages by `.github/workflows/pages.yml`.
+**`site/`** — the read-only public website, live at
+https://menno420.github.io/curious-research/. Plain HTML/CSS/JS, no build step, published by
+`.github/workflows/pages.yml`.
+- `index.html` — the shelf: every guide and project as a card, grouped.
+- `kennis.html` — the browsable reference. Topic tabs (arm · printing · Fusion · Arduino ·
+  laser · milling), collapsible sections, and short cards each carrying a confidence badge
+  (ZEKER / MEESTAL / BETWIST) and a source link. Search runs across every topic at once.
+  **All content lives in one `KENNIS` object at the top of the file** — adding a card is
+  editing a list, no build step. Empty topics say so honestly rather than being hidden.
 
 **`docs/`** — four files, all live: [`teaching-style.md`](teaching-style.md) (binding — the
 spec and quality bar for explainers), [`git-for-makers.md`](git-for-makers.md) (git in bench
