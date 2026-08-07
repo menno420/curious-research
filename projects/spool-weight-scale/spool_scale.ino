@@ -1,15 +1,12 @@
 // ============================================================================
-//  spool_scale.ino  --  honest "how much filament is left?" gauge
+//  spool_scale.ino  --  experimentele filamentweger
 //  Part of: curious-research / projects/spool-weight-scale
 // ----------------------------------------------------------------------------
 //  WHAT THIS IS
-//  A cheap load cell (a little metal bar that bends a hair under weight) read
-//  through an HX711 amplifier board by an Arduino, reporting grams. Set a spool
-//  on it, and it tells you roughly how much filament is left -- an ON-DEMAND
-//  spot-check you re-zero, NOT an always-on precision shelf display. A cheap
-//  load cell drifts a few grams with temperature and time (see the README and
-//  ideas/spool-weight-scale.md), so trust it for "roughly half a spool left,"
-//  not "exactly 3 g left to finish this print."
+//  Een loadcell wordt via een HX711 door een Arduino uitgelezen. Na kalibratie
+//  en aftrek van het ZELF GEMETEN lege-spoelgewicht volgt een schatting van de
+//  resterende massa. Resolutie, drift en bruikbare marge zijn geen vaste
+//  getallen: meet ze op de eigen constructie met README.md en meetlog.md.
 //
 //  Bench words (one line each):
 //    load cell    = a metal bar with a strain gauge inside that bends a tiny,
@@ -30,26 +27,25 @@
 //      * "Adafruit GFX Library" by Adafruit
 //
 // ----------------------------------------------------------------------------
-//  WIRING  (all low-voltage, powered over the Arduino's USB -- no external
-//  supply, nothing hot, nothing mains. Full numbered wiring is in the README.)
+//  BEDRADING. Controleer eerst de toegestane spanning van bord, HX711-module
+//  en optioneel OLED. Werk spanningsloos; de volledige route staat in README.
 //
-//    LOAD CELL (4 thin wires) -> HX711 board:
-//        red   -> E+        black -> E-
-//        white -> A-        green -> A+    (if grams read backwards/negative,
-//                                           swap white<->green)
+//    LOADCELLFUNCTIE -> HX711 (kleur volgt ALLEEN uit het eigen datablad):
+//        excitatie+ -> E+        excitatie- -> E-
+//        signaal+   -> A+        signaal-   -> A-
 //    HX711 board -> Arduino:
-//        VCC -> 5V     GND -> GND
+//        VCC -> bevestigde bordspanning     GND -> GND
 //        DT  -> pin 4  (data)      SCK -> pin 5  (clock)
 //    STAGE 3 EXTRAS:
 //        Read button: one leg -> pin 6, other leg -> GND (uses the chip's
 //                     built-in pull-up; no resistor needed)
-//        SSD1306 OLED (I2C): VCC -> 5V  GND -> GND  SDA -> A4  SCL -> A5
-//                     (on an Uno/Nano, SDA is A4 and SCL is A5)
+//        SSD1306 OLED (I2C): gebruik voedingsspanning, SDA/SCL en adres uit de
+//                     documentatie van het concrete bord en de module.
 //
-//    CHECK THIS YOURSELF (the one real caution -- mechanical, not electrical):
-//    bolt the load cell with ONE end rigidly fixed and the load on the FREE
-//    end, and never twist or over-torque the bar. Bending it the wrong way or
-//    cranking the screws too hard permanently damages the strain gauge inside.
+//    MONTAGE: volg de pijl en montagetekening van het concrete loadcellmodel.
+//    Een single-ended beam heeft vaak een vaste en belastbare zijde, maar dat
+//    is geen universele regel voor ieder celtype. Voorkom torsie, nevencontact,
+//    overbelasting en te hoog aanhaalmoment.
 // ============================================================================
 
 // ---------------------------------------------------------------------------
@@ -76,20 +72,16 @@ float calibrationFactor = 1.0;   // <-- paste YOUR Stage-1 number here
 
 // ---------------------------------------------------------------------------
 //  YOUR KNOWN WEIGHT (Stage 1 only)
-//  The mass, in grams, of the object you place to calibrate. A labelled kitchen
-//  weight, or anything you weighed on a kitchen scale (a full 500 mL water
-//  bottle is ~500 g). Bigger and heavier gives a steadier calibration.
+//  De onafhankelijk vastgestelde massa, in gram, van het kalibratievoorwerp.
+//  Neem inhoud of een etiket niet automatisch als exacte totale massa over.
 // ---------------------------------------------------------------------------
-float knownMassGrams = 500.0;
+float knownMassGrams = 0.0;     // <-- vul jouw onafhankelijk bekende massa in
 
 // ---------------------------------------------------------------------------
 //  YOUR SPOOL LIBRARY  (Stages 2 and 3)
 //  grams-remaining = total-on-scale  -  this spool's EMPTY weight.
-//  The empty weight is the hard part: empty spools range ~80-306 g, so guessing
-//  is useless. WEIGH YOUR OWN SPOOL EMPTY ONCE and put that number in slot 0 --
-//  your measured gram beats any table below. The seeded numbers are only
-//  ballpark starting points (Prusament ~201 g, Bambu ~256 g -- from the
-//  empty-spool catalogs cited in the README); confirm them on your own bench.
+//  Het leeggewicht is werkplaatsspecifiek. WEEG IEDERE ECHTE SPOEL LEEG en vul
+//  alleen eigen metingen in. Er staan bewust geen merk- of cataloguswaarden in.
 // ---------------------------------------------------------------------------
 struct Spool {
   const char* name;       // shows in the Serial Monitor / on the OLED
@@ -97,12 +89,12 @@ struct Spool {
 };
 
 Spool spoolLibrary[] = {
-  { "MY SPOOL (measure me!)", 0.0   },  // slot 0: YOUR measured empty weight
-  { "Prusament (approx)",     201.0 },
-  { "Bambu (approx)",         256.0 },
-  { "Hatchbox (approx)",      225.0 },
-  { "eSun (approx)",          224.0 },
+  { "SPOEL 1 - zelf meten", 0.0 },
+  { "SPOEL 2 - zelf meten", 0.0 },
+  { "SPOEL 3 - zelf meten", 0.0 },
 };
+
+const unsigned int SPOOL_COUNT = sizeof(spoolLibrary) / sizeof(spoolLibrary[0]);
 
 // Which spool from the list above is on the scale right now (0 = your own).
 #define ACTIVE_SPOOL 0
@@ -119,7 +111,7 @@ HX711_ADC LoadCell(HX711_dout, HX711_sck);
 #if STAGE == 3
   #define SCREEN_WIDTH  128
   #define SCREEN_HEIGHT 64
-  #define OLED_ADDR     0x3C   // most 0.96" I2C OLEDs; try 0x3D if the screen stays blank
+  #define OLED_ADDR     0x3C   // voorbeeldwaarde: bevestig met datasheet of I2C-scan
   Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #endif
 
@@ -130,7 +122,7 @@ void setup() {
   Serial.begin(57600);
   delay(300);
   Serial.println();
-  Serial.println("spool_scale -- starting up");
+  Serial.println("filamentweger -- startup");
 
   LoadCell.begin();
   // Let the cell settle, and tare (zero) it with NOTHING on the platform.
@@ -138,21 +130,41 @@ void setup() {
   boolean doTare = true;                 // zero the empty platform at startup
   LoadCell.start(stabilizingTime, doTare);
 
-  if (LoadCell.getTareTimeoutFlag()) {
-    Serial.println("ERROR: HX711 not responding. Check the DT (pin 4) and SCK (pin 5) wiring.");
+  if (LoadCell.getTareTimeoutFlag() || LoadCell.getSignalTimeoutFlag()) {
+    Serial.println("FOUT: HX711 reageert niet. Controleer DOUT/DT, SCK en de pinmapping.");
     while (true) { }   // stop here -- nothing works until the wiring is fixed
   }
 
   LoadCell.setCalFactor(calibrationFactor);
-  Serial.println("Startup done. Keep the platform EMPTY until asked.");
+  Serial.println("Startup klaar. Houd het platform leeg totdat om massa wordt gevraagd.");
+
+#if STAGE == 2 || STAGE == 3
+  if (calibrationFactor == 1.0) {
+    Serial.println("FOUT: calibrationFactor staat nog op de onbevestigde standaardwaarde 1.0.");
+    Serial.println("Voer eerst fase 1 uit en vul de gemeten factor in.");
+    while (true) { }
+  }
+  if (ACTIVE_SPOOL >= SPOOL_COUNT) {
+    Serial.println("FOUT: ACTIVE_SPOOL wijst buiten spoolLibrary.");
+    while (true) { }
+  }
+  if (spoolLibrary[ACTIVE_SPOOL].emptyGrams <= 0.0) {
+    Serial.println("FOUT: meet en vul eerst het lege gewicht van de actieve spoel in.");
+    while (true) { }
+  }
+#endif
 
 #if STAGE == 1
+  if (knownMassGrams <= 0.0) {
+    Serial.println("FOUT: vul eerst knownMassGrams in met een onafhankelijk bekende massa.");
+    while (true) { }
+  }
   Serial.println();
-  Serial.println("=== STAGE 1: CALIBRATE ===");
-  Serial.println("1) Leave the platform empty. 2) Type 't' + Enter to zero it.");
-  Serial.print("3) Place your known weight (");
+  Serial.println("=== FASE 1: KALIBREREN ===");
+  Serial.println("1) Laat het platform leeg. 2) Stuur 't' + Enter om te tareren.");
+  Serial.print("3) Plaats de bekende massa (");
   Serial.print(knownMassGrams);
-  Serial.println(" g). 4) Type 'r' + Enter to read the calibration factor.");
+  Serial.println(" g). 4) Stuur 'r' + Enter voor de kalibratiefactor.");
 #endif
 
 #if STAGE == 3
@@ -185,7 +197,7 @@ void loopCalibrate() {
   static unsigned long lastPrint = 0;
   if (millis() - lastPrint > 500) {
     lastPrint = millis();
-    Serial.print("reading (not real grams until you calibrate): ");
+    Serial.print("uitlezing (nog geen gram vóór kalibratie): ");
     Serial.println(LoadCell.getData());
   }
 
@@ -194,24 +206,24 @@ void loopCalibrate() {
     char c = Serial.read();
     if (c == 't') {
       LoadCell.tareNoDelay();      // zero the empty platform
-      Serial.println(">> taring... (keep the platform empty)");
+      Serial.println(">> tareren... houd het platform leeg");
     }
     if (c == 'r') {
       // With the known mass sitting on the platform, compute the factor.
       LoadCell.refreshDataSet();   // average a fresh set of readings with the mass on
       float newCal = LoadCell.getNewCalibration(knownMassGrams);
       Serial.println();
-      Serial.print(">> YOUR CALIBRATION FACTOR = ");
+      Serial.print(">> JOUW KALIBRATIEFACTOR = ");
       Serial.println(newCal);
-      Serial.println(">> Copy that number into 'calibrationFactor' near the top");
-      Serial.println(">> of this sketch, set STAGE to 2, and upload again.");
+      Serial.println(">> Kopieer dit getal naar 'calibrationFactor' bovenin");
+      Serial.println(">> de sketch, zet STAGE op 2 en upload opnieuw.");
       Serial.println();
     }
   }
 
   // Announce when a tare finishes.
   if (LoadCell.getTareStatus()) {
-    Serial.println(">> tare done. Now place your known weight and type 'r'.");
+    Serial.println(">> tareren klaar. Plaats de bekende massa en stuur 'r'.");
   }
 }
 #endif
@@ -231,15 +243,10 @@ void loopGramsRemaining() {
     if (remaining < 0) remaining = 0;                      // never show negative
 
     Serial.print(spoolLibrary[ACTIVE_SPOOL].name);
-    Serial.print(" | total ");    Serial.print(total, 0);
-    Serial.print(" g  - empty "); Serial.print(empty, 0);
+    Serial.print(" | totaal ");   Serial.print(total, 0);
+    Serial.print(" g  - leeg ");  Serial.print(empty, 0);
     Serial.print(" g  = ~");      Serial.print(remaining, 0);
-    Serial.println(" g filament left");
-
-    if (empty == 0.0) {
-      Serial.println("   (slot 0's empty weight is still 0 -- weigh your spool");
-      Serial.println("    empty once and put that gram number in the spool library.)");
-    }
+    Serial.println(" g filament resterend");
   }
 }
 #endif
@@ -250,15 +257,15 @@ void loopGramsRemaining() {
 #if STAGE == 3
 void startOLED() {
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
-    Serial.println("ERROR: OLED not found. Check SDA=A4, SCL=A5, and the 0x3C/0x3D address.");
+    Serial.println("FOUT: OLED niet gevonden. Controleer voeding, SDA/SCL en OLED_ADDR.");
     while (true) { }
   }
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);
   display.setTextSize(1);
   display.setCursor(0, 0);
-  display.println("spool scale");
-  display.println("press button to read");
+  display.println("filamentweger");
+  display.println("druk knop");
   display.display();
 }
 
@@ -274,9 +281,9 @@ void showReading(float remaining, float total) {
   display.println(" g");
   display.setTextSize(1);
   display.setCursor(0, 52);
-  display.print("total ");
+  display.print("totaal ");
   display.print(total, 0);
-  display.println("g spot-check");
+  display.println("g meting");
   display.display();
 }
 
@@ -286,7 +293,8 @@ void loopOledStandalone() {
   bool pressed = (digitalRead(READ_BUTTON) == LOW);
 
   if (pressed && !wasPressed) {
-    // A fresh, averaged reading makes the spot-check trustworthy.
+    // Een verse, gemiddelde dataset dempt ruis. Of de meting bruikbaar is,
+    // volgt alleen uit de herhaalbaarheidsproef in meetlog.md.
     LoadCell.refreshDataSet();
     float total     = LoadCell.getData();
     float empty     = spoolLibrary[ACTIVE_SPOOL].emptyGrams;

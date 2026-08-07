@@ -10,6 +10,11 @@ De centrale context en nog onbekende armgegevens staan in
 [`docs/workshop-profile.md`](../../docs/workshop-profile.md). De veiligheids- en
 kalibratieafspraken staan in [`arm/README.md`](../../arm/README.md).
 
+De maker heeft bevestigd dat de arm al met een controller is gebruikt. Bewaar die werkende
+controller, firmware, pinmapping, voeding en startup als basislijn. De waarschuwingen hieronder
+gaan over **de meegeleverde penplottersketch**, niet over de bewering dat de arm nooit heeft
+gewerkt.
+
 ## Bekende startupbeperking — lees dit vóór bekrachtigen
 
 > **De besturingsworkflow vereist kalibratie vóór gecontroleerde bediening. Dat betekent niet

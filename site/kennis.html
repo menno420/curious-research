@@ -175,8 +175,8 @@ const KENNIS = {
           a:'De Arduino Servo-library gebruikt normaal een periodieke refresh rond 20 ms, maar de respons van de werkelijke servo en de rest van de sketch moeten worden gemeten. Sneller nieuwe doelen berekenen geeft niet automatisch snellere mechanische reactie. Begin met 20 ms en vergelijk respons, jitter en seriële belasting.',
           status:'practical' },
         { v:'Waarom is soepel bewegen langzamer?',
-          a:'Omdat optrekken en afremmen tijd kosten. Zet je de snelheidslimiet hoog genoeg, dan is er geen tijd meer om op te bouwen en lijkt netjes rekenen weer op knallen. Vloeiendheid is dus een ruil tegen snelheid, geen instelling die je gratis wint.',
-          status:'practical' }
+          a:'Bij smoothstep is de piek van de afgeleide 1,5 keer de gemiddelde snelheid. Wil je dezelfde maximale commandosnelheid houden als bij een lineair profiel, dan moet de S-curvebeweging daarom 1,5 keer zo lang duren. Of de echte arm daardoor rustiger beweegt blijft een A/B-test.',
+          status:'practical', bron:'https://github.com/menno420/curious-research/blob/main/projects/arm-soepele-beweging/soepele_beweging.ino' }
       ]},
       { titel: 'Startup en begrenzen', kaarten: [
         { v:'Betekent “geen kalibratie” dat de arm niet kan bewegen?',

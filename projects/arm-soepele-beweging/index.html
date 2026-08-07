@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Soepele beweging — waarom je arm schokt, en hoe je dat stopt</title>
+<title>Soepele beweging — drie opdrachtprofielen vergelijken</title>
 <style>
   :root {
     --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
@@ -68,14 +68,14 @@
 </head>
 <body>
 
-<h1>Waarom je arm schokt — en hoe je dat stopt</h1>
-<p class="sub">Drie keer exact dezelfde beweging, van A naar B. Alleen de manier waarop de
-hoeken verstuurd worden verschilt. Druk op <b>Speel af</b> en kijk vooral naar de
-snelheidsgrafiek onderin.</p>
+<h1>Drie manieren om dezelfde doelsprong op te bouwen</h1>
+<p class="sub">Deze animatie vergelijkt de <b>opgedragen</b> positie van A naar B. Zij
+simuleert niet de interne regeling, belasting of werkelijke snelheid van een MG996R-klasse
+servo. Gebruik haar om een test te begrijpen, niet als meetbewijs.</p>
 
 <div class="stage">
 <svg id="scene" viewBox="0 0 840 470" role="img"
-     aria-label="Drie armen maken dezelfde beweging: knallen, gelijke stapjes, en een s-bocht. Daaronder hun snelheid in de tijd."></svg>
+     aria-label="Drie opdrachtprofielen voor dezelfde beweging: één doelsprong, gelijke tussenstappen en een S-curve. Daaronder de opgedragen snelheid in de tijd."></svg>
 
 <div class="controls">
   <button id="play">▶ Speel af</button>
@@ -83,7 +83,7 @@ snelheidsgrafiek onderin.</p>
 </div>
 
 <div class="schuif">
-  <label for="snelheid">Snelheidslimiet</label>
+  <label for="snelheid">Max. commandosnelheid</label>
   <input type="range" id="snelheid" min="20" max="300" step="10" value="60">
   <span class="waarde" id="snelheidUit">60 gr/s</span>
 </div>
@@ -92,22 +92,21 @@ snelheidsgrafiek onderin.</p>
 <div class="uitleg">
 
   <div class="kaart rood">
-    <h2>1 · <code>servo.write(140)</code> — knallen</h2>
-    <p>Er bestaat geen snelheidsinstelling op een hobbyservo. <code>write(140)</code> betekent
-    letterlijk <b>"sta NU op 140 graden"</b>. De servo geeft vol gas tot hij er is en staat
-    dan stil. Twee snelheden: alles of niets.</p>
-    <p>In de grafiek is dat de rode blokhaak — meteen op zijn hoogst, dan pats terug naar nul.
-    Dat is precies het schokken dat je in het echt ziet.</p>
+    <h2>1 · <code>servo.write(140)</code> — één grote doelsprong</h2>
+    <p>De Arduino Servo-API vervangt de vorige doelhoek direct door 140°. Hoe snel de echte
+    servo daarna beweegt, bepaalt zijn interne regeling samen met voeding, belasting en
+    mechanica. De animatie kent die eigenschappen niet.</p>
+    <p>De rode blokhaak is daarom alleen een vergelijkingsmodel voor de <b>opdracht</b>, geen
+    gemeten snelheidsprofiel van de arm.</p>
   </div>
 
   <div class="kaart oranje">
-    <h2>2 · Gelijke stapjes — al veel beter, maar nog niet af</h2>
-    <p>Stuur je in plaats daarvan elke 20 milliseconden een doel dat een klein stukje verder
-    ligt, dan jaagt de servo steeds iets vlakbij na en beweegt hij rustig. Dit is de grote
-    stap vooruit.</p>
-    <p>Maar kijk naar de oranje lijn: die springt aan het <b>begin</b> in één keer omhoog en
-    aan het <b>eind</b> in één keer omlaag. Dat zijn nog steeds twee schokjes, alleen kleiner.
-    Je voelt ze als een tikje bij vertrek en aankomst.</p>
+    <h2>2 · Gelijke stapjes — geleidelijke positie, abrupte snelheidsrand</h2>
+    <p>Stuur je in plaats daarvan met een vast interval een doel dat een klein stukje verder
+    ligt, dan wordt het opgedragen positieprofiel geleidelijker. Of de as werkelijk rustiger
+    volgt, controleer je op de arm.</p>
+    <p>De oranje commandosnelheid springt aan het <b>begin</b> omhoog en aan het <b>eind</b>
+    omlaag. Bij dezelfde pieklimiet bereikt dit profiel B eerder dan de S-curve.</p>
   </div>
 
   <div class="kaart groen">
@@ -118,16 +117,18 @@ snelheidsgrafiek onderin.</p>
     <p>Eén regel rekenwerk doet dat: <code>3t² − 2t³</code>. Je stopt er de voortgang in
     (0 = net begonnen, 1 = klaar) en er komt een voortgang uit die traag start en traag
     eindigt.</p>
+    <p>De piek van deze curve is 1,5 keer de gemiddelde snelheid. Om dezelfde maximale
+    commandosnelheid te houden, duurt de groene beweging daarom 1,5 keer zo lang als de
+    lineaire oranje beweging.</p>
   </div>
 
 </div>
 
 <div class="denk">
   <h2>Draai eens aan de knop</h2>
-  <p>Zet de schuif op <b>300 gr/s</b> en speel af. Zie je dat de groene en oranje lijnen bijna
-  op de rode gaan lijken? Bij hoge snelheid <em>is</em> netjes rekenen bijna hetzelfde als
-  knallen — er is simpelweg geen tijd meer om op te trekken. Vloeiendheid kost tijd. Dat is
-  geen instelling die je kunt winnen, dat is de ruil.</p>
+  <p>Vergelijk eerst <b>30 en 60 gr/s</b>. Verhoog alleen op de echte arm nadat startup,
+  limieten en voeding zijn gecontroleerd. Bij een hoge ingestelde hoeksnelheid zijn er voor
+  dezelfde route minder updatepunten; het zichtbare verschil is een meetvraag.</p>
   <p>En een echte vraag waar we het antwoord niet van weten voor jouw arm: de schouder tilt
   het hele gewicht op, de basis draait alleen maar rond. <b>Zouden die twee wel dezelfde
   snelheidslimiet moeten hebben?</b> Omhoog bewegen is zwaar, omlaag helpt de zwaartekracht
@@ -141,7 +142,7 @@ snelheidsgrafiek onderin.</p>
   const scene = document.getElementById('scene');
 
   const MODES = [
-    { id:'knal',    naam:'servo.write()',   onder:'knallen',            kleur:'var(--bad)'  },
+    { id:'knal',    naam:'servo.write()',   onder:'één doelsprong',      kleur:'var(--bad)'  },
     { id:'lineair', naam:'gelijke stapjes', onder:'lineair',            kleur:'var(--warm)' },
     { id:'sbocht',  naam:'s-bocht',         onder:'optrekken/afremmen', kleur:'var(--ok)'   }
   ];
@@ -150,18 +151,20 @@ snelheidsgrafiek onderin.</p>
 
   // ---- de wiskunde --------------------------------------------------------
   // Elke functie geeft de voortgang (0..1) op tijdstip t (0..1).
-  // write() rent op volle servosnelheid en is dus al klaar terwijl de anderen
-  // nog maar net begonnen zijn.
+  // De rode lijn is een visueel vergelijkingsmodel voor één onmiddellijke
+  // doelwijziging. Zij voorspelt niet de echte servosnelheid. Lineair gebruikt
+  // 2/3 van de S-curveduur: beide profielen hebben dan dezelfde piek van 1,5.
   const KNAL_DEEL = 0.16;
+  const LINEAIR_DEEL = 2 / 3;
   const POS = {
     knal:    t => Math.min(1, t / KNAL_DEEL),
-    lineair: t => t,
+    lineair: t => Math.min(1, t / LINEAIR_DEEL),
     sbocht:  t => t * t * (3 - 2 * t)
   };
   // Snelheid = hoe snel de positie verandert (de afgeleide).
   const VEL = {
     knal:    t => (t <= KNAL_DEEL ? 1 / KNAL_DEEL : 0),
-    lineair: t => 1,
+    lineair: t => (t <= LINEAIR_DEEL ? 1 / LINEAIR_DEEL : 0),
     sbocht:  t => 6 * t * (1 - t)
   };
   const VMAX = 1 / KNAL_DEEL;
@@ -235,7 +238,7 @@ snelheidsgrafiek onderin.</p>
     scene.appendChild(txt('text', { class:'naam', x:G.x0, y:G.kop,
       fill:'var(--ink)', style:`font-size:${L.tekst}px` }, 'Snelheid tijdens de beweging'));
     scene.appendChild(txt('text', { class:'klein', x:G.x0, y:G.kop + 16,
-      style:`font-size:${L.klein}px` }, 'hoe hard de servo op dat moment draait'));
+      style:`font-size:${L.klein}px` }, 'afgeleide van het opgedragen positieprofiel'));
 
     scene.appendChild(el('line', { class:'as', x1:G.x0, y1:G.yBot, x2:G.x1, y2:G.yBot }));
     scene.appendChild(el('line', { class:'as', x1:G.x0, y1:G.yTop, x2:G.x0, y2:G.yBot }));
@@ -246,7 +249,7 @@ snelheidsgrafiek onderin.</p>
     scene.appendChild(txt('text', { class:'klein', x:G.x0, y:G.yBot + 18,
       style:`font-size:${L.klein}px` }, 'start'));
     scene.appendChild(txt('text', { class:'klein', x:G.x1, y:G.yBot + 18,
-      'text-anchor':'end', style:`font-size:${L.klein}px` }, 'klaar'));
+      'text-anchor':'end', style:`font-size:${L.klein}px` }, 'S-curve klaar'));
 
     MODES.forEach(m => {
       const pl = el('polyline', { id:'v_' + m.id, fill:'none', stroke:m.kleur,
@@ -290,9 +293,10 @@ snelheidsgrafiek onderin.</p>
   let rafId = null, t0 = null, huidigeT = 0;
 
   function duurMs() {
-    // De arm draait 120 graden. Bij de gekozen limiet in graden per seconde
-    // duurt dat 120 / limiet seconden -- precies de som uit de sketch.
-    return (120 / Number(schuif.value)) * 1000;
+    // Smoothstep piekt op 1,5 * gemiddelde snelheid. Voor een echte maximale
+    // commandosnelheid duurt 120 graden daarom 1,5 * 120 / limiet seconden.
+    // Het lineaire profiel gebruikt 2/3 van deze totale tijd.
+    return ((1.5 * 120) / Number(schuif.value)) * 1000;
   }
 
   function toonStand(t) {

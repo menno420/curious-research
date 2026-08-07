@@ -1,21 +1,21 @@
 // ============================================================================
-//  soepele_beweging.ino  --  vloeiende, beheerste bewegingen voor de 6-servo arm
+//  soepele_beweging.ino  --  lineaire en S-curve-doelprofielen voor de arm
 //  Onderdeel van: curious-research / projects/arm-soepele-beweging
 // ----------------------------------------------------------------------------
 //  WAT DIT OPLOST
-//  Een hobbyservo heeft GEEN snelheidsingang. Er is geen manier om hem te
-//  vertellen "ga langzaam". Als je schrijft:
+//  De Arduino Servo-API geeft write() een doelhoek en geen afzonderlijke
+//  snelheidsparameter. Als je schrijft:
 //
 //      servo.write(140);
 //
-//  dan betekent dat: "sta NU op 140 graden". De servo geeft vol gas, knalt
-//  ernaartoe, en staat stil. Vandaar het schokkerige, plotselinge gedrag: de
-//  arm heeft maar twee snelheden -- vol gas en stilstand.
+//  vervang je de vorige doelhoek door 140 graden. Hoe de echte servo daarop
+//  reageert hangt af van interne regeling, voeding, belasting en mechanica.
+//  Een grote doelsprong kan abrupt bewegen; "vol gas" is hier niet gemeten.
 //
 //  De truc is dus niet een instelling die je aanzet. Het is: JIJ stuurt een
-//  reeks doelen die steeds een klein stukje verder liggen, netjes verdeeld
-//  over de tijd. De servo jaagt telkens een doel na dat vlakbij is, en dan
-//  beweegt hij rustig. De vloeiendheid zit in JOUW code, niet in de servo.
+//  reeks doelen die steeds een klein stukje verder liggen, verdeeld over de
+//  tijd. Daarmee wordt het OPGEGEVEN positieprofiel geleidelijker. Of de as
+//  werkelijk geleidelijk volgt is een experiment op de echte arm.
 //
 //  Deze sketch doet drie dingen bovenop dat basisidee:
 //
@@ -105,8 +105,9 @@ const int JOINT_HOME[JOINT_COUNT] = { 90, 90, 90, 90, 90, 90 };
 // snelheid van deze arm. Begin laag na een gecontroleerde startup.
 float maxSnelheid = 60.0;
 
-// Begininterval voor nieuwe doelhoeken. De Arduino Servo-library ververst rond
-// 20 ms; de werkelijke mechanische respons van deze servo's moet worden gemeten.
+// Begininterval voor nieuwe doelhoeken. De Arduino Servo-library definieert een
+// refresh-interval van 20 ms; dit bewijst geen interne regelsnelheid of
+// mechanische respons van deze onbekende servovarianten.
 const unsigned long UPDATE_MS = 20;   // 20 ms = 50 Hz
 
 // Zet dit op false om te zien wat de S-bocht nou eigenlijk doet: dan wordt er
@@ -152,12 +153,12 @@ int clampDegrees(float waarde, int laag, int hoog) {
 //      lineair         0    0.25   0.5   0.75    1     <- gelijke stapjes
 //      s-bocht         0    0.16   0.5   0.84    1     <- traag, snel, traag
 //
-//  Het verschil in POSITIE lijkt klein. Het verschil in SNELHEID is het punt:
-//  lineair begin je meteen op volle snelheid, met de s-bocht bouw je die op.
-//  Precies dat opbouwen is wat "schokkerig" verandert in "beheerst".
+//  Het verschil in POSITIE lijkt klein. Het verschil in COMMANDOSNELHEID is
+//  het punt: lineair begint meteen op de ingestelde limiet; de s-bocht bouwt
+//  op en af. Of de echte arm daardoor rustiger beweegt moet worden gemeten.
 //
-//  Wil je nog zachter? Probeer smootherstep: 6t^5 - 15t^4 + 10t^3. Die begint
-//  en eindigt nog vlakker. Een regel code, meteen te voelen -- probeer maar.
+//  Een ander profiel, zoals smootherstep, verandert ook de verhouding tussen
+//  pieksnelheid en duur. Voeg dat pas toe met een nieuwe berekening en A/B-test.
 // ---------------------------------------------------------------------------
 float sBocht(float t) {
   if (t <= 0.0) return 0.0;
@@ -181,10 +182,13 @@ void beweegNaar(const int doelen[JOINT_COUNT]) {
     if (afstand > grootsteAfstand) grootsteAfstand = afstand;
   }
 
-  // Het gewricht dat het verst moet bepaalt de looptijd. Alle andere krijgen
-  // dezelfde tijd, dus ze komen samen aan.
-  //     tijd (s) = afstand (graden) / snelheid (graden per seconde)
-  bewegingDuur = (unsigned long)((grootsteAfstand / maxSnelheid) * 1000.0);
+  // Het gewricht dat het verst moet bepaalt de geplande commandoduur. De
+  // afgeleide van smoothstep heeft een piekfactor 1,5. Zonder correctie zou
+  // de s-bocht dus 1,5 * maxSnelheid vragen. Door de duur 1,5 keer zo lang te
+  // maken blijft de berekende pieksnelheid binnen dezelfde softwarelimiet.
+  // Dit begrenst het opdrachtprofiel, niet de gemeten mechanische snelheid.
+  float profielFactor = gebruikSbocht ? 1.5 : 1.0;
+  bewegingDuur = (unsigned long)(((grootsteAfstand * profielFactor) / maxSnelheid) * 1000.0);
 
   if (bewegingDuur < UPDATE_MS) bewegingDuur = UPDATE_MS;  // nooit door nul
   bewegingStart = millis();
@@ -201,7 +205,7 @@ void werkBeweging() {
   if (!bezig) return;
 
   unsigned long nu = millis();
-  if (nu - laatsteUpdate < UPDATE_MS) return;   // nog te vroeg, servo luistert toch niet
+  if (nu - laatsteUpdate < UPDATE_MS) return;   // volgend software-updatepunt nog niet bereikt
   laatsteUpdate = nu;
 
   float t = (float)(nu - bewegingStart) / (float)bewegingDuur;
@@ -255,7 +259,12 @@ void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 3000) { /* wacht kort op de USB-verbinding */ }
 
-  Serial.println(F("soepele_beweging -- vloeiende bewegingen voor de arm"));
+  Serial.println(F("soepele_beweging -- experimentele doelprofielen voor de arm"));
+
+  if (maxSnelheid <= 0.0) {
+    Serial.println(F("FOUT: maxSnelheid moet groter zijn dan 0 gr/s."));
+    while (true) { }
+  }
 
   bool grenzenIngevuld = false;
   for (int i = 0; i < JOINT_COUNT; i++) {

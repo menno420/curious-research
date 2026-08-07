@@ -72,8 +72,8 @@
 <body>
 
 <h1>Begin hier — je werkplaats die terugpraat</h1>
-<p class="sub">Twee minuten. Druk op <b>Speel af</b> en kijk wat er gebeurt als je Claude
-iets vraagt over je printer, je Arduino of je robotarm.</p>
+<p class="sub">Twee minuten. Druk op <b>Speel af</b> en kijk hoe je Claude of ChatGPT via
+de openbare bron dezelfde werkplaatscontext geeft.</p>
 
 <div class="stage-box">
 <svg viewBox="0 0 820 330" role="img" aria-label="Animatie: je vraag wordt een uitleg die bewaard blijft">
@@ -101,7 +101,7 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
     <g id="scanline">
       <line class="scan" x1="352" y1="120" x2="478" y2="120"/>
     </g>
-    <text class="small" x="415" y="210" text-anchor="middle">Claude leest de relevante bestanden</text>
+    <text class="small" x="415" y="210" text-anchor="middle">AI leest profiel + relevante pagina</text>
   </g>
 
   <!-- ============ claude bouwt de uitleg ============ -->
@@ -159,15 +159,15 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
 
 <div class="recap">
   <h2>Wat je net zag</h2>
-  <p>Start je Claude Code vanuit deze map, dan leest het eerst de vaste instructies en opent het
-  daarna de relevante gidsen, projecten en research. Zo past het antwoord bij je werkplaats in
-  plaats van bij een willekeurige printer of arm.</p>
+  <p>Open op de website <b>GitHub + AI</b> en geef de actuele profieltekst of directe link aan
+  Claude of ChatGPT. Deel daarna één relevante gids of projectpagina. Zo krijgt iedere assistent
+  dezelfde basiscontext zonder dat je nu een GitHub-account of lokale clone nodig hebt.</p>
   <p><b>Dan komt de belangrijke stap:</b> test het antwoord. Alleen een bevestigde ontdekking
-  hoort als bestand op de plank. Vraag Claude waar hij thuishoort, lees de wijziging na en maak
-  een kopie van je lokale map of publiceer hem later met GitHub.</p>
-  <p><b>Eerlijk erbij:</b> een chat bewaart de repository niet automatisch. Claude Code kan een
-  bestand voorstellen of lokaal wijzigen; jij controleert of het klopt. De volledige eerste
-  installatie staat in <code>docs/claude-usage-guide.md</code>.</p>
+  hoort als bestand op de plank. Laat vastleggen wat is gemeten en laat de repositorybeheerder
+  de gecontroleerde wijziging publiceren.</p>
+  <p><b>Eerlijk erbij:</b> een AI leest een URL alleen als die sessie webtoegang heeft en de
+  pagina werkelijk opent. Anders plak of upload je de tekst. Een chat bewaart de repository
+  nooit automatisch. <a href="https://menno420.github.io/curious-research/github-en-ai.html">Open GitHub + AI →</a></p>
 </div>
 
 <script>
@@ -181,19 +181,19 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
       html: 'Je vraagt gewoon wat je wilt weten — <b>in het Nederlands</b>, in je eigen woorden. Geen commando’s, geen codetaal. "Mijn print heeft overal draadjes" is een prima vraag.' },
     { on: ["bubbleG","readG"],
       step: "Stap 2 van 5",
-      html: 'Start Claude Code <b>in deze map</b>. Het leest eerst het werkplaatsprofiel en opent daarna de relevante gids of research. Daarom past het antwoord bij <i>jouw</i> machines en niet bij die van een willekeurige video.' },
+      html: 'Geef Claude of ChatGPT het <b>openbare werkplaatsprofiel</b> en daarna één relevante pagina. Kan de AI de link niet openen, plak je de tekst. Zo blijft ontbrekende toegang zichtbaar.' },
     { on: ["bubbleG","readG","buildG"],
       step: "Stap 3 van 5",
-      html: 'Claude bouwt er een <b>uitleg</b> van: leesbare tekst, een filmpje dat de beweging laat zien, en meestal <b>één instelling</b> die je vanavond kunt veranderen om het verschil te zien.' },
+      html: 'De AI bouwt er een <b>uitleg</b> van die bij de bevestigde machines past, met liefst <b>één kleine test</b> en een zichtbaar of meetbaar succescriterium.' },
     { on: ["readG","buildG","saveG"],
       step: "Stap 4 van 5",
-      html: 'Test de uitleg eerst. Werkt hij? Laat Claude hem dan op de <b>juiste bestaande plek</b> als bestand bewaren en lees de wijziging na. Een chat doet dat niet vanzelf.' },
+      html: 'Test de uitleg eerst. Werkt hij? Laat het resultaat dan met omstandigheden samenvatten en via een gecontroleerde wijziging op de <b>juiste bestaande plek</b> bewaren.' },
     { on: ["readG","buildG","saveG","weeksG"],
       step: "Stap 5 van 5",
       html: 'Elke <b>bevestigde</b> ontdekking kan erbij — die groene is die van vandaag. Na een tijdje heb je je eigen gecontroleerde werkplaatsboek, zonder dezelfde feiten overal te kopiëren.' },
     { on: ["readG","buildG","saveG","weeksG","lostG"],
       step: "Waarom niet gewoon chatten?",
-      html: 'Een <b>chatantwoord</b> is nog geen bron van waarheid. In deze map krijgt een getest resultaat een vaste plek, datum en bewijsniveau. Daardoor kan een volgende sessie het gericht terugvinden.' }
+      html: 'Een <b>chatantwoord</b> is nog geen bron van waarheid. Pas na test, controle en merge staat het in de gedeelde GitHub-bron die je later weer aan iedere AI kunt geven.' }
   ];
 
   var all = ["bubbleG","readG","buildG","saveG","weeksG","lostG"];
@@ -257,6 +257,9 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
   render(0);
 })();
 </script>
+
+</body>
+</html>
 
 </body>
 </html>

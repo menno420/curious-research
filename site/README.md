@@ -5,6 +5,10 @@
 De site is statisch en alleen-lezen. Voeg geen tokens, uploadformulier of schrijffunctie toe;
 alles in GitHub Pages is publiek. De repositorybestanden blijven de bron van waarheid.
 
+`github-en-ai.html` is de publieksroute om dezelfde werkplaatscontext aan Claude of ChatGPT te
+geven. De pagina dupliceert het profiel niet: zij laadt
+`docs/workshop-profile.md` rechtstreeks vanaf de `main`-branch en biedt een kopieerbare fallback.
+
 ## Bestanden
 
 | Bestand | Functie |

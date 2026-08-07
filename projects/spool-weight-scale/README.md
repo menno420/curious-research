@@ -1,298 +1,209 @@
-# Filament spool scale — an honest "how much is left?" gauge
+# Filamentweger — van loadcell naar een herhaalbare voorraadcontrole
 
-> Set a spool on it, press read, and it tells you *roughly* how much filament
-> is left. This is an **on-demand spot-check you re-zero** — not an always-on
-> precision number left drifting on a shelf. The honest scope is the whole
-> point; a cheap load cell can't do more, and pretending otherwise just
-> disappoints you the first hot afternoon.
+> **Status:** bouwroute gereed · hardware en Arduino-sketch nog niet op de echte opstelling
+> geverifieerd · nauwkeurigheid is een meetresultaat, geen vaste productspecificatie
 
-Grown from [`../../ideas/spool-weight-scale.md`](../../ideas/spool-weight-scale.md)
-(ritual verdict: **build** — the honest version).
+## Welk probleem lost dit op?
 
----
+Een loadcell meet het totale gewicht van spoel plus filament. Na kalibratie en aftrek van het
+**zelf gemeten** lege-spoelgewicht krijg je een praktische schatting van de resterende
+hoeveelheid filament.
 
-## Bench words (one line each)
+Dit project is bedoeld als een momentopname vóór een print. Het belooft geen universele
+nauwkeurigheid en ook geen waarde die dagenlang zonder opnieuw tareren geldig blijft.
 
-- **load cell** = a small metal bar with a strain gauge inside that bends a
-  tiny, measurable amount under weight.
-- **strain gauge** = a foil pattern whose electrical resistance changes as it
-  stretches — that's how the bar "feels" weight.
-- **HX711** = the little amplifier + analog-to-digital chip that turns the load
-  cell's microscopic voltage change into a number the Arduino can read.
-- **ADC (analog-to-digital converter)** = the part that turns a voltage into a
-  digital number (it's the "711" chip's day job).
-- **tare** = zeroing the scale so it ignores a known weight (the empty spool)
-  and reports only what you added.
-- **calibration factor** = the counts-per-gram number you find once by weighing
-  a known mass, so raw readings become real grams.
-- **drift / creep** = a load cell's reading slowly wandering under a constant
-  weight or as the temperature changes — the reason this is a spot-check, not a
-  live display.
+## Waarom is dit nuttig voor deze werkplaats?
 
----
+Het project verbindt drie vaardigheden die ook elders bruikbaar zijn:
 
-## What it honestly is / isn't
+1. een sensor mechanisch correct monteren;
+2. ruwe meetwaarden met een bekende massa kalibreren;
+3. herhaalbaarheid meten voordat je een getal vertrouwt.
 
-**It is** reliable as an *on-demand spot-check you re-zero*: set a spool on the
-platform, take a fresh reading, get an answer to the one real question — "do I
-have enough to start this print?" — in five seconds.
+De uitkomst kan helpen bij de vraag *"is er waarschijnlijk genoeg filament voor deze print?"*.
+De veiligheidsmarge bepaal je pas nadat je de spreiding op de eigen opstelling hebt gemeten.
 
-**It isn't** reliable as a number left drifting on a shelf all day. Cheap load
-cells wander a few grams with temperature and time, and practical resolution is
-only about **±5 g on a 5 kg cell**. That's great for "roughly half a spool
-left," and weak for "exactly enough to finish this one." A reading that sits
-powered next to a hot printer drifts as the chamber warms.
+## Wat is al onderbouwd en wat nog niet?
 
-The drift reasoning — the cited creep and temperature figures, and a builder of
-exactly this device calling it "a general measuring system rather than a
-precision scale" — is written up in
-[`../../ideas/spool-weight-scale.md`](../../ideas/spool-weight-scale.md).
-
----
-
-## Parts list
-
-| Part | Rough price (USD) | Notes |
+| Onderdeel | Status | Betekenis |
 |---|---|---|
-| 5 kg straight-bar load cell | ~$3–8 | The right size for a ≤1.25 kg full spool **plus headroom**. A 10 kg cell wastes resolution on weight you'll never load. |
-| HX711 amplifier board | ~$1–3 | Often bundled *with* the load cell as a kit — check before buying separately. |
-| Arduino Uno or Nano | ~$5–25 | You very likely already own one. |
-| 0.96" SSD1306 I2C OLED | ~$4–8 | **Stage 3 only** — the standalone "press to read" screen. Skip it until you want to unplug from the PC. |
-| Rigid base + flat platform | scrap / printed | One end of the cell bolts down solid; the platform sits on the free end. Print one or use scrap. |
-| A known calibration weight | you have this | A labelled kitchen weight, or a water bottle you weigh on a kitchen scale (a full 500 mL bottle is ~500 g). |
-
----
-
-## The one safety note
-
-> **Check this yourself — the one real caution is mechanical, not electrical.**
-> This whole build is low-voltage USB 5 V hobby electronics: no external power
-> supply, nothing mains-powered, nothing hot, nothing load-bearing (unlike the
-> robot arm). The single thing that can permanently break a part is how you
-> **mount the load cell**: bolt it with **one end rigidly fixed** and the load
-> on the **free end**, and never twist or over-torque the bar. Bending it the
-> wrong way or cranking the screws too hard damages the strain gauge inside for
-> good. Mount it right once and it lasts.
-
----
-
-## Install the library
-
-In the Arduino IDE:
-
-1. Open the Library Manager: click `Sketch` > `Include Library` > `Manage Libraries…`.
-
-2. In the search box, type:
-
-   ```
-   HX711_ADC
-   ```
-
-3. Find **"HX711_ADC" by Olav Kallhovd** in the list and click `Install`.
-
-That one library covers all three stages. **For Stage 3 (the OLED screen) also
-install these two:**
-
-4. Search for and install **"Adafruit SSD1306" by Adafruit**. If it offers to
-   install dependencies, click `Install All`.
-
-5. Search for and install **"Adafruit GFX Library" by Adafruit**.
-
----
-
-## Numbered wiring steps
-
-Do these with the Arduino **unplugged**. One connection per step.
-
-**Load cell (4 thin wires) → HX711 board.** The colours are standard on most
-cells:
-
-1. Connect the load cell's **red** wire to the HX711 **E+** pad.
-2. Connect **black** to **E-**.
-3. Connect **white** to **A-**.
-4. Connect **green** to **A+**.
-
-   ```
-   red   -> E+      white -> A-
-   black -> E-      green -> A+
-   ```
-
-   > If your grams read **negative** (weight goes down when you add load), the
-   > cell is just wired mirror-image — swap **white ↔ green** and re-upload.
-
-**HX711 board → Arduino.**
-
-5. Connect HX711 **VCC** to Arduino **5V**.
-6. Connect HX711 **GND** to Arduino **GND**.
-7. Connect HX711 **DT** (data) to Arduino **pin 4**.
-8. Connect HX711 **SCK** (clock) to Arduino **pin 5**.
-
-   ```
-   VCC -> 5V        DT  -> pin 4
-   GND -> GND       SCK -> pin 5
-   ```
-
-**Stage-3 extras (skip these until you build the standalone screen).**
-
-9. Connect one leg of the read button to **pin 6**, the other leg to **GND**.
-   (No resistor needed — the sketch uses the chip's built-in pull-up.)
-
-   ```
-   button leg 1 -> pin 6
-   button leg 2 -> GND
-   ```
-
-10. Connect the SSD1306 OLED over I2C. On an Uno or Nano, **SDA is A4** and
-    **SCL is A5**.
-
-    ```
-    OLED VCC -> 5V       OLED SDA -> A4
-    OLED GND -> GND      OLED SCL -> A5
-    ```
-
----
-
-## Stage 1 — calibrate (the weekend win)
-
-This is the satisfying first finish: a working, calibrated scale reading real
-grams.
-
-1. Near the top of `spool_scale.ino`, set the stage to 1:
-
-   ```
-   #define STAGE 1
-   ```
-
-2. Click the **Upload** arrow button to flash the sketch.
-
-3. Open the Serial Monitor (`Tools` > `Serial Monitor`) and set its baud rate
-   (bottom-right dropdown) to:
-
-   ```
-   57600
-   ```
-
-4. Keep the platform **empty**. You'll see live raw readings scrolling.
-
-5. Type `t` and press Enter to zero (tare) the empty platform:
-
-   ```
-   t
-   ```
-
-   You should see `>> tare done. Now place your known weight and type 'r'.`
-
-6. Set `knownMassGrams` near the top of the sketch to match the weight you're
-   about to use, and re-upload if you changed it. For a 500 g weight:
-
-   ```
-   float knownMassGrams = 500.0;
-   ```
-
-7. Place your known weight gently on the platform.
-
-8. Type `r` and press Enter to read the calibration factor:
-
-   ```
-   r
-   ```
-
-9. The Monitor prints `>> YOUR CALIBRATION FACTOR = ...`. Copy that number into
-   `calibrationFactor` near the top of the sketch:
-
-   ```
-   float calibrationFactor = 1234.56;   // <-- your number here
-   ```
-
-**Verify:** set `#define STAGE 2`, upload, and with your known weight still on
-the platform the Serial Monitor should show grams within a few grams of the
-weight's real value. If it does, you have a calibrated scale.
-
----
-
-## Stage 2 — the honest tare (grams remaining)
-
-Weighing is easy; the honest hard part is **tare** — the scale reads *total*
-weight, and filament-left = total − the empty spool. So build the one habit
-that makes this trustworthy: **weigh a spool empty, once.**
-
-1. When a spool runs out, weigh the bare empty spool on your calibrated scale
-   (or any kitchen scale). Write the number down.
-
-2. Put that number into **slot 0** of the spool library near the top of the
-   sketch — the slot labelled `MY SPOOL (measure me!)`:
-
-   ```
-   { "MY SPOOL (measure me!)", 245.0 },   // <-- your measured empty grams
-   ```
-
-3. Point the sketch at that slot:
-
-   ```
-   #define ACTIVE_SPOOL 0
-   ```
-
-4. Set the stage and upload:
-
-   ```
-   #define STAGE 2
-   ```
-
-The Monitor now prints a line like `total 640 g  - empty 245 g  = ~395 g
-filament left`.
-
-**Your own measured empty weight beats the seeded table, every time.** Empty
-spools range roughly **80–306 g** depending on brand and material, so guessing
-is useless. The seeds in the library — Prusament ~201 g, Bambu ~256 g, Hatchbox
-~225 g, eSun ~224 g — are only *starting points* pulled from the empty-spool
-catalogs cited in
-[`../../ideas/spool-weight-scale.md`](../../ideas/spool-weight-scale.md).
-Confirm any of them on your own bench before you trust them.
-
----
-
-## Stage 3 — standalone OLED (press to read)
-
-Cut the PC cord: read grams on a little screen with a button press.
-
-1. Wire the read button and the OLED per steps 9–10 above.
-
-2. Set the stage and upload:
-
-   ```
-   #define STAGE 3
-   ```
-
-3. The screen shows `spool scale / press button to read`. Set a spool on the
-   platform and press the button — it takes a fresh, averaged reading and shows
-   **grams remaining** big, with the **total** below as a spot-check.
-
-It's **press-to-read on purpose.** That's the honest design: a spot-check you
-ask for, not a live feed that drifts while you're not looking.
-
----
-
-## Honest expectations
-
-- **±5 g resolution on a 5 kg cell.** "Roughly half a spool left" is
-  trustworthy. "Exactly enough to finish this print" is not — leave yourself
-  margin.
-- **Re-zero (re-tare) each session.** Drift means yesterday's zero isn't
-  today's zero. A fresh tare before a reading is a few seconds well spent.
-- **Drift grows if it sits powered near a hot printer.** As the chamber warms,
-  the reading wanders. This is a set-it-down-and-check-it tool, not a shelf
-  display.
-- **Its natural companion** is the sibling
-  [`../../ideas/filament-drybox-logger.md`](../../ideas/filament-drybox-logger.md):
-  moisture (is it dry?) + quantity (how much?) are the two "filament health"
-  instruments — same mental model, different sensors.
-
----
-
-## A note on the sketch
-
-The `spool_scale.ino` here was written and reviewed in this repo but has **not**
-been compiled — there's no Arduino toolchain in the authoring environment, so
-your Arduino IDE will be its first real compile. If it flags anything, it'll
-almost certainly be a missing library (re-check the install steps) or a pin
-typo (re-check the wiring) — both quick fixes.
+| Kalibratie met `tare()`, `refreshDataSet()` en `getNewCalibration()` | **Geverifieerd** | Dit is de route uit de officiële `HX711_ADC`-bibliotheek. |
+| Draadfuncties `E+`, `E-`, `A+` en `A-` | **Geverifieerd** | Alleen de interfacefuncties zijn bekend; de **kleuren van jouw loadcell zijn niet bekend**. |
+| Montage, stabilisatietijd en opnieuw tareren | **Praktijkadvies** | Dit zijn goede startstappen, maar het resultaat hangt af van de echte cel, constructie en omgeving. |
+| Resolutie, drift en bruikbare foutmarge | **Experiment** | Meet die met [`meetlog.md`](meetlog.md); neem geen vaste `±5 g` over. |
+| Sketch op het eigen Arduino-bord | **Nog bevestigen** | Bord, core, modules en bibliotheekversies zijn nog niet geïnventariseerd; de sketch is hier niet gecompileerd. |
+
+## Benodigde onderdelen en informatie
+
+- een Arduino-compatibel bord waarvan exact model en logicaspanning bekend zijn;
+- een HX711-module;
+- een vier- of zesdraads loadcell met voldoende capaciteit voor platform + volle spoel + marge;
+- een stijve basis en platform volgens de montagerichting van de loadcell;
+- een bekende massa die onafhankelijk is gewogen;
+- Arduino IDE en `HX711_ADC` van Olav Kallhovd;
+- optioneel: knop en SSD1306-I²C-OLED, met eigen datasheet;
+- multimeter voor voedingscontrole en diagnose.
+
+De huidige voorbeeldsketch gebruikt digitale pin 4 voor `DOUT`, pin 5 voor `SCK` en pin 6 voor
+de optionele knop. Dat is een **softwarekeuze**, geen bewijs dat deze pinnen of 5 V bij ieder
+Arduino-bord en iedere module passen.
+
+## Leg deze gegevens eerst vast
+
+Maak foto's van opschriften en zoek, waar mogelijk, de officiële datasheets op.
+
+| Gegeven | Waarom nodig? |
+|---|---|
+| exact Arduino-bord | bepaalt logicaspanning, I²C-pinnen, boardprofiel en ondersteunde libraries |
+| merk/type/capaciteit van de loadcell | bepaalt maximale belasting, montage, draadtoewijzing en verwachte output |
+| draadfunctie per kleur | voorkomt dat een kleurconventie van een ander model wordt overgenomen |
+| type HX711-print en toegestane voeding | bepaalt veilige voeding en pinlabels |
+| OLED-type, voedingsspanning en I²C-adres | voorkomt gokken met 5 V, `0x3C` of `0x3D` |
+| massa van het kalibratievoorwerp | bepaalt de kalibratiefactor |
+| leeggewicht van iedere echte spoel | nodig voor `resterend = totaal - lege spoel` |
+| gewenste beslismarge | bepaalt wanneer de meting bruikbaar genoeg is voor een print |
+
+Heb je geen datasheet van de loadcell, gok dan niet op draadkleur. Geef Claude een scherpe foto
+van alle opschriften en eventueel de zes weerstandsmetingen tussen de vier draden. Zo'n meting kan
+kandidaatparen aanwijzen, maar hoeft niet eenduidig te bewijzen welk paar excitatie of signaal is.
+Laat dus expliciet noteren wat ambigu blijft en behandel de mapping als **Nog bevestigen** totdat
+zij met modelspecifieke informatie of een gecontroleerde test is bewezen.
+
+## Stapsgewijze workflow
+
+### 1. Monteer de loadcell
+
+1. Lees de pijl, `LOAD`-markering of montagetekening van het concrete model.
+2. Bevestig de daarvoor bedoelde vaste zijde star aan de basis.
+3. Bevestig het platform aan de belastbare zijde.
+4. Controleer dat het platform niets anders raakt en de cel niet tordeert.
+5. Plaats nog geen spoel en sluit nog geen voeding aan.
+
+### 2. Maak eerst de functiemapping
+
+De HX711 verwacht deze vier brugfuncties:
+
+| Functie loadcell | HX711-label |
+|---|---|
+| positieve excitatie | `E+` |
+| negatieve excitatie | `E-` |
+| positief meetsignaal | `A+` |
+| negatief meetsignaal | `A-` |
+
+Gebruik voor de linkerkolom het datablad of de markering van **jouw** loadcell. Rood, zwart,
+groen en wit zijn geen universele functienamen. Een negatieve uitlezing kan met polariteit te
+maken hebben, maar is op zichzelf geen bewijs dat alleen twee signaaldraden omgewisseld moeten
+worden.
+
+### 3. Sluit HX711 en Arduino aan
+
+Doe dit spanningsloos.
+
+1. Verbind `GND` met `GND`.
+2. Verbind `DOUT`/`DT` met de in de sketch ingestelde pin 4.
+3. Verbind `SCK`/`CLK` met de in de sketch ingestelde pin 5.
+4. Verbind de voeding pas nadat bord- en modulehandleiding dezelfde toegestane spanning geven.
+5. Controleer alle verbindingen nogmaals en sluit dan pas USB aan.
+
+Voor een ander bord mag je pin 4 en 5 wijzigen. Noteer de nieuwe mapping boven in de sketch en
+in het meetlog.
+
+### 4. Installeer de bibliotheek
+
+1. Open in Arduino IDE **Sketch → Include Library → Manage Libraries…**.
+2. Zoek `HX711_ADC`.
+3. Installeer **HX711_ADC by Olav Kallhovd**.
+4. Installeer voor fase 3 ook **Adafruit SSD1306** en **Adafruit GFX Library**.
+5. Kies het exacte boardprofiel; laat `STAGE` voorlopig op `1` staan.
+
+### 5. Kalibreer in fase 1
+
+1. Zet `knownMassGrams` gelijk aan de onafhankelijk bekende massa.
+2. Upload met `#define STAGE 1`.
+3. Open Serial Monitor op `57600` baud.
+4. Laat het lege platform stabiliseren.
+5. Stuur `t` en wacht op `tare done`.
+6. Plaats de bekende massa gecentreerd en wacht opnieuw tot de waarde stabiel wordt.
+7. Stuur `r`.
+8. Kopieer de getoonde factor naar `calibrationFactor` en upload opnieuw.
+
+Gebruik niet automatisch “500 ml water = precies 500 gram”. Weeg het complete voorwerp op een
+geschikte referentieweegschaal en gebruik die gemeten massa.
+
+### 6. Meet herhaalbaarheid vóór je een spoel berekent
+
+1. Laat hetzelfde bekende gewicht vijf keer stabiliseren.
+2. Neem het gewicht na iedere meting volledig weg en plaats het opnieuw.
+3. Noteer alle waarden in [`meetlog.md`](meetlog.md).
+4. Bereken het gemiddelde, de grootste afwijking en de spreiding `maximum - minimum`.
+5. Herhaal na opwarming en, indien relevant, bij een andere omgevingstemperatuur.
+
+Pas daarna kies je een bruikbare veiligheidsmarge. Het aantal bits van de HX711, het bereik van
+de loadcell en één internetvoorbeeld voorspellen de nauwkeurigheid van deze complete constructie
+niet.
+
+### 7. Meet het lege spoelgewicht
+
+1. Weeg de werkelijk lege spoel die je later wilt herkennen.
+2. Vervang in `spoolLibrary` de naam en `0.0` door die eigen meting.
+3. Kies de juiste regel met `ACTIVE_SPOOL`.
+4. Zet `STAGE` op `2` en upload.
+5. Plaats de gevulde spoel en controleer zowel totaalgewicht als berekende restmassa.
+
+De sketch bevat bewust geen vooraf ingevulde merkgewichten. Twee spoelen van hetzelfde merk
+kunnen verschillen en een cataloguswaarde is geen werkplaatsmeting.
+
+### 8. Voeg het OLED pas als laatste toe
+
+1. Controleer de voeding, I²C-pinnen en het adres in de documentatie van bord en scherm.
+2. Sluit de knop tussen de ingestelde pin 6 en `GND` aan; de sketch gebruikt `INPUT_PULLUP`.
+3. Pas `OLED_ADDR` aan als de gedocumenteerde of gescande waarde anders is.
+4. Zet `STAGE` op `3`, upload en vergelijk de schermwaarde met Serial Monitor.
+
+## Hoe controleer je succes?
+
+De bouw is technisch geslaagd als:
+
+1. de HX711 zonder timeout nieuwe waarden levert;
+2. de nul na opnieuw tareren binnen jouw gemeten spreiding terugkomt;
+3. vijf herplaatsingen van de referentiemassa binnen de vooraf gekozen foutmarge vallen;
+4. een tweede bekende massa geen onverwacht grote schaalfout laat zien;
+5. het berekende filamentgewicht het **zelf gemeten** lege-spoelgewicht gebruikt;
+6. de omstandigheden en uitkomsten in `meetlog.md` staan.
+
+“De waarde ziet er rustig uit” is niet genoeg. Een zwaar gefilterde maar fout gekalibreerde
+waarde kan ook rustig zijn.
+
+## Veelgemaakte fouten
+
+- draadkleuren van een andere loadcell als standaard behandelen;
+- capaciteit of voeding kiezen zonder totaalgewicht en datasheet te controleren;
+- kalibreren terwijl het platform iets raakt of de basis doorbuigt;
+- één plaatsing meten en dat “nauwkeurigheid” noemen;
+- een afgerond merkgewicht als leeggewicht opslaan;
+- filteren gebruiken om een mechanisch probleem te verbergen;
+- het OLED toevoegen voordat HX711 + Serial aantoonbaar werken;
+- de sketch als gecompileerd beschrijven terwijl exact board en libraries nog ontbreken.
+
+## Wanneer vraag je Claude of ChatGPT?
+
+- *“Dit zijn merk, typenummer en datasheet van mijn loadcell. Maak een mapping naar E+, E-, A+
+  en A- en citeer de exacte tabel.”*
+- *“Hier zijn vijf herhaalde metingen en de referentiemassa. Bereken gemiddelde, bias en
+  spreiding zonder meer precisie te tonen dan de data ondersteunt.”*
+- *“Mijn uitlezing verandert bij belasting de verkeerde kant op. Geef hypothesen in
+  testvolgorde; neem niet aan dat draadkleuren standaard zijn.”*
+- *“Controleer deze sketch voor mijn exacte Arduino-board en bibliotheekversies. Wijzig nog
+  niets aan de hardwaremapping zonder mij de aanname te tonen.”*
+
+## Bronnen
+
+- [`HX711_ADC` en de kalibratiefuncties](https://github.com/olkal/HX711_ADC) — officiële
+  bibliotheekbron, **Geverifieerd**, gecontroleerd 2026-08-07.
+- [Load Cell Wiring Guide van ANYLOAD](https://www.anyload.com/wiring-guide/) — fabrikant legt
+  uit dat draadkleurcodes kunnen verschillen en dat het modelspecifieke datablad leidend is,
+  **Geverifieerd voor die algemene waarschuwing**, gecontroleerd 2026-08-07.
+- [Load Cell Wiring Made Easy van Morehouse](https://mhforce.com/load-cell-wiring/) — laat zien
+  wat weerstandsmetingen wel en niet eenduidig identificeren bij een onbekende vierdraads cel,
+  **Onderbouwd voor de diagnoseroute**, gecontroleerd 2026-08-07.
+- Alle prestaties van deze specifieke bouw — **Experiment** tot het meetlog is ingevuld.

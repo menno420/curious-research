@@ -30,9 +30,11 @@ toe, met herkomst en bewijsniveau.
 De normale route is volledig Nederlands:
 
 1. [`../README.md`](../README.md) — cadeau-ingang en kaart van de repository;
-2. [`../guides/begin-hier/`](../guides/begin-hier/) — eerste contextcontrole en echte vraag;
-3. [`claude-usage-guide.md`](claude-usage-guide.md) — Claude Pro en Claude Code op Windows;
-4. [`../site/index.html`](../site/index.html) — gidsen gegroepeerd per werkplaatstype;
+2. [`../site/github-en-ai.html`](../site/github-en-ai.html) — hetzelfde actuele profiel aan
+   Claude of ChatGPT geven, zonder eigen GitHub-account;
+3. [`../guides/begin-hier/`](../guides/begin-hier/) — contextcontrole en eerste echte vraag;
+4. [`claude-usage-guide.md`](claude-usage-guide.md) — website + chat als hoofdroute, met
+   projectupload en lokale repository als latere opties;
 5. [`../site/projecten.html`](../site/projecten.html) — projectuitleg vóór broncode;
 6. [`../site/kennis.html`](../site/kennis.html) — korte antwoorden met vijf bewijslabels.
 
@@ -72,12 +74,19 @@ De gids `arduino-zonder-blokkeren` bevat een uitvoerbare `millis()`-workflow en 
 Het exacte Arduino-bord en gebruikte sensorinventaris zijn nog niet vastgelegd; bordspanning en
 pinmogelijkheden mogen niet worden aangenomen.
 
+Het filamentwegerproject heeft een Nederlandse uitvoeringsgids en leeg meetlog. Universele
+`±5 g`-resolutie, vaste loadcelldraadkleuren, aangenomen Uno/Nano-bezit en vooraf ingevulde
+merkgewichten zijn verwijderd. Kalibratie volgt de officiële `HX711_ADC`-route; prestaties en
+drift blijven experimenten op de echte constructie. De sketch is niet gecompileerd zolang exact
+board, core en libraries ontbreken.
+
 ### Robotarm
 
 Bevestigd:
 
 - zelfgebouwde 6-DOF-arm;
 - MG996R-klasse servo's;
+- de arm is volgens de maker al met een controller gebruikt (bevestigd 2026-08-07);
 - projecten voor penplotter, soepele beweging, herhaalbaarheid en verwisselbaar gereedschap.
 
 Nog niet bevestigd:
@@ -87,7 +96,8 @@ Nog niet bevestigd:
 - gemeten min/max/midden per gewricht;
 - voedingsspanning, continue/piekstroom, zekering en draadcapaciteit;
 - echte payload en herhaalbaarheid;
-- veilig gecontroleerde startupstand.
+- exact controllermodel en werkende firmware/sketch;
+- veilig gecontroleerde startupstand van de repositorysketches.
 
 Kritisch broncodefeit: `projects/arm-pen-plotter/pen_plotter_arm.ino` koppelt in `setup()` alle
 servo's aan en schrijft 90° voordat gemeten limieten zijn ontvangen. De laptoptool vereist een
@@ -95,8 +105,16 @@ geldig kalibratiebestand vóór **gecontroleerde bediening**, maar dat verhinder
 startupopdracht niet. De smooth-motion-sketch stuurt eveneens direct zijn `JOINT_HOME` en begint
 daarna automatisch te bewegen. Negentig graden is geen bewezen gezamenlijke startupstand.
 
-Zie [`../arm/README.md`](../arm/README.md) en gebruik geen powered armproject voordat startup,
-pinvolgorde en homewaarden op de echte arm onder toezicht zijn opgelost en vastgelegd.
+Zie [`../arm/README.md`](../arm/README.md). De arm is niet als ongebruikt of onbeproefd
+gedocumenteerd: de bestaande controllerroute dient als referentie. Upload geen meegeleverde
+repositorysketch voordat startup, pinvolgorde en homewaarden daarmee zijn vergeleken en onder
+toezicht zijn vastgelegd.
+
+De smooth-motionuitleg behandelt 20 ms als refresh-interval van de Arduino Servo-library, niet
+als bewezen interne regelsnelheid van iedere MG996R-variant. Rustiger opdrachtprofiel is een
+experiment; stroompiek, overshoot en trilling vragen afzonderlijke metingen. De sketch corrigeert
+de S-curveduur met factor 1,5, zodat `maxSnelheid` ook voor smoothstep de berekende piek van het
+opdrachtprofiel begrenst.
 
 ### OpenSCAD-modellen
 
@@ -124,9 +142,10 @@ op een GitHub-directory. Ieder project heeft daar:
 - pas daarna links naar bronbestanden.
 
 Die pagina behandelt de pasmunt, filamentweger, penplotter, soepele armbeweging en verwisselbaar
-gereedschap. Diepere bron-README's kunnen historische Engelstalige ontwerpnotities bevatten; zij
-zijn niet de eerste gebruikerservaring en mogen geen sterkere veiligheidsclaim maken dan de
-Nederlandse projectroute.
+gereedschap. Diepere bron-README's kunnen historische ontwerpnotities bevatten; zij zijn niet de
+eerste gebruikerservaring en mogen geen sterkere veiligheidsclaim maken dan de Nederlandse
+projectroute. De filamentweger-README is volledig Nederlands en bevat hardware-inventaris,
+functiebedrading en meetcriteria.
 
 ## Vertrouwen en provenance
 
@@ -147,16 +166,18 @@ provenancetabel vermeldt tool, onderwerp en corroboratiestatus. Lasersnijden hee
 onafhankelijke run en verdient extra controle. Oude labels in ruwe dossiers zijn geen huidige
 goedkeuring; iedere claim wordt opnieuw beoordeeld voordat hij in een gids of kenniskaart komt.
 
-## Claude en persistentie
+## AI en persistentie
 
-[`claude-usage-guide.md`](claude-usage-guide.md) beschrijft twee routes:
+[`claude-usage-guide.md`](claude-usage-guide.md) beschrijft drie oplopende routes:
 
-- Claude Code starten vanuit de uitgepakte repositorymap;
-- relevante bestanden uploaden als Claude Project knowledge.
+- website + gewone Claude- of ChatGPT-chat als directe hoofdroute;
+- relevante bestanden als projectkennis uploaden wanneer de gekozen dienst dat aanbiedt;
+- de repository later lokaal downloaden/clonen en desgewenst Claude Code gebruiken.
 
-We claimen geen automatische repositorymemory. Chatantwoorden wijzigen geen bestand; lokale
-automatische notities zijn niet automatisch gedeeld of geback-upt. Een getest resultaat wordt
-pas durable kennis na gecontroleerde bestandswijziging en back-up/publicatie.
+De publieke pagina `site/github-en-ai.html` laadt het canonieke werkplaatsprofiel rechtstreeks
+uit GitHub en biedt een kopieerbare fallback. We claimen geen automatische repositorymemory:
+een AI moet de URL werkelijk openen of de tekst ontvangen. Chatantwoorden wijzigen geen bestand;
+een getest resultaat wordt pas duurzame kennis na gecontroleerde bestandswijziging en merge.
 
 ## Site en navigatie
 
@@ -166,8 +187,10 @@ kennisbank telt kaarten dynamisch uit het `KENNIS`-object. Nieuwe gidsen worden 
 of verwijderd, niet apart verder onderhouden.
 
 GitHub Pages assembleert `site/` plus de HTML onder `guides/`. Markdown blijft leesbaar via de
-repository. Na wijzigingen aan site of gidsen moet de Pages-deploy afzonderlijk worden
-gecontroleerd; een groene linkcheck bewijst niet dat de openbare site al is bijgewerkt.
+repository. `github-en-ai.html` verwijst voor het profiel naar het ene canonieke Markdownbestand
+op `main`, zodat geen tweede handmatig bijgehouden hardwareprofiel ontstaat. Na wijzigingen aan
+site of gidsen moet de Pages-deploy afzonderlijk worden gecontroleerd; een groene linkcheck
+bewijst niet dat de openbare site al is bijgewerkt.
 
 ## Validatie vóór publicatie
 
@@ -186,7 +209,7 @@ Controleer daarnaast:
 - geen oude labels `ZEKER`, `MEESTAL` of `BETWIST` meer als kennisstatus;
 - geen vaste inventarisaantallen in gebruikersdocumentatie;
 - geen claim “geen kalibratie = geen fysieke beweging”;
-- geen claim dat chat, Claude Projects of lokale auto-memory de repository automatisch bijwerkt;
+- geen claim dat chat, projectuploads of lokale auto-memory de repository automatisch bijwerkt;
 - links en navigatie vanaf `site/index.html`, `site/projecten.html` en `guides/README.md`.
 
 De verplichte `substrate-gate` installeert OpenSCAD en voert de rendercontrole bij iedere PR en
@@ -199,8 +222,12 @@ gecompileerd nadat het exacte board en de benodigde libraries zijn vastgelegd.
 2. Welk exact lasermerk/model, principe, lens/focusmethode en software gebruikt hij?
 3. Welke CNC, controller, spindel, collets en frezen staan er?
 4. Welke Arduino-borden en veelgebruikte sensoren liggen er?
-5. Welke exacte servovarianten, pinvolgorde en voeding heeft de arm?
-6. Wat zijn de gemeten gewrichtslimieten, homewaarden en startupresultaten?
+5. Welk exact controllermodel, welke werkende firmware/sketch, servovarianten, pinvolgorde en
+   voeding gebruikt de arm?
+6. Wat zijn de gemeten gewrichtslimieten, homewaarden en startupresultaten van die werkende
+   configuratie en van iedere nieuwe repositorysketch?
+7. Welk exact Arduino-bord, loadcellmodel, HX711-module en optioneel OLED wordt voor de
+   filamentweger gekozen?
 
 Zodra een antwoord is gemeten of uit een primaire bron komt: werk eerst
 `workshop-profile.md` bij, voeg datum/herkomst toe en laat gidsen ernaar verwijzen.

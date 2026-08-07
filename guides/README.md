@@ -3,13 +3,13 @@
 Elke actieve gids heeft:
 
 - `index.html` — een zelfstandige Nederlandse procesuitleg in de browser;
-- `guide.md` — benodigdheden, stappen, succescontrole, fouten, Claude-vragen en bewijsstatus.
+- `guide.md` — benodigdheden, stappen, succescontrole, fouten, AI-vragen en bewijsstatus.
 
 Hardware- en eigenaarfeiten worden niet in gidsen beheerd. De canonieke bron is
 [`docs/workshop-profile.md`](../docs/workshop-profile.md); het format staat in
 [`docs/teaching-style.md`](../docs/teaching-style.md).
 
-## Start en Claude
+## Start en AI
 
 | Gids | Doel |
 |---|---|

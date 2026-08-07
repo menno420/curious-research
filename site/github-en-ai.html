@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GitHub + AI — één werkplaatsbron voor Claude en ChatGPT</title>
+<meta name="description" content="Gebruik dezelfde actuele werkplaatscontext in Claude en ChatGPT, ook zonder eigen GitHub-account.">
+<link rel="stylesheet" href="style.css">
+<style>
+  .terug{display:inline-block;margin-top:24px;color:var(--accent);font-weight:700;text-decoration:none}
+  .stappen{display:grid;grid-template-columns:1fr;gap:14px;margin-top:22px}
+  @media(min-width:700px){.stappen{grid-template-columns:repeat(3,1fr)}}
+  .stap{padding:18px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  .stap b{display:block;color:var(--accent);margin-bottom:5px}.stap p{margin:0;color:var(--muted)}
+  .acties{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+  button,.knop{font:700 14px system-ui;padding:10px 14px;border:2px solid var(--accent);border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;cursor:pointer}
+  button.secundair,.knop.secundair{background:transparent;color:var(--accent)}button:disabled{opacity:.5;cursor:wait}
+  .status{min-height:1.5em;color:var(--muted);font-size:.92rem}
+  pre{max-height:34rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:18px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--ink);font:14px/1.55 ui-monospace,"Cascadia Code",Consolas,monospace}
+  table{width:100%;border-collapse:collapse;background:var(--card)}th,td{text-align:left;vertical-align:top;padding:10px;border:1px solid var(--line)}th{color:var(--accent)}
+  .eerlijk{border-left-color:var(--warm)}
+</style>
+</head>
+<body><div class="wrap">
+<a class="terug" href="index.html">← Terug naar de werkplaatswebsite</a>
+
+<header>
+  <p class="kicker">Geen account nodig</p>
+  <h1>Geef Claude en ChatGPT dezelfde werkplaatscontext</h1>
+  <p class="lead">GitHub bewaart één actuele bron. De website maakt hem leesbaar. Jij geeft
+  de relevante link of tekst aan de AI waarmee je op dat moment praat.</p>
+</header>
+
+<div class="stappen">
+  <div class="stap"><b>1 · Geef de context</b><p>Kopieer het actuele werkplaatsprofiel of de directe link met de knoppen hieronder.</p></div>
+  <div class="stap"><b>2 · Geef het probleem</b><p>Deel daarna de URL van één gids of project en beschrijf wat je ziet, meet en wilt bereiken.</p></div>
+  <div class="stap"><b>3 · Test en bewaar</b><p>Test één wijziging. Laat een bevestigd resultaat daarna gecontroleerd in de repository zetten.</p></div>
+</div>
+
+<div class="doos">
+  <h2>Start een gesprek</h2>
+  <p>De eerste knop kopieert een opdracht met de directe URL van het canonieke profiel. Kan de
+  gekozen AI die URL niet openen, gebruik dan de tweede knop en plak de profieltekst zelf.</p>
+  <div class="acties">
+    <button id="kopieerOpdracht">Kopieer startopdracht</button>
+    <button id="kopieerProfiel" class="secundair" disabled>Kopieer profieltekst</button>
+    <a class="knop secundair" id="openProfiel" href="https://raw.githubusercontent.com/menno420/curious-research/main/docs/workshop-profile.md">Open bronbestand</a>
+  </div>
+  <p class="status" id="kopieStatus" role="status" aria-live="polite"></p>
+</div>
+
+<section>
+  <h2 class="sectie">Actuele profieltekst</h2>
+  <p class="sectie-uitleg">Deze tekst wordt rechtstreeks uit het canonieke GitHub-bestand
+  geladen. Hij is hier niet nogmaals handmatig bijgehouden.</p>
+  <pre id="profiel">Werkplaatsprofiel laden…</pre>
+</section>
+
+<div class="doos eerlijk">
+  <h2>Eerlijk: dit is geen automatisch gedeeld geheugen</h2>
+  <p>Een openbare bron maakt het mogelijk om iedere AI dezelfde invoer te geven. De AI leest
+  hem alleen als zij webtoegang heeft en de URL werkelijk opent. Anders moet je de tekst plakken
+  of uploaden. Een chatantwoord werkt GitHub nooit vanzelf bij.</p>
+</div>
+
+<section>
+  <h2 class="sectie">Waarom GitHub hier handig is</h2>
+  <p class="sectie-uitleg">Niet omdat de maker programmeur moet worden, maar omdat kennis één
+  controleerbare plek, geschiedenis en publicatieroute krijgt.</p>
+  <table>
+    <thead><tr><th>Onderdeel</th><th>Wat het oplevert</th></tr></thead>
+    <tbody>
+      <tr><td>Repository</td><td>Bestanden, mappen en iedere eerdere versie bij elkaar.</td></tr>
+      <tr><td><code>main</code></td><td>De huidige goedgekeurde bron waar website en AI-context naar verwijzen.</td></tr>
+      <tr><td>Branch + pull request</td><td>Een AI-wijziging kan eerst als zichtbaar verschil worden beoordeeld.</td></tr>
+      <tr><td>Automatische controles</td><td>Links, HTML en ontwerpbron worden gecontroleerd vóór publicatie.</td></tr>
+      <tr><td>GitHub Pages</td><td>De leesbare website wordt uit dezelfde repository gepubliceerd.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2 class="sectie">Een goede eerste vraag</h2>
+  <div class="doos" style="margin-top:16px">
+    <p><code>Gebruik het werkplaatsprofiel dat ik zojuist gaf. Mijn A1-print trekt linksvoor
+    los. Geef maximaal drie hypotheses, kies de kleinste test met één variabele en vertel wat
+    ik in Bambu Studio Preview of aan de print moet controleren. Benoem iedere aanname.</code></p>
+  </div>
+</section>
+
+<section>
+  <h2 class="sectie">Na een geslaagde test</h2>
+  <ol>
+    <li>Noteer machine, materiaal, instelling, meetresultaat en datum.</li>
+    <li>Laat bepalen of het resultaat in het profiel, een gids of een projectlog hoort.</li>
+    <li>Laat de wijziging als aparte branch en pull request maken.</li>
+    <li>Controleer het verschil en de automatische tests.</li>
+    <li>Merge pas daarna; de website krijgt vervolgens de bijgewerkte kennis.</li>
+  </ol>
+  <p>Een eigen GitHub-account is voor deze route nu niet nodig. Later kan de maker zelf clonen
+  en wijzigingen voorstellen; de kennisstructuur hoeft daarvoor niet opnieuw te worden gebouwd.</p>
+</section>
+
+<div class="doos">
+  <h2>Meer uitleg</h2>
+  <p>Lees de volledige Nederlandse uitleg
+  <a href="https://github.com/menno420/curious-research/blob/main/docs/git-for-makers.md">GitHub als gedeeld werkplaatsgeheugen</a>.</p>
+</div>
+
+<footer><p>Dezelfde bron, zichtbaar bewijsniveau, geen automatische geheugenclaim.</p></footer>
+</div>
+
+<script>
+(function () {
+  const profielUrl = 'https://raw.githubusercontent.com/menno420/curious-research/main/docs/workshop-profile.md';
+  const profiel = document.getElementById('profiel');
+  const kopieerProfiel = document.getElementById('kopieerProfiel');
+  const status = document.getElementById('kopieStatus');
+  let profielTekst = '';
+
+  const opdracht = 'Open en lees eerst ' + profielUrl + '\n' +
+    'Gebruik dit als werkplaatscontext voor mijn volgende vraag. Noem feiten en aannames apart. ' +
+    'Als je de URL niet werkelijk kunt openen, zeg dat dan direct en vraag mij de tekst te plakken. ' +
+    'Antwoord standaard in het Nederlands en verzin geen ontbrekende hardware.';
+
+  async function kopieer(tekst, melding) {
+    try {
+      await navigator.clipboard.writeText(tekst);
+      status.textContent = melding;
+    } catch (_) {
+      status.textContent = 'Kopiëren lukte niet automatisch. Selecteer de tekst hieronder handmatig.';
+    }
+  }
+
+  document.getElementById('kopieerOpdracht').addEventListener('click', function () {
+    kopieer(opdracht, 'Startopdracht gekopieerd. Plak hem als eerste bericht in Claude of ChatGPT.');
+  });
+
+  kopieerProfiel.addEventListener('click', function () {
+    kopieer(profielTekst, 'Werkplaatsprofiel gekopieerd. Plak het vóór je concrete vraag.');
+  });
+
+  fetch(profielUrl)
+    .then(function (antwoord) {
+      if (!antwoord.ok) throw new Error('HTTP ' + antwoord.status);
+      return antwoord.text();
+    })
+    .then(function (tekst) {
+      profielTekst = tekst;
+      profiel.textContent = tekst;
+      kopieerProfiel.disabled = false;
+    })
+    .catch(function () {
+      profiel.textContent = 'Het profiel kon niet automatisch worden geladen. Open het bronbestand met de knop hierboven.';
+      status.textContent = 'Automatisch laden mislukt; de directe bronlink blijft beschikbaar.';
+    });
+})();
+</script>
+</body>
+</html>

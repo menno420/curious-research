@@ -1,18 +1,24 @@
-# Soepele beweging — je arm laten optrekken en afremmen
+# Soepele beweging — doelhoeken gecontroleerd opbouwen
 
-**Wat dit is:** een Arduino-sketch die je arm rustig en beheerst laat bewegen in plaats van
-schokkerig, plus de uitleg waaróm dat werkt.
+**Wat dit is:** een Arduino-sketch die doelhoeken volgens een lineair profiel of S-curve
+opbouwt, plus een meetroute om te bepalen wat dat op de echte arm verandert.
+
+> **Status:** de maker heeft de arm al met een controller gebruikt. Deze specifieke sketch is
+> nog niet tegen dat werkende controller-, pin- en voedingssysteem gecompileerd of getest.
+> Bewaar de bestaande werkende configuratie daarom als referentie en upload dit experiment pas
+> nadat de verschillen zijn vastgelegd.
 
 > **Bekijk het eerst:** open [`index.html`](./index.html) in je browser. Daar zie je drie
-> keer exact dezelfde beweging naast elkaar — knallen, gelijke stapjes, en optrekken/afremmen
-> — met onderin een grafiek van de snelheid. Dat plaatje maakt de rest van deze pagina in
-> tien seconden duidelijk.
+> keer exact dezelfde opdracht naast elkaar — één doelsprong, gelijke tussenstappen en een
+> S-curve — met onderin de afgeleide van het opgedragen positieprofiel. De animatie is geen
+> meting van de echte servo.
 
 ---
 
 ## Het probleem, in één zin
 
-Een hobbyservo heeft **geen snelheidsingang**. Je kunt hem niet vertellen "ga langzaam".
+De gebruikte Arduino `Servo`-API geeft `write()` een doelhoek, maar geen afzonderlijke
+snelheidsparameter.
 
 Als je dit schrijft:
 
@@ -20,27 +26,32 @@ Als je dit schrijft:
 servo.write(140);
 ```
 
-zeg je letterlijk: *"sta NU op 140 graden."* De servo geeft vol gas tot hij er is en staat
-dan stil. Twee snelheden — alles of niets. Dat is precies het schokkerige, plotselinge
-gedrag dat je ziet.
+vervang je de laatst ingestelde doelhoek door 140°. Hoe snel, hard en nauwkeurig de echte servo
+daarop reageert, wordt bepaald door zijn interne regeling, belasting, voeding en mechanica. Een
+plotselinge grote doelsprong **kan** daardoor een abrupte armbeweging geven; “vol gas” en “twee
+snelheden” zijn geen gemeten eigenschappen van deze onbekende servovariant.
 
-**De vloeiendheid moet dus uit jouw code komen, niet uit de servo.**
+Deze sketch onderzoekt daarom of kleinere, tijdgestuurde doelsprongen de zichtbare beweging op
+deze arm rustiger maken.
 
 ---
 
 ## De oplossing in drie lagen
 
-Elke laag is een verbetering op de vorige. De sketch doet alle drie.
+Elke laag maakt het **opgedragen profiel** geleidelijker dan de vorige. Of dat fysiek beter is,
+blijft onderdeel van de vergelijking op de arm.
 
 ### Laag 1 — stuur veel doelen die dichtbij liggen
 
-In plaats van één keer `write(140)`, stuur je elke 20 milliseconden een doel dat een klein
-stukje verder ligt: 90, 91, 92, 93… De servo jaagt telkens iets na dat vlakbij is, en dan
-beweegt hij rustig.
+In plaats van één keer `write(140)`, berekent de sketch met een vast interval een tussendoel:
+90, 91, 92, 93… Daardoor wordt het **opgedragen positieprofiel** geleidelijker. Of de werkelijke
+as even geleidelijk volgt, moet je aan de arm observeren of meten.
 
-**Waarom 20 milliseconden?** Een gewone analoge servo luistert **50 keer per seconde**. Vaker
-sturen is weggegooid werk — hij kijkt er niet naar. Veel langzamer dan dat en je gaat de
-losse stapjes zien.
+**Waarom beginnen bij 20 milliseconden?** De officiële Arduino Servo-library gebruikt een
+minimaal refresh-interval van 20.000 microseconden. Dat onderbouwt de timing van de uitgaande
+pulstrein van die library; het bewijst niet hoe vaak iedere MG996R-klasse servo intern meet of
+regelt. Zie 20 ms daarom als een controleerbaar softwarestartpunt, niet als universele
+servospecificatie.
 
 ### Laag 2 — laat alle gewrichten tegelijk aankomen
 
@@ -48,15 +59,15 @@ Als de basis 90 graden moet draaien en de pols maar 10, en beide doen 1 graad pe
 dan is de pols na 10 stapjes klaar terwijl de basis nog 80 te gaan heeft. Dat ziet er
 hakkelig uit, ook al beweegt elke servo op zichzelf netjes.
 
-De sketch kijkt daarom eerst welk gewricht het **verst** moet. Dat bepaalt de looptijd. Alle
-andere gewrichten krijgen diezelfde tijd en doen dus rustiger aan. Ze vertrekken samen en
-komen samen aan.
+De sketch kijkt daarom eerst welk gewricht het **verst** moet. Dat bepaalt de geplande looptijd.
+Alle andere gewrichten krijgen dezelfde commandoduur. Hun laatste doel wordt dus tegelijk
+verstuurd; zonder positieterugmelding bewijst dit niet dat de echte assen tegelijk aankomen.
 
 ### Laag 3 — optrekken en afremmen (dit is de grote)
 
-Verdeel je de beweging in **gelijke** stapjes, dan gaat de snelheid aan het begin in één klap
-van stil naar vol, en aan het eind in één klap terug naar stil. Twee schokjes, alleen
-kleiner dan bij `write()`. Je voelt ze als een tikje bij vertrek en aankomst.
+Verdeel je het opdrachtprofiel in **gelijke** stapjes, dan springt de berekende
+commandosnelheid aan het begin van nul naar een vaste waarde en aan het eind terug naar nul.
+De hypothese is dat die overgang aan een zichtbare of voelbare tik kan bijdragen.
 
 De sketch verdeelt daarom níet gelijk: **kleine stapjes aan het begin, grote in het midden,
 weer kleine aan het eind.** Eén regel rekenwerk doet dat:
@@ -77,6 +88,11 @@ een voortgang uit die traag start, versnelt, en weer afremt.
 
 Het verschil in **positie** lijkt klein. Het verschil in **snelheid** is het hele punt — en
 dat zie je in de animatie.
+
+De afgeleide van deze S-curve piekt op 1,5 keer de gemiddelde snelheid. De sketch maakt een
+S-curvebeweging daarom 1,5 keer zo lang als een lineaire beweging met dezelfde ingestelde
+pieksnelheid. Zonder die correctie zou `maxSnelheid` bij de S-curve geen echte softwarelimiet
+zijn. Dit begrenst nog steeds alleen het opdrachtprofiel, niet de gemeten mechanische snelheid.
 
 ---
 
@@ -137,7 +153,7 @@ richting.**
 Dit is geen sketch om te draaien en dan te vergeten. Er zitten drie knoppen in waarmee je
 kunt voelen wat er gebeurt.
 
-### `maxSnelheid` — graden per seconde
+### `maxSnelheid` — maximale opgedragen hoeksnelheid
 
 ```cpp
 float maxSnelheid = 60.0;
@@ -145,14 +161,15 @@ float maxSnelheid = 60.0;
 
 | waarde | hoe het voelt |
 |---|---|
-| `30` | plechtig langzaam, mooi om naar te kijken |
-| `60` | rustig en beheerst — goede startwaarde |
-| `120` | vlot |
-| `300` | ongeveer wat de servo zelf doet bij `write()` — weer schokkerig |
+| `30` | lage opgedragen hoeksnelheid; eerste experiment na veilige startup |
+| `60` | middelste vergelijkingswaarde |
+| `120` | hogere vergelijkingswaarde; alleen als voeding en mechanica rustig blijven |
+| `300` | zeer korte profieltijd; niet gelijk aan een gemeten servosnelheid |
 
-**Het experiment:** zet hem op 300 en kijk. Merk je dat netjes rekenen bij hoge snelheid
-bijna niets meer oplevert? Er is simpelweg geen tijd meer om op te trekken. **Vloeiendheid
-kost tijd.** Dat is geen instelling die je kunt winnen — dat is de ruil.
+**Het experiment:** vergelijk eerst 30 en 60 met exact dezelfde korte route. Verhoog pas daarna.
+De S-curve duurt bij dezelfde limiet langer omdat hij tijd gebruikt om op en af te bouwen. Bij
+een hogere ingestelde limiet bevat dezelfde verplaatsing minder updatepunten. Noteer wat
+werkelijk zichtbaar en hoorbaar verandert.
 
 ### `gebruikSbocht` — aan of uit
 
@@ -160,20 +177,20 @@ kost tijd.** Dat is geen instelling die je kunt winnen — dat is de ruil.
 bool gebruikSbocht = true;
 ```
 
-Zet hem op `false`, upload, en kijk of je het tikje bij vertrek en aankomst terugvoelt. Zet
-hem weer op `true`. Heen en weer schakelen tussen die twee is de beste manier om te snappen
-wat laag 3 doet.
+Zet hem op `false`, upload, en noteer of vertrek en aankomst anders aanvoelen of klinken. Zet
+hem weer op `true`. Alleen die A/B-vergelijking laat zien wat laag 3 op deze arm doet.
 
 ### `UPDATE_MS` — hoe vaak je een nieuw doel stuurt
 
 ```cpp
-const unsigned long UPDATE_MS = 20;   // 20 ms = 50 keer per seconde
+const unsigned long UPDATE_MS = 20;   // startpunt gelijk aan Servo-library-refresh
 ```
 
-Zet hem eens op `60`. Nu stuur je nog maar ~17 keer per seconde en zie je de arm stappen in
-plaats van glijden. Zet hem op `5` en… er verandert niets, want de servo luistert toch maar
-50 keer per seconde. Dat laatste is een nuttige teleurstelling: sneller sturen is niet
-altijd beter.
+Vergelijk bijvoorbeeld `60`, `20` en `5`. Bij 60 ms zijn de opgedragen hoekstappen groter. Bij
+5 ms berekent de sketch vaker een nieuw tussendoel dan het 20 ms-refresh-interval van de
+huidige Arduino Servo-library. De library gebruikt steeds de laatst geschreven waarde; welk
+zichtbaar verschil overblijft hangt af van bord, timing en echte servo. Meet het in plaats van
+vooraf “geen verschil” te beloven.
 
 ---
 
@@ -204,11 +221,36 @@ Eerlijk zijn helpt meer dan mooi doen:
 
 - **Slop blijft slop.** Speling in de tandwielen en de beugels wordt hier niet minder van.
   De beweging wordt netter, niet nauwkeuriger.
-- **Herhaalbaarheid is een ander probleem.** Waar een gewricht precies uitkomt hangt af van
-  welke kant hij kwam aanrijden. Dat heet *backlash* en *deadband*, en daar helpt een
-  s-bocht niet tegen.
-- **Zakken onder gewicht blijft.** Een uitgestrekte arm zakt iets in. Soepel bewegen
-  verandert daar niets aan.
+- **Herhaalbaarheid is een ander probleem.** De eindpositie kan afhankelijk zijn van de
+  aanrijrichting door speling en deadband. Meet dat apart; een S-curve bewijst geen verbetering.
+- **Doorbuiging onder gewicht blijft mogelijk.** Een uitgestrekte arm kan onder belasting
+  zakken. Het opdrachtprofiel compenseert dat niet automatisch.
 
-De arm wordt hier **rustiger**, niet **preciezer**. Dat is nog steeds veel waard: rustiger
-bewegen betekent minder trillen, minder overshoot, en minder stroompieken.
+Het doel is een **rustiger opgedragen bewegingsprofiel**, niet automatisch een preciezere arm.
+Minder zichtbare schok is observeerbaar; minder trilling, overshoot of stroompiek is pas een
+resultaat nadat het met dezelfde route en belasting is vergeleken.
+
+## Welke gegevens ontbreken nog voor een echte armtest?
+
+Leg vóór upload vast:
+
+- merk en exact type van de bestaande controller;
+- de werkende sketch/firmware en versie die nu als referentie dient;
+- pinmapping en draairichting per fysiek gewricht;
+- werkende voeding, beveiliging en gedeelde-massa-opbouw;
+- huidig startupgedrag en homepositie;
+- gemeten min/midden/max per gewricht;
+- servomerk/variant per as, voor zover te herkennen.
+
+Daarna kan Claude de bestaande werkende configuratie met `soepele_beweging.ino` vergelijken
+zonder de arm opnieuw te ontwerpen.
+
+## Bronnen en bewijsniveau
+
+- [Arduino Servo-library, `Servo.h`](https://github.com/arduino-libraries/Servo/blob/master/src/Servo.h)
+  — `write()` zet een hoekwaarde en de library gebruikt een refresh-interval van 20.000 µs,
+  **Geverifieerd**, gecontroleerd 2026-08-07.
+- Het effect van de S-curve op deze arm — **Experiment** tot dezelfde route lineair en met
+  S-curve onder gelijke omstandigheden is gemeten.
+- Stroom, overshoot en mechanische trilling — **Nog bevestigen** zonder stroommeting of
+  positiemeting op de echte opstelling.

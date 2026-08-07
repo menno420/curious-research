@@ -1,119 +1,89 @@
-# Claude gebruiken met deze werkplaatsmap
+# Claude of ChatGPT gebruiken met deze werkplaatskennis
 
 ## Welk probleem lost dit op?
 
-In een losse chat moet je steeds opnieuw vertellen welke printers, software en machines je
-gebruikt. Als Claude Code in deze map start, leest het `CLAUDE.md` en kan het daarna het
-werkplaatsprofiel, de gidsen, projecten en research openen wanneer die relevant zijn.
+Een losse AI-chat kent niet automatisch de printers, software, robotarm en voorkeursstijl van
+de maker. Deze repository bewaart die context op één plek. De huidige aanbevolen route is:
 
-Belangrijk: iedere Claude-sessie begint met een nieuw contextvenster. `CLAUDE.md` geeft vaste
-projectinstructies, maar gewone chattekst wordt niet vanzelf een bestand in deze repository.
-Claude Code heeft daarnaast lokale automatische notities; die blijven op die ene computer en
-worden niet automatisch met de GitHub-repository of een andere computer gedeeld.
+**website openen → actuele context delen → concrete vraag stellen → advies testen → bevestigd
+resultaat laten bewaren**
 
-## Wat heb je nodig?
+Daarvoor is nu geen GitHub-account, clone of lokale installatie nodig.
 
-- je Windows-pc;
-- je Claude Pro-account;
-- internet voor de eerste download en installatie;
-- ongeveer tien minuten.
+## Direct beginnen via website en chat
 
-Je hebt voor deze eerste route **geen eigen GitHub-account** nodig. De repository is openbaar.
+### 1. Open de werkplaatswebsite
 
-## Eerste gebruik — aanbevolen route met Claude Code
+Ga naar <https://menno420.github.io/curious-research/> en open **GitHub + AI**. Die pagina legt
+uit waarom GitHub de centrale bron is en laadt het actuele canonieke werkplaatsprofiel rechtstreeks
+uit de repository.
 
-### 1. Download de werkplaatsmap
+Directe pagina:
+<https://menno420.github.io/curious-research/github-en-ai.html>
 
-1. Open <https://github.com/menno420/curious-research>.
-2. Klik op de groene knop **Code**.
-3. Klik op **Download ZIP**.
-4. Open in Verkenner je map **Downloads**.
-5. Klik met rechts op het ZIP-bestand en kies **Alles uitpakken**.
-6. Kies bijvoorbeeld `Documenten\curious-research` en klik **Uitpakken**.
+### 2. Geef de AI het werkplaatsprofiel
 
-GitHub beschrijft dezelfde ZIP-route hier:
-<https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives>.
+Klik op **Kopieer startopdracht** en plak die als eerste bericht in Claude of ChatGPT. De
+opdracht verwijst naar:
 
-### 2. Installeer Claude Code
+<https://raw.githubusercontent.com/menno420/curious-research/main/docs/workshop-profile.md>
 
-1. Klik op **Start**.
-2. Typ `PowerShell` en open **Windows PowerShell**.
-3. Plak deze officiële WinGet-opdracht en druk op **Enter**:
+Vraag de assistent daarna eerst te vertellen wat zij werkelijk kon openen. Dat voorkomt dat
+webtoegang wordt verondersteld.
 
-```powershell
-winget install Anthropic.ClaudeCode
-```
+Kan de AI de URL niet lezen? Klik op **Kopieer profieltekst** en plak de tekst in de chat. Als
+de gebruikte chat een bestandsupload aanbiedt, mag je `docs/workshop-profile.md` ook uploaden.
 
-4. Wacht tot de installatie klaar is en sluit PowerShell.
+### 3. Deel één relevante gids of projectpagina
 
-De actuele officiële installatiepagina staat op
-<https://code.claude.com/docs/en/setup>. WinGet werkt eenvoudig op Windows, maar werkt niet
-automatisch bij. Werk later bij met:
+Open op de website het onderwerp dat bij de vraag hoort en kopieer die URL. Deel niet meteen
+de hele repository als één lange tekst; één profiel plus één relevante uitvoeringspagina geeft
+meestal een duidelijker antwoord.
 
-```powershell
-winget upgrade Anthropic.ClaudeCode
-```
-
-### 3. Start Claude in precies deze map
-
-1. Open in Verkenner de uitgepakte map `curious-research`.
-2. Klik in de adresbalk bovenin Verkenner.
-3. Typ `powershell` en druk op **Enter**. PowerShell opent nu direct in deze map.
-4. Typ:
-
-```powershell
-claude
-```
-
-5. Volg de browsermelding om met je Claude Pro-account in te loggen.
-6. Accepteer alleen de werkmap die je zojuist zelf hebt geopend.
-
-Controleer daarna met deze vraag:
+Voorbeeld:
 
 ```text
-Lees CLAUDE.md en docs/workshop-profile.md. Vertel in het Nederlands in vijf punten welke werkplaatscontext je nu kent en welke gegevens nog ontbreken.
+Gebruik het werkplaatsprofiel dat ik zojuist gaf. Open ook deze gids:
+https://menno420.github.io/curious-research/guides/speling/index.html
+
+Mijn geprinte passing klemt. Help me bepalen of krimp, olifantenvoet of te weinig speling de
+oorzaak is. Laat me één variabele tegelijk wijzigen en benoem wat je niet uit de pagina kunt
+afleiden.
 ```
 
-**Geslaagd als:** Claude de A1, A1 mini, AMS Lite, Fusion 360, Arduino en de 6-DOF-arm
-noemt, én geen onbekend laser- of CNC-model verzint.
+### 4. Controleer of de context werkelijk is gebruikt
 
-De officiële Claude Code-snelstart staat op <https://code.claude.com/docs/en/quickstart>.
+De eerste ronde is geslaagd als de AI:
 
-## Alternatief — een Claude Project in de browser
-
-Wil je geen programma installeren, maak dan op <https://claude.ai/projects> een project met
-de naam **Mijn werkplaats**. Upload met de **+** in elk geval:
-
-1. `docs/workshop-profile.md`;
-2. `CLAUDE.md`;
-3. de gids of het project dat je op dat moment gebruikt.
-
-Zet bij **Set project instructions**:
-
-```text
-Antwoord standaard in het Nederlands. Lees eerst workshop-profile.md. Gebruik alleen bevestigde hardwarefeiten; benoem aannames. Geef genummerde stappen, volledige links en een controle waarmee ik zie of het gelukt is.
-```
-
-Projectkennis wordt in alle chats **binnen dat Claude Project** gebruikt. Een bestand dat later
-in GitHub verandert, wordt niet vanzelf opnieuw geüpload. De officiële uitleg staat op
-<https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects>.
+1. Bambu Lab A1, A1 mini en AMS Lite noemt;
+2. Bambu Studio, Fusion 360 Personal Use, Arduino IDE en Windows herkent;
+3. de zelfgebouwde 6-DOF-arm met MG996R-klasse servo's noemt;
+4. geen exact laser-, CNC-, Arduino-board- of servomodel verzint;
+5. feiten, aannames en ontbrekende gegevens zichtbaar uit elkaar houdt.
 
 ## Zo stel je een goede vraag
 
-Een goede vraag bevat het doel, wat je al ziet of meet, en wat niet mag veranderen.
+Een goede vraag bevat het onderdeel, het doel, wat je ziet of meet en wat niet zomaar mag
+veranderen.
 
 **Goed:**
 
 ```text
-Mijn PETG-beugel uit Bambu Studio scheurt bij het schroefgat. Lees het werkplaatsprofiel. Help me eerst bepalen of de oriëntatie, wanddikte of passing de oorzaak is. Geef één test tegelijk en vertel wat ik moet meten.
+Mijn PETG-beugel scheurt bij het schroefgat. Gebruik mijn werkplaatsprofiel. Help me eerst
+bepalen of oriëntatie, wanddikte of passing de oorzaak is. Kies één kleine proef en vertel wat
+ik in Bambu Studio Preview en aan het proefstuk moet controleren.
 ```
 
 ```text
-Ik wil dit Fusion-onderdeel uit 3 mm plaat lasersnijden. Geef de workflow van schets naar DXF en testcoupon. Neem geen kerfwaarde aan: laat me die eerst meten.
+Ik wil dit Fusion-onderdeel uit 3 mm plaat maken. Vergelijk laser en CNC voor deze geometrie.
+Noem eerst welke gegevens van mijn machines en materiaal nog ontbreken en geef geen universele
+feeds, speeds of kerfwaarde.
 ```
 
 ```text
-Deze Arduino-sketch mist soms een knopdruk zodra de servo beweegt. Zoek blokkerende delay()-aanroepen, herschrijf alleen de timing met millis() en leg uit hoe ik controleer dat het gedrag gelijk blijft.
+Deze Arduino-sketch mist soms een knopdruk zodra de servo beweegt. Zoek blokkerende
+delay()-aanroepen. Herschrijf alleen de timing met millis() en geef een test waarmee het oude en
+nieuwe gedrag vergelijkbaar zijn.
 ```
 
 **Te breed:**
@@ -122,41 +92,111 @@ Deze Arduino-sketch mist soms een knopdruk zodra de servo beweegt. Zoek blokkere
 Leg Fusion uit.
 ```
 
-Maak hem bruikbaar door een doel toe te voegen: *welk onderdeel*, *welke productiemethode* en
+Maak de vraag bruikbaar met: *welk onderdeel*, *welke productiemethode*, *wat gaat mis* en
 *wanneer is het resultaat goed*.
+
+## Wat GitHub hier precies toevoegt
+
+GitHub is de centrale plek voor bestanden plus hun wijzigingsgeschiedenis. Daardoor kun je
+Claude en ChatGPT dezelfde actuele bron geven en later terugzien waarom iets veranderde. De
+website is de leesbare voorkant van die bron.
+
+GitHub geeft AI echter geen automatisch geheugen:
+
+- een assistent moet de URL werkelijk openen of de tekst van jou krijgen;
+- een chatantwoord verandert geen repositorybestand;
+- eerder geüploade bestanden verversen niet vanzelf wanneer `main` wijzigt;
+- dezelfde context kan nog steeds tot verschillende adviezen leiden.
+
+Lees voor de volledige uitleg
+[`git-for-makers.md`](git-for-makers.md) of de publieke pagina
+<https://menno420.github.io/curious-research/github-en-ai.html>.
 
 ## Waardevolle kennis bewaren
 
-Een chatantwoord is pas werkplaatskennis als het controleerbaar en terugvindbaar is.
+Een antwoord wordt pas duurzame werkplaatskennis na deze lus:
 
-1. **Test het advies** aan de machine of in simulatie.
-2. **Leg het resultaat vast:** materiaal, machine, relevante instellingen, meting en datum.
-3. **Vraag Claude waar het thuishoort:** profiel, bestaande gids, projectlog of nieuwe gids.
-4. **Laat Claude alleen het passende bestand bijwerken.** Ruwe research blijft ongewijzigd.
-5. **Lees de wijziging na.** Feit en aanname moeten zichtbaar gescheiden zijn.
+1. **Test het advies** aan machine, werkstuk of simulatie.
+2. **Noteer de omstandigheden:** machine, materiaal, relevante instelling, meting en datum.
+3. **Vraag waar het thuishoort:** profiel, bestaande gids of projectlog.
+4. **Laat een gecontroleerde repositorywijziging maken.** Dat kan voorlopig via de beheerder;
+   de maker hoeft daarvoor geen eigen account te hebben.
+5. **Lees het verschil na** en merge alleen na groene controles.
 
-Handige opdracht:
+Handige vervolgopdracht:
 
 ```text
-Dit resultaat is bevestigd op mijn eigen machine. Werk de juiste bestaande pagina bij zonder feiten te dupliceren. Noem de testdatum, omstandigheden en wat nog niet bewezen is. Laat eerst zien welk bestand je wilt wijzigen en waarom.
+Dit resultaat is op de echte werkplaats bevestigd. Vat exact samen wat is gemeten, onder welke
+omstandigheden en wat nog niet bewezen is. Stel daarna voor welk bestaand repositorybestand
+moet worden bijgewerkt; dupliceer geen hardwarefeiten.
 ```
 
-Zonder GitHub-account blijven wijzigingen in de uitgepakte map op deze pc staan. Maak geregeld
-een kopie van die map. Met een later GitHub-account kan de geschiedenis online worden bewaard,
-maar dat is niet nodig om vandaag te beginnen.
+Bewaar geen namen, adressen, toegangssleutels, privéfoto's of andere gevoelige gegevens in deze
+openbare repository.
+
+## Optioneel: vaste projectcontext in de browser
+
+Als de gebruikte Claude- of ChatGPT-versie projectmappen en bestandsuploads aanbiedt, kun je een
+project **Mijn werkplaats** maken en minimaal toevoegen:
+
+1. `docs/workshop-profile.md`;
+2. de relevante gids of projectdocumentatie;
+3. deze instructie:
+
+```text
+Antwoord standaard in het Nederlands. Gebruik alleen bevestigde hardwarefeiten uit
+workshop-profile.md, benoem aannames en sluit af met een zichtbare of meetbare controle.
+```
+
+Behandel geüploade bestanden als snapshots. Wanneer GitHub verandert, controleer je zelf of het
+projectbestand opnieuw moet worden geüpload. De officiële Claude-uitleg over Projects staat op
+<https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects>.
+
+## Later pas: de hele repository lokaal gebruiken
+
+Een lokale clone en Claude Code worden pas nuttig wanneer de maker zelf bestanden wil wijzigen
+of de volledige repository als lokale context wil gebruiken. Een eigen GitHub-account is zelfs
+dan niet nodig om de openbare repository als ZIP te downloaden, maar wordt wel handig voor eigen
+branches en pull requests.
+
+### Download als ZIP
+
+1. Open <https://github.com/menno420/curious-research>.
+2. Klik **Code → Download ZIP**.
+3. Kies in Verkenner **Alles uitpakken**.
+4. Bewaar de map bijvoorbeeld onder `Documenten\curious-research`.
+
+GitHub beschrijft ZIP en clone hier:
+<https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives>.
+
+### Claude Code op Windows, alleen wanneer die route gewenst is
+
+1. Open PowerShell.
+2. Installeer volgens de actuele officiële instructie, bijvoorbeeld met:
+
+```powershell
+winget install Anthropic.ClaudeCode
+```
+
+3. Open de uitgepakte repositorymap in Verkenner.
+4. Typ `powershell` in de adresbalk.
+5. Start `claude` vanuit precies die map.
+6. Laat `CLAUDE.md` en `docs/workshop-profile.md` samenvatten vóór de eerste taak.
+
+Actuele officiële installatie: <https://code.claude.com/docs/en/setup>.
 
 ## Veelgemaakte fouten
 
-- Claude starten vanuit `Downloads` in plaats van uit de uitgepakte `curious-research`-map;
-- aannemen dat een losse chat automatisch alle repositorybestanden heeft gelezen;
-- een antwoord als feit opslaan vóór de test;
-- een waarde op meerdere pagina's kopiëren in plaats van het canonieke profiel bij te werken;
-- een machinebestand als master bewaren terwijl het Fusion-model de ontwerpbron hoort te zijn.
+- aannemen dat een AI een gedeelde URL heeft gelezen zonder dat te controleren;
+- alleen de website noemen en niet het concrete profiel of de relevante pagina delen;
+- een goed klinkend antwoord als werkplaatsfeit bewaren vóór een fysieke test;
+- een waarde op meerdere pagina's kopiëren in plaats van de canonieke bron te wijzigen;
+- denken dat GitHub, Claude Projects of ChatGPT-projectbestanden automatisch synchroniseren;
+- de optionele clone- en installatieroute als voorwaarde voor de eerste vraag behandelen.
 
-## Wanneer vraag je Claude om hulp?
+## Wanneer vraag je de AI om hulp?
 
-- *"Controleer met `/context` of de CLAUDE.md uit deze map is geladen."*
-- *"Welke bevestigde gegevens mis je nog om dit advies voor mijn machine te geven?"*
-- *"Zet dit testresultaat op de juiste plek en label het volgens docs/knowledge-policy.md."*
-- *"Vergelijk mijn nieuwe meting met het vorige projectlog en verander maar één hypothese."*
-
+- *“Welke bevestigde context heb je werkelijk uit de gedeelde bron gelezen?”*
+- *“Welke ontbrekende hardware-informatie kan jouw advies nog veranderen?”*
+- *“Maak van dit advies een proef met één variabele en een succescriterium.”*
+- *“Vat mijn meetresultaat samen zodat de repositorybeheerder het controleerbaar kan bewaren.”*
