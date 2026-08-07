@@ -13,6 +13,12 @@ A gift and a workshop notebook for a Dutch hobby maker: two 3D printers (one sma
 3-colour), a 6-servo robot arm, a busy Arduino bench. Everything in it is meant to be read
 by him, in Dutch, and to teach by showing.
 
+**Known about his setup as of 2026-08 (his own words, via the owner):** he already uses
+**Claude regularly** — for Arduino code, 3D-printing tips, and **Fusion 360**. He models in
+Fusion 360, so he has real parametric CAD and knows it. Read `CLAUDE.md` §0 for what that
+changes: he is new to *GitHub*, not to Claude, and the repo's pitch is persistence, not
+capability.
+
 **It is complete for its purpose and it still grows.** A session that only walks him through
 what is already here is an excellent session. A session that adds a guide is also an
 excellent session. Neither is the failure mode; manufacturing busywork is.
@@ -106,7 +112,20 @@ every PR pending forever. `auto-merge-enabler.yml` arms GitHub-native auto-merge
 
 ## Open questions — waiting on the owner
 
-Four things nobody but the owner can answer. Each unblocks concrete work.
+Five things nobody but the owner can answer. Each unblocks concrete work.
+
+0. **OpenSCAD or Fusion 360 — which way do the designs go?** This is the newest and probably
+   the biggest. Every design in `projects/` ships as `.scad`, and
+   `guides/windows-gereedschap/` tells him to install OpenSCAD. But he already models in
+   **Fusion 360** and knows it well. The real trade-off, stated honestly:
+   - **OpenSCAD** — the model is *text*, so Claude can write and edit the design directly.
+     He only renders and exports. That is why the repo chose it.
+   - **Fusion 360** — far more capable and already in his hands, but the files are binary,
+     so Claude cannot author them.
+   - **The third path, probably the best one:** Fusion 360 has a **Python scripting API**.
+     Claude can write a Fusion script that he runs *inside* Fusion to generate parametric
+     geometry — keeping Claude's ability to author designs AND the tool he already knows.
+     Not yet tried here; would need a guide and one worked example.
 
 1. **Which slicer does he use?** Cura, PrusaSlicer, OrcaSlicer, or Bambu Studio. Every
    printing guide currently describes settings generically. With the answer, the retraction,
