@@ -78,8 +78,40 @@ jobs:
             *)
               echo "skip=0" >> "$GITHUB_OUTPUT" ;;
           esac
-      - name: Enable native auto-merge (squash)
+      - name: Do NOT arm a PR that publishes the site (it would land unpublished)
+        id: publish
         if: steps.rules.outputs.required != '0' && steps.label.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ secrets.ROUTINE_PAT || secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          # MEASURED 2026-08-07. GitHub suppresses workflow runs for events
+          # triggered by GITHUB_TOKEN. With no ROUTINE_PAT set, native
+          # auto-merge lands the PR as GITHUB_TOKEN, so pages.yml's `push`
+          # trigger never fires and the live site silently keeps serving the
+          # previous build — green checks, no error, wrong site. PR #68 did
+          # exactly that: site/index.html changed, zero pages runs, and the
+          # new guide 404'd live.
+          #
+          # The SAME merge performed with a user-attributed token DOES fire
+          # pages — verified on PR #72, a `push` run within 20 seconds. So for
+          # any PR touching what gets published we refuse to arm, and a
+          # session merges it via the API instead. The step below already
+          # prefers a PAT "so the eventual merge attributes to a real user";
+          # this makes that preference load-bearing instead of advisory.
+          #
+          # Remove this step if a ROUTINE_PAT is ever added, or if the site
+          # moves off GitHub Pages.
+          files="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename')"
+          if printf '%s\n' "$files" | grep -qE '^(site|guides)/'; then
+            echo "::notice::PR #$PR touches site/ or guides/ — NOT arming auto-merge. Merge it with a user-attributed token so pages.yml fires, then check the live URL actually changed."
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "no publishing paths touched — arming normally."
+            echo "skip=0" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Enable native auto-merge (squash)
+        if: steps.rules.outputs.required != '0' && steps.label.outputs.skip == '0' && steps.publish.outputs.skip == '0'
         env:
           # Prefer a PAT so the eventual merge attributes to a real
           # user; GITHUB_TOKEN is the fallback.

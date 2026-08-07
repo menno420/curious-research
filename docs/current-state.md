@@ -204,12 +204,31 @@ curl -s -X POST -H "Authorization: Bearer $GITHUB_PAT" \
 
 Then verify the live URL actually changed — do not assume the dispatch worked.
 
-**The owner has ruled out adding a `ROUTINE_PAT`** (2026-08-07), so the fix is not a new
-secret. The live candidate is to **merge with the account PAT instead of auto-merge**: a merge
-attributed to a real user is not suppressed, and that credential already exists. If a session
-confirms that, the durable fix is to stop arming auto-merge on PRs that touch `site/` or
-`guides/` and merge them via the API instead. Beyond that, moving the site off GitHub Pages
-onto Railway is an owner-stated goal and would retire this whole failure mode.
+### …and how it is fixed — `MEASURED`, no new credential
+
+**The owner ruled out adding a `ROUTINE_PAT`** (2026-08-07). It turned out not to be needed.
+
+`MEASURED` on PR #72: the same merge performed with the **account PAT** — attributed to a real
+user rather than `GITHUB_TOKEN` — **does** fire `pages`, a `push` run within 20 seconds,
+completed green. The suppression is about *who* the merge is attributed to, not about merging.
+`auto-merge-enabler.yml`'s own comment already preferred a PAT "so the eventual merge attributes
+to a real user"; it just fell back to `GITHUB_TOKEN` when no PAT existed.
+
+So the enabler now **refuses to arm any PR touching `site/` or `guides/`** and says why in a
+run notice. Those PRs are merged via the API instead:
+
+```
+curl -s -X PUT -H "Authorization: Bearer $GITHUB_PAT" \
+  -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/menno420/curious-research/pulls/<N>/merge \
+  -d '{"merge_method":"squash","sha":"<head-sha>"}'
+```
+
+Everything else still auto-merges as before. **Always verify the live URL changed afterwards** —
+this failure gives no error, so the only proof is the site itself.
+
+Moving off GitHub Pages onto Railway is an owner-stated goal and would retire the whole failure
+mode; remove this carve-out then, or if a `ROUTINE_PAT` ever appears.
 
 ## Open questions — waiting on the owner
 
