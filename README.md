@@ -1,13 +1,19 @@
 # curious-research 🔬
 
-> ### A gift, for you 🎁
-> Someone who knows you built this as a starting point — a workshop notebook that *answers
-> back*. Your two 3D printers, your 6-servo robot arm, and your Arduino tinkering now have a
-> research partner that teaches by **showing**, not lecturing. Nothing here is a test, and
-> nothing here can break.
+> ### Een cadeau, voor jou 🎁
+> Iemand die jou kent heeft dit gemaakt als startpunt — een werkplaatsschriftje dat
+> **terugpraat**. Je twee 3D-printers, je 6-servo robotarm en je Arduino-geknutsel hebben nu
+> een maatje dat uitlegt door het te **laten zien**. Niets hier is een test, en je kunt niets
+> kapotmaken.
 >
-> **👉 First click:** open **[`guides/start-here/`](guides/start-here/guide.md)** — a
-> two-minute animated tour of the whole thing, and a guided first 30 minutes.
+> **👉 Eerste klik:** open **[`guides/begin-hier/`](guides/begin-hier/guide.md)** — twee
+> minuten, in het Nederlands: wat dit is, wat je er vanavond mee kunt, en hoe je binnenkomt.
+>
+> **👉 Op je Windows-laptop:** [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md)
+> — de gratis programma's die handig zijn, met directe downloadlinks. *(Je hebt er niets van
+> nodig om te beginnen.)*
+>
+> *(English original of the tour: [`guides/start-here/`](guides/start-here/guide.md).)*
 
 **This repo is a research companion.** It exists to help you discover new ways to use your
 projects (the printers, the arm, the Arduino bench, and whatever comes next) and new, easier
@@ -56,7 +62,8 @@ questions and ideas, Claude turns them into experiments, designs, and — the ho
 | [`projects/`](projects/) | Finished builds, each with its docs — first one is live: [`projects/tolerance-test-coin/`](projects/tolerance-test-coin/) |
 | [`CLAUDE.md`](CLAUDE.md) | The house rules Claude reads first — teaching doctrine + safety |
 | [`docs/git-for-makers.md`](docs/git-for-makers.md) | Git in bench terms, no jargon |
-| [`docs/eap-closeout-walkthrough-2026-07-14.md`](docs/eap-closeout-walkthrough-2026-07-14.md) | **Picking this repo up? Start here** — what's built, what works, and the six things only you can do next |
+| [`guides/begin-hier/`](guides/begin-hier/guide.md) | 🇳🇱 **De Nederlandse rondleiding — begin hier** |
+| [`guides/windows-gereedschap/`](guides/windows-gereedschap/guide.md) | 🇳🇱 Gratis programma's voor je Windows-laptop, met downloadlinks |
 | `bootstrap.py` + `.claude/` + `docs/` (the rest) | The [substrate-kit](https://github.com/menno420/substrate-kit) — the memory/quality machinery that keeps Claude sharp here (MIT, [`LICENSE-substrate-kit`](LICENSE-substrate-kit)). It maintains itself; you never need to touch it. |
 
 *Seeded 2026-07-13 with substrate-kit v1.15.0. This repo is public — it carries interests

@@ -137,9 +137,19 @@ are safe to sweep by hand — the one-time sweep is owner action §C item 1 in
 
 the friend reads the PR description and any rendered guide/artifact, asks questions right in the PR, merges when he understands it - understanding is the review bar
 
-## Seat dormant
+## Live — owner-driven, no schedule (supersedes the July "seat dormant" phase)
 
-The owner ended the EAP on 2026-07-14 and this seat is now **dormant** — no routine will
-wake it. The dormancy record (health at shutdown, routine disposition, revival
-instructions) lives in `control/status.md`; the owner's own next steps live in
-`docs/eap-closeout-walkthrough-2026-07-14.md` (§C).
+*Updated 2026-08-07.* The July 2026 dormancy ended when the repo was handed to its intended
+reader. This seat is **live but unscheduled**: it wakes when the maker opens a session at
+claude.ai/code and asks something. No cron, no pacemaker, and none is wanted — an empty week
+is a fine week (`CLAUDE.md` §1.5). **Do not read this repo as decommissioned.**
+
+**Before anything else, read `CLAUDE.md` §0** — who you are talking to, what language to use,
+and the two phases. In short: a Dutch hobby maker on a Windows laptop, low coding knowledge,
+reaching you through a throwaway cloud container. Speak Dutch. Teach visually. In **phase 1**
+you simply walk him through the finished content and **no write access is required** — a
+read-only clone is enough and a failed push is not a blocker.
+
+Added 2026-08-07: `guides/begin-hier/` (the Dutch front door — animated tour + step-by-step)
+and `guides/windows-gereedschap/` (Windows downloads in Dutch), bringing the shelf to
+**thirteen guides**. `control/status.md` carries the live status and the ranked next-best work.
