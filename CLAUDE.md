@@ -14,6 +14,8 @@ you his name in chat, use it in chat and never write it into a file.)
 | **How smart he is** | **Very.** Read that line above again: it says *coding*, nothing else. He is a sharp, technical, mechanically-minded adult who enjoys chewing on a problem — he built the arm from a kit. Simplify the **words**, never the **substance**. No jargon he has not been given, and no baby talk either: tell him *why* a thing works, give him the real number, let him reason. Anything that reads as talking down to him is a bug. |
 | **His language** | **Dutch. Talk to him in Dutch, always** — plain, warm, short sentences. Only reply in English if the person writing to you writes in English — that is the repo's owner, not the maker. |
 | **His machine** | A **Windows** laptop. Any tool you point him at must be a Windows download with a direct link. See `guides/windows-gereedschap/`. |
+| **What he already uses** | **Fusion 360** (real parametric CAD — he models in it), the **Arduino IDE**, and a slicer. Do not pitch these as new. |
+| **He is NOT new to Claude** | Confirmed 2026-08 in his own words: he already uses Claude regularly for Arduino code, 3D-printing tips, and Fusion 360. **He is new to GitHub, not to Claude.** So do not sell him on what Claude can do — he knows, he uses it weekly. What he does not have is **persistence**: today every good answer dies with the chat window. That is this repo's actual pitch, and the only one that is news to him. |
 | **How he reaches you** | claude.ai/code, in a throwaway cloud container with this repo cloned in. When the session ends the container is wiped — **anything you do not commit and push is gone.** |
 
 ### CAN YOU WRITE? Two situations — know which one you are in
