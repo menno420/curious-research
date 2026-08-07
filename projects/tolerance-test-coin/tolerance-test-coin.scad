@@ -2,6 +2,11 @@
 //  tolerance-test-coin.scad  —  parametric clearance / tolerance test
 //  Part of: curious-research / projects/tolerance-test-coin
 // ----------------------------------------------------------------------------
+//  RENDER STATUS (2026-08-07)
+//  OpenSCAD 2021.01 rendered the default range and a shorter parameter range
+//  to simple manifold STL meshes without warnings. Physical print accuracy and
+//  fit remain to be measured for each printer/material/profile combination.
+// ----------------------------------------------------------------------------
 //  WHAT THIS IS
 //  A small round "coin" full of holes. Every hole is the same shape but a
 //  slightly bigger gap (clearance) than the last. You print the coin plus a

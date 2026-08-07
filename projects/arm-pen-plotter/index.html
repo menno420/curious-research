@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Teach-mode, watched: jog, record a waypoint, replay through the clamp</title>
+<title>Teach-mode in beeld: joggen, waypoint opslaan en begrensd terugspelen</title>
 <style>
   :root {
     --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
@@ -77,17 +77,16 @@
 </style>
 </head>
 <body>
-<h1>Teach-mode, watched — jog, record a waypoint, replay through the clamp</h1>
-<p class="sub">This is how you draw your first line with the arm and <b>no math</b>: nudge
-the joints to a spot, save it, nudge to the next spot, save it — then replay the saved
-spots slowly. Every angle is trimmed to your measured safe range before it reaches a motor.</p>
+<h1>Teach-mode in beeld — joggen, waypoint opslaan en terugspelen</h1>
+<p class="sub">Leer zonder geometrie een eerste lijn aan: beweeg één gewricht per keer,
+bewaar twee punten en speel ze langzaam terug via de begrensde bedieningsroute.</p>
 
 <div class="stage-box">
-  <svg viewBox="0 0 780 360" aria-label="Animated 2-joint robot arm holding a pen over paper, showing teach-mode: jogging the arm, recording waypoints into a list, a clamp trimming an out-of-range jog, and replaying the waypoints to draw a wobbly line">
+  <svg viewBox="0 0 780 360" aria-label="Vereenvoudigde animatie van teach-mode: joggen, waypoints opslaan, een hoek begrenzen en terugspelen">
     <!-- paper + desk -->
     <rect class="paper" x="210" y="284" width="300" height="34" rx="3"/>
     <line class="desk" x1="120" y1="318" x2="600" y2="318"/>
-    <text class="small" x="214" y="336">paper taped to the desk</text>
+    <text class="small" x="214" y="336">papier vastgezet op het bureau</text>
 
     <!-- safe-range wedge at the shoulder (revealed from the clamp stage on) -->
     <path id="wedge" d=""></path>
@@ -113,14 +112,14 @@ spots slowly. Every angle is trimmed to your measured safe range before it reach
     <circle id="nib" class="nib" r="3.5"/>
     <circle id="elbow" class="joint" r="7"/>
     <circle class="pivot" cx="390" cy="70" r="10"/>
-    <text class="small" x="404" y="66">shoulder</text>
+    <text class="small" x="404" y="66">schouder</text>
 
     <!-- clamp tag -->
     <g id="clampBox">
       <rect x="60" y="30" width="212" height="62" rx="9"/>
       <text class="ttl" x="74" y="52">clamp(150, 20, 120)</text>
       <text class="strike" x="74" y="78">150&#176;</text>
-      <text class="out" x="120" y="78">&#8594; 120&#176; (trimmed to max)</text>
+      <text class="out" x="120" y="78">&#8594; 120&#176; (naar maximum)</text>
     </g>
 
     <!-- waypoint list panel -->
@@ -129,11 +128,11 @@ spots slowly. Every angle is trimmed to your measured safe range before it reach
       <text class="hd" x="616" y="142">waypoints.json</text>
       <g id="row1" class="row">
         <circle class="dot" cx="622" cy="164" r="5"/>
-        <text class="lbl" x="636" y="169">#1  start</text>
+        <text class="lbl" x="636" y="169">#1  begin</text>
       </g>
       <g id="row2" class="row">
         <circle class="dot" cx="622" cy="190" r="5"/>
-        <text class="lbl" x="636" y="195">#2  end</text>
+        <text class="lbl" x="636" y="195">#2  einde</text>
       </g>
     </g>
   </svg>
@@ -141,41 +140,39 @@ spots slowly. Every angle is trimmed to your measured safe range before it reach
   <div class="caption" id="caption" aria-live="polite"></div>
 
   <div class="controls">
-    <button id="prev">&#9664; Back</button>
-    <button id="next" class="primary">Next step &#9654;</button>
-    <button id="play">&#9654; Play all</button>
-    <button id="replay">&#8635; Replay</button>
+    <button id="prev">&#9664; Terug</button>
+    <button id="next" class="primary">Volgende stap &#9654;</button>
+    <button id="play">&#9654; Alles afspelen</button>
+    <button id="replay">&#8635; Opnieuw</button>
   </div>
 </div>
 
 <div class="recap">
-  <h2>What you just watched</h2>
-  <p><b>1.</b> In <b>teach-mode</b> you don't do any geometry. You <b>jog</b> the arm — nudge
-  one joint a few degrees at a time — until the pen is where you want it.</p>
-  <p><b>2.</b> When the pen is on the spot, you <b>record a waypoint</b>: a snapshot of all six
-  joint angles, saved to a plain file. Here we recorded two — the start and end of one line.</p>
-  <p><b>3.</b> Ask a joint to go past its safe limit and the <b>clamp</b> — <code>clamp(angle,
-  min, max)</code> — trims the number down to the edge <i>before</i> the motor moves. The
-  joint stops at the safe edge; the pen never leaves the safe zone.</p>
-  <p><b>4.</b> <b>Replay</b> eases the arm from waypoint to waypoint, slowly, drawing the line.
-  Every replayed value passes through the clamp again. And it <span class="danger">wobbles</span>
-  — that's the hobby-servo character, not a bug. Celebrate the wobble.</p>
+  <h2>Wat je net zag</h2>
+  <p><b>1.</b> In <b>teach-mode</b> jog je één gewricht enkele graden per keer totdat de pen op
+  de bedoelde plek staat.</p>
+  <p><b>2.</b> Een <b>waypoint</b> bewaart alle zes gewrichtshoeken. Hier zijn begin en einde van
+  één lijn vastgelegd.</p>
+  <p><b>3.</b> <code>clamp(hoek, min, max)</code> brengt een gecontroleerde hoekopdracht terug tot
+  de gemeten grens vóór verzending. Dat begrenst een getal; het detecteert geen tafel, kabel,
+  last of botsing.</p>
+  <p><b>4.</b> <b>Replay</b> interpoleert langzaam tussen waypoints. Iedere waarde gaat opnieuw
+  door de clamp. Meet de <span class="danger">spreiding</span> van herhaalde lijnen in plaats van
+  printerprecisie te verwachten.</p>
 
-  <h2>Safety, for real</h2>
+  <h2>Veiligheid, zonder overclaim</h2>
   <ul>
-    <li><b>No calibration file, no motion.</b> The real tool refuses to run until you've
-    measured your arm into <code>arm/calibration.json</code>. The clamp is only as safe as
-    those measured numbers.</li>
-    <li><b>Servo power is external, always</b> — a separate 5&ndash;6&nbsp;V supply, shared
-    ground, fused, reachable switch. Never the Arduino's 5&nbsp;V pin.</li>
-    <li><b>A human watches every move</b>, hand on the switch. Nothing is ever safe unattended.</li>
+    <li><b>De gecontroleerde laptopworkflow vereist kalibratie.</b> De Arduino-sketch schrijft
+    bij startup echter al 90&deg; vóór de limietenhandshake. Dat kan beweging geven bij reset.</li>
+    <li><b>Servovoeding is extern</b>, passend bij de werkelijke servo's en belasting, met
+    gedeelde massa, zekering en bereikbare uitschakeling. Nooit via de Arduino-5V-pin.</li>
+    <li><b>Iemand kijkt bij iedere powered test mee.</b> Een clamp bewijst geen hardwareveiligheid.</li>
   </ul>
 
-  <h2>What this animation simplifies</h2>
-  <p>It shows a <b>2-joint arm from the side</b>; yours has six servos moving in 3-D. The
-  clamp really trims <b>joint angles</b> (shown here as the pen halting at the safe edge). And
-  the wobble is drawn gently — a real hobby arm is often wobblier. Measure first, clamp always,
-  watch every time.</p>
+  <h2>Wat deze animatie versimpelt</h2>
+  <p>Je ziet een arm met twee gewrichten van opzij; de echte arm heeft zes servo's en beweegt
+  ruimtelijk. De groene zone illustreert alleen hoeklimieten. Startup, zwaartekracht, speling,
+  kabels en botsingen worden niet gesimuleerd.</p>
 </div>
 
 <script>
@@ -293,34 +290,30 @@ spots slowly. Every angle is trimmed to your measured safe range before it reach
   }
 
   const stages = [
-    { cap: '<span class="stepnum">1</span><b>Meet the setup.</b> A 2-joint arm (yours has six '
-      + 'servos) holds a floating pen over taped-down paper. Right now nothing is recorded — '
-      + 'the <b>waypoints</b> file is empty.',
+    { cap: '<span class="stepnum">1</span><b>De opstelling.</b> Een vereenvoudigde arm met twee '
+      + 'gewrichten houdt een zwevende pen boven papier. Er zijn nog geen <b>waypoints</b>.',
       run: () => { resetScene(); tweenTip([{ x:REST.x, y:REST.y, dur:600 }]); } },
 
-    { cap: '<span class="stepnum">2</span><b>Jog to the start.</b> You <b>jog</b> the arm — '
-      + 'nudge one joint a few degrees at a time, by eye — until the pen touches the spot where '
-      + 'your line should begin. No math, just nudging.',
+    { cap: '<span class="stepnum">2</span><b>Jog naar het begin.</b> Beweeg één gewricht enkele '
+      + 'graden per keer totdat de pen op het beginpunt staat.',
       run: () => { resetScene(); tweenTip([{ x:START.x, y:LIFT, dur:700 }, { x:START.x, y:START.y, dur:600 }]); } },
 
-    { cap: '<span class="stepnum">3</span><b>Record waypoint #1.</b> Happy with the spot? Type '
-      + '<code>rec</code>. That snapshots all six joint angles and adds them to '
-      + '<code>waypoints.json</code>. One dot saved.',
+    { cap: '<span class="stepnum">3</span><b>Bewaar waypoint 1.</b> Typ <code>rec</code>. Alle '
+      + 'zes gewrichtshoeken worden als één punt in <code>waypoints.json</code> bewaard.',
       run: () => { resetScene(); applyTip(START.x, START.y); revealWp(1); } },
 
-    { cap: '<span class="stepnum">4</span><b>The clamp catches an over-jog.</b> Nudge a joint '
-      + 'past its measured max and <code>clamp(angle, min, max)</code> trims it to the edge '
-      + '<i>before</i> the motor moves. The joint stops safely; the pen never crosses the line.',
+    { cap: '<span class="stepnum">4</span><b>De clamp vangt een te grote hoek op.</b> '
+      + '<code>clamp(hoek, min, max)</code> brengt de gecontroleerde opdracht terug tot de '
+      + 'gemeten grens vóór verzending. Dat is geen botsingsdetectie.',
       run: () => runClamp() },
 
-    { cap: '<span class="stepnum">5</span><b>Jog to the end &amp; record #2.</b> Lift the pen, '
-      + 'jog to where the line should end, set it down, and <code>rec</code> again. Two '
-      + 'waypoints now — the whole line is taught.',
+    { cap: '<span class="stepnum">5</span><b>Jog naar het einde en bewaar waypoint 2.</b> '
+      + 'Verplaats de pen en gebruik opnieuw <code>rec</code>. Twee punten beschrijven de lijn.',
       run: () => runToEnd() },
 
-    { cap: '<span class="stepnum">6</span><b>Replay through the clamp.</b> Type <code>replay</code>: '
-      + 'the arm eases from #1 to #2, slowly, every value re-clamped, drawing the line. See the '
-      + '<span class="danger">wobble</span>? That\'s the hobby-servo charm — not a defect.',
+    { cap: '<span class="stepnum">6</span><b>Speel terug via de clamp.</b> Typ <code>replay</code>: '
+      + 'de arm beweegt langzaam van punt 1 naar punt 2. Herhaal en meet de '
+      + '<span class="danger">spreiding</span>.',
       run: () => runReplay() },
   ];
 

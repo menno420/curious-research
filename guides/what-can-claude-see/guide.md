@@ -1,68 +1,82 @@
-# What can Claude actually see? — turn a photo or error into a fix
+# Een foto of foutmelding aan Claude geven — van beeld naar meetbare test
 
-**Watch it instead:** open [`index.html`](./index.html) in your browser — it animates this whole
-page and lets you flip between three real examples. (On GitHub: tap `index.html` → the **⋯** menu →
-*Download*, then open the downloaded file. Or open it in any Codespace/preview.)
+## Welk probleem lost dit op?
 
-## The one idea
+“Mijn print is mislukt” bevat te weinig informatie. Met een overzichtsfoto, detail, relevante
+instellingen en een concrete vraag kan Claude hypotheses rangschikken en een kleine proef
+voorstellen. Een beeld levert aanwijzingen, geen automatische zekerheid.
 
-If it's on your screen, you can show it to Claude — a **photo**, an **error message** (pasted as
-text), or a **screenshot** — and get back the same three things every time:
+Open [`index.html`](./index.html) voor de invoerketen.
 
-1. **What it sees** — in plain language.
-2. **The likely cause.**
-3. **One concrete thing to try** next.
+## Waarom dit voor jouw werkplaats telt
 
-Then you change one thing and ask again. That loop is the whole point.
+Claude kent via [`docs/workshop-profile.md`](../../docs/workshop-profile.md) de A1/A1 mini,
+Bambu Studio, Fusion 360 en de robotarm. Daardoor hoef je die context niet telkens uit te
+schrijven. Het beeld moet nog wel laten zien welk onderdeel, welke plaats en welke afwijking je
+bedoelt; materiaal, instellingen en geluid zijn vaak niet zichtbaar.
 
-## Three examples, start to finish
+## Benodigdheden
 
-### 1. A failed 3D print (a photo)
+- Claude met deze repository als context;
+- één overzichtsfoto en één scherpe detailfoto;
+- bij software: volledige fouttekst als kopieerbare tekst plus een screenshot voor context;
+- bij printen: printer, materiaalprofiel, plaat/nozzle en de relevante Bambu Studio-instellingen;
+- bij een bewegend systeem: video of opeenvolgende beelden, plus wat je hoorde en wanneer.
 
-1. Take a clear, well-lit photo of the print — get the whole failed area in frame.
-2. Start a chat with Claude and **drag the photo in** (or tap the attach/📎 button and pick it).
-3. Add one line of context: *"PLA, small printer, this stringing between the two towers — why?"*
-4. Claude reads the image and answers, e.g.: *"That's stringing — the nozzle oozes while travelling.
-   Likely too little retraction or the hot end a bit hot. Try +1 mm retraction and −5 °C."*
-5. Change **one** setting, reprint the test, and show the new photo. Repeat until it's clean.
+## Stappenplan
 
-### 2. A slicer error (pasted text)
+1. **Maak eerst een overzicht.** Laat onderdeel, oriëntatie en omgeving zien. Gebruik voldoende
+   licht en een rustige achtergrond.
+2. **Maak daarna één detail.** Zet een liniaal of bekende maat in beeld als schaal nuttig is.
+   Markeer de fout desnoods met een eenvoudige cirkel in een kopie van de foto.
+3. **Verwijder privé-informatie.** Controleer naam, adreslabel, serienummer, gezichten, schermtabs,
+   notificaties en reflecties. Deel geen toegangscodes of sleutels.
+4. **Geef niet-zichtbare context.** Noem materiaal, processtap, instelling, voorafgaand gedrag en
+   wat al is geprobeerd. Voeg de exacte fouttekst als tekst toe; laat Claude niet OCR raden als
+   kopiëren kan.
+5. **Vraag om observatie vóór diagnose.** Laat Claude eerst beschrijven wat werkelijk zichtbaar
+   is en dat scheiden van aannames.
+6. **Laat hypotheses rangschikken.** Vraag maximaal drie oorzaken, met per oorzaak welk detail
+   ervoor en ertegen spreekt.
+7. **Kies één onderscheidende test.** Een goede volgende stap verandert één variabele of vraagt
+   één extra foto/meting die hypotheses uit elkaar trekt.
+8. **Bewaar het resultaat pas na uitvoering.** Noteer foto, omstandigheden, wijziging en uitkomst
+   op de juiste project- of gidspagina. Een chatdiagnose is nog geen werkplaatsfeit.
 
-1. When your slicer (Cura, PrusaSlicer, etc.) shows a red error, select the text and copy it —
-   or screenshot it if you can't select it.
-2. Paste it into Claude with: *"My slicer says this — what does it mean and how do I fix it?"*
-3. Claude translates the jargon, e.g. *"'Not watertight / open edges' means the model has holes in
-   its surface. Run it through a free repair tool, then re-slice."*
+## Voorbeeldprompt
 
-### 3. An Arduino / code error (a screenshot)
+```text
+Lees eerst docs/workshop-profile.md. Beschrijf alleen wat je op deze twee foto's ziet.
+Scheid observaties, aannames en ontbrekende gegevens. Rangschik daarna maximaal drie oorzaken
+en geef één kleine test die ze het best uit elkaar trekt. Verander maar één variabele.
+```
 
-1. Screenshot the red error bar at the bottom of the Arduino editor (include the highlighted line).
-2. Paste or attach it with: *"New to this — what's wrong and where do I fix it?"*
-3. Claude points to the exact fix, e.g. *"Missing ';'. The real fix is the line **above** the one it
-   flags — add the semicolon there and upload again."*
+## Zo controleer je het resultaat
 
-## Good things to show it (your "when to ask" list)
+Geslaagd als Claude geen onbekend printer-, materiaal- of machinegegeven verzint, observaties van
+aannames scheidt en de voorgestelde proef een zichtbaar succescriterium heeft. Na de test moet je
+één hypothese sterker of zwakker kunnen maken.
 
-- A print that failed — stringing, warping, gaps, a blob, spaghetti.
-- Any red error text — from your slicer, the Arduino editor, or a terminal.
-- A screenshot of a setting you're unsure about: *"is this right for PLA?"*
-- A photo of your wiring: *"does this look safe?"* — it flags risks, **you verify the power yourself**.
+## Veelgemaakte fouten
 
-## Honest limits
+- Alleen een extreem close-upbeeld sturen zonder onderdeeloriëntatie.
+- Een screenshot sturen terwijl de fouttekst kopieerbaar is.
+- Vragen “wat is er mis?” zonder materiaal, processtap of doel.
+- Een foto als bewijs van onzichtbare temperatuur, stroom of maat behandelen.
+- Meerdere instellingen tegelijk veranderen en daarna de diagnose “bevestigd” noemen.
+- Privégegevens in achtergrond, reflectie of venstertitel vergeten.
 
-- It sees a **still image**, not live video — it can't watch a print happen in real time.
-- It can't **measure** exact millimetres or temperatures from a photo; it reasons from what's visible.
-- Blurry, dark, or cropped shots give a weaker read. Good light, the whole subject, and any error
-  text in frame all help a lot.
-- It only knows what you **show and tell** it — always mention the material, the printer, and what
-  you already tried.
-- A photo is never proof. For anything **mains-powered, hot, or load-bearing**, treat Claude's read
-  as a helpful second opinion and **check it yourself**.
+## Wanneer vraag je Claude?
 
-**Verify:** open [`index.html`](./index.html), click each of the three example tabs, and press
-**Replay** — you should see the input card slide into the "eye", a scan sweep, and a plain-language
-diagnosis appear on the right for all three. That's the exact experience you'll get in a real chat.
+- *"Welke extra foto geeft de meeste informatiewinst?"*
+- *"Welke van jouw beweringen is een observatie en welke is een aanname?"*
+- *"Vergelijk dit Bambu Preview-beeld met de foto van het werkelijke defect."*
+- *"Zet mijn uitgevoerde test en resultaat op de juiste plek, met bewijsniveau Experiment."*
 
-*Simplification note: the animated "eye" is a friendly picture, not how the model literally works
-inside. The three diagnoses shown are realistic examples, not fixed scripts — your real answer adapts
-to your exact photo and the details you give.*
+## Bronnen en bewijsniveau
+
+- De bekende machinecontext komt uit
+  [`docs/workshop-profile.md`](../../docs/workshop-profile.md) — **Geverifieerd in repository**.
+- Beeldinterpretatie en hypotheserangschikking — **Nog bevestigen** totdat een werkplaatstest de
+  oorzaak onderscheidt.
+- De uitgevoerde A/B-test — **Experiment**; promoveer alleen met vastgelegde herhaling en bron.

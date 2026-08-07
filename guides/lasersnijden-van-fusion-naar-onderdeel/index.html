@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lasersnijden — van Fusion-schets naar passend onderdeel</title>
+<style>
+:root{--bg:#f5f3ec;--card:#fff;--ink:#20251f;--muted:#687066;--line:#d7dbd2;--accent:#b45309;--ok:#15803d;--bad:#b91c1c;--shadow:0 8px 28px #2d2a2018}@media(prefers-color-scheme:dark){:root{--bg:#121613;--card:#1d241f;--ink:#eef4ed;--muted:#a8b3a7;--line:#3a443c;--accent:#f59e0b;--ok:#4ade80;--bad:#f87171;--shadow:0 8px 28px #0008}}*{box-sizing:border-box}body{margin:0;padding:28px 16px 48px;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,sans-serif}main{max-width:920px;margin:auto}h1{font-size:clamp(1.55rem,4vw,2.25rem);line-height:1.12;margin:.2em 0}.lead{color:var(--muted);max-width:68ch}.panel,.note{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-top:22px}.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:22px 0}.stage{min-height:105px;border:2px solid var(--line);border-radius:13px;padding:10px 7px;display:grid;place-content:center;text-align:center;position:relative;transition:.25s}.stage:not(:last-child):after{content:'›';position:absolute;right:-9px;top:35%;z-index:2;font-size:1.5rem;color:var(--muted)}.stage.active{border-color:var(--accent);background:#b4530912;transform:translateY(-5px)}.stage.done{border-color:var(--ok)}.stage b{display:block}.stage small{color:var(--muted)}.caption{min-height:5.5em;color:var(--muted);margin:15px 0}.caption b{color:var(--ink)}.controls{display:flex;gap:10px;flex-wrap:wrap}button,.button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 15px;font-weight:700;cursor:pointer;text-decoration:none}button.primary{background:var(--accent);border-color:var(--accent);color:#fff}.note h2{font-size:1.15rem;margin-top:0}.note li{margin:.45em 0}.danger{color:var(--bad);font-weight:750}code{background:var(--bg);padding:.12em .35em;border-radius:5px}@media(max-width:750px){.flow{grid-template-columns:1fr 1fr}.stage:not(:last-child):after{display:none}.stage{min-height:88px}}
+</style></head>
+<body><main><h1>Van Fusion-schets naar een passing die echt klopt</h1>
+<p class="lead">Een DXF is maar een tussenstap. Een betrouwbaar laseronderdeel ontstaat door schaal en lijnen te controleren, kerf op een proefstuk te meten en pas daarna de definitieve plaat te snijden.</p>
+<section class="panel">
+ <div class="flow" id="flow">
+  <div class="stage"><b>Fusion</b><small>één vlakke schets</small></div><div class="stage"><b>DXF</b><small>exporteer</small></div><div class="stage"><b>Laser-software</b><small>schaal + lijnen</small></div><div class="stage"><b>Kerfproef</b><small>meet passing</small></div><div class="stage"><b>Test cut</b><small>klein en goedkoop</small></div><div class="stage"><b>Assemblage</b><small>pasvorm loggen</small></div>
+ </div>
+ <div class="caption" id="caption" aria-live="polite"></div>
+ <div class="controls"><button id="prev">◀ Terug</button><button class="primary" id="next">Volgende ▶</button><button id="play">Alles afspelen</button><button id="reset">↻ Opnieuw</button></div>
+</section>
+<section class="note"><h2>De beslissingen die verschil maken</h2>
+ <ul><li>Exporteer alleen de bedoelde vlakke schets; controleer in de lasersoftware één bekende maat.</li><li>Compenseer kerf op <em>één</em> plek: in het ontwerp óf in de lasersoftware, niet dubbel.</li><li>Maak per materiaal en dikte een passingcoupon met meerdere spleetmaten.</li><li>Wijzig bij parameterproeven één variabele tegelijk en noteer materiaal, dikte, machine en resultaat.</li><li class="danger">Snijd nooit onbekende kunststof. PVC en andere chloorhoudende materialen zijn gevaarlijk voor mens en machine.</li></ul>
+ <a class="button" href="https://github.com/menno420/curious-research/blob/main/guides/lasersnijden-van-fusion-naar-onderdeel/guide.md">Open de volledige workflow en het testlog</a>
+</section></main>
+<script>
+const text=[
+'<b>1 · Fusion.</b> Maak gesloten contouren op één vlak. Verwijder hulplijnen en dubbele geometrie voordat je exporteert.',
+'<b>2 · DXF.</b> Exporteer de schets, niet een willekeurige aanzichtprojectie. De DXF draagt nog geen bewijs van de juiste schaal.',
+'<b>3 · Importcontrole.</b> Meet één referentiemaat, verwijder dubbele lijnen en wijs snij- en graveerlagen bewust toe.',
+'<b>4 · Kerfproef.</b> Snijd een kleine coupon. De beste passing komt uit meting op jouw materiaal, niet uit een universele kerfwaarde.',
+'<b>5 · Test cut.</b> Snijd eerst het kleinste representatieve deel. Controleer maat, rand, vlamvorming en loskomen.',
+'<b>6 · Assemblage.</b> Pas zonder geweld. Leg de gekozen offset en instellingen vast zodat de volgende versie reproduceerbaar is.'
+];const stages=[...document.querySelectorAll('.stage')],caption=document.getElementById('caption');let step=0,timer;
+function show(n){step=(n+text.length)%text.length;stages.forEach((el,i)=>el.className='stage'+(i<step?' done':i===step?' active':''));caption.innerHTML=text[step]}
+function stop(){clearInterval(timer);timer=null}document.getElementById('next').onclick=()=>{stop();show(step+1)};document.getElementById('prev').onclick=()=>{stop();show(step-1)};document.getElementById('reset').onclick=()=>{stop();show(0)};document.getElementById('play').onclick=()=>{stop();show(0);timer=setInterval(()=>step===text.length-1?stop():show(step+1),2300)};show(0);
+</script></body></html>

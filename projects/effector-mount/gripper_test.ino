@@ -3,7 +3,7 @@
 //  Part of: curious-research / projects/effector-mount
 // ----------------------------------------------------------------------------
 //  WHAT THIS IS  --  AND WHAT IT IS NOT
-//  A tiny, safe sketch to exercise the gripper's SINGLE servo on the BENCH,
+//  A tiny bench sketch to exercise the gripper's SINGLE servo on the BENCH,
 //  BY ITSELF, so you can find its open and closed positions and watch the jaws
 //  move before you ever trust them on anything. It sweeps the servo slowly
 //  between an OPEN pulse and a CLOSE pulse, pausing at each end, forever.
@@ -18,9 +18,9 @@
 //      through clamp() before it can reach a motor. A raw servo write like the
 //      one in THIS sketch has no envelope behind it — that is exactly why it
 //      stays on the bench and off the arm.
-//    * arm/calibration.json DOES NOT EXIST YET. Until you measure and write it,
-//      NO arm motion can run at all. This bench sketch needs no calibration
-//      because it moves nothing but this one gripper servo on your desk.
+//    * The repository's controlled arm workflow requires arm/calibration.json.
+//      That does not guarantee that other sketches or board startup cannot move
+//      hardware. This bench sketch needs separate, measured gripper limits.
 //
 //  HOW TO USE IT (makers)
 //    1. Wire ONE servo per the WIRING block below (external fused supply!).
@@ -32,15 +32,15 @@
 //
 //    SERVO POWER IS A SEPARATE, EXTERNAL, FUSED SUPPLY. NEVER THE ARDUINO 5 V PIN.
 //
-//    A gripper servo STALLS by design (it pushes on the object and stops). A
-//    stalling servo gulps far more current than the Arduino's onboard regulator
+//    A gripper servo CAN STALL if commanded farther than the jaws or object can
+//    move. A stalling servo draws far more current than the Arduino regulator
 //    can give — powering it from the 5 V pin browns out the board (it resets or
 //    acts drunk) or fries it outright.
 //
-//    * Use a dedicated 5-6 V supply (battery pack or bench PSU) sized for the
-//      servo's STALL current (an MG996R can pull ~2.5 A at stall).
-//    * FUSE the supply's positive lead (a 2-3 A fuse suits one 9 g-class servo;
-//      size it to your servo's stall spec).
+//    * Use a dedicated supply within the ACTUAL servo's voltage range and size
+//      it from that exact model's specification plus a supervised measurement.
+//    * FUSE the positive lead. Choose the fuse from measured current, supply
+//      capability and wire capacity; no universal rating is asserted here.
 //    * A REACHABLE POWER SWITCH on the servo supply, within arm's reach, so you
 //      can cut motor power instantly WITHOUT unplugging the USB.
 //    * SHARED GROUND: the servo supply's (-) MUST connect to the Arduino GND, or
@@ -67,8 +67,9 @@ const int SERVO_PIN = 9;
 
 // ============================================================================
 //  THE TWO NUMBERS YOU MEASURE  --  in MICROSECONDS of pulse width.
-//  A hobby servo reads a pulse ~500..2500 us wide as "go to this angle". The
-//  exact pulse for "jaws just open" and "jaws just touching" depends on YOUR
+//  A hobby servo reads repeated control pulses, but its accepted pulse range is
+//  model-specific. Do NOT assume a universal 500..2500 us range. The exact pulse
+//  for "jaws just open" and "jaws just touching" depends on YOUR
 //  servo, YOUR pinion, and how you clocked the horn on the shaft — so YOU find
 //  them, once, by hand. There is no universal value.
 //
@@ -79,14 +80,15 @@ const int SERVO_PIN = 9;
 //    4. GRIP_OPEN_US  = the pulse where the jaws are open as wide as you need.
 //    5. GRIP_CLOSE_US = the pulse where the jaws JUST MEET / just touch your
 //       object -- and NO FURTHER. Do NOT drive them harder into a closed stall:
-//       a stalled servo overheats and strips its gears (and an SG90's plastic
-//       gears strip fast -- use MG90S/MG996R, see the .scad servo note).
-//    6. Once found, they hardly ever change -- write them in and leave them.
+//       a stalled servo can overheat or damage its gears.
+//    6. Record the values with the exact servo and mechanism revision; recheck
+//       after mechanical changes.
 //
-//  The starting values below are SAFE-ISH placeholders near servo centre so a
-//  first power-on barely moves. REPLACE them with your measured numbers.
+//  The starting values below are UNVERIFIED placeholders near nominal centre.
+//  They can still cause motion or a jam on your mechanism. REPLACE them with
+//  values established by a supervised incremental bench test.
 // ============================================================================
-const int GRIP_MID_US   = 1500;   // ~centre; a servo barely moves from here
+const int GRIP_MID_US   = 1500;   // placeholder only; NOT a proven centre
 const int GRIP_OPEN_US  = 1300;   // <-- MEASURE: pulse for "jaws open"
 const int GRIP_CLOSE_US = 1600;   // <-- MEASURE: pulse for "jaws just meet"
                                   //     (set so they TOUCH, never stall harder)
@@ -122,14 +124,15 @@ void printBanner() {
   Serial.println("  GRIPPER BENCH TEST  --  ONE servo, on the bench, NOT on the arm.");
   Serial.println(line);
   Serial.println("  BEFORE you let this run:");
-  Serial.println("   * SERVO POWER = a SEPARATE, FUSED 5-6 V supply, ground shared to the");
+  Serial.println("   * SERVO POWER = a SEPARATE, FUSED supply within the ACTUAL servo");
+  Serial.println("     voltage range, sized from its spec and measurement; ground shared to");
   Serial.println("     Arduino GND, with a REACHABLE switch. NEVER the Arduino's 5 V pin --");
   Serial.println("     a gripping servo stalls and browns out or fries the board.");
   Serial.println("   * KEEP A HAND ON THE POWER SWITCH. Watch every sweep. If it buzzes,");
   Serial.println("     smells hot, or jams closed, CUT POWER FIRST, ask questions after.");
   Serial.println("   * BENCH ONLY. This drives one servo. It is NOT arm motion code --");
   Serial.println("     arm-mounted use goes through the clamped teach_and_replay.py path");
-  Serial.println("     against arm/calibration.json (which does not exist yet).");
+  Serial.println("     against a measured arm/calibration.json. That is separate from this test.");
   Serial.println("   * Set GRIP_CLOSE_US so the jaws JUST MEET -- never a hard stall.");
   Serial.println(line);
   Serial.print("  open pulse  = "); Serial.print(GRIP_OPEN_US);  Serial.println(" us");
@@ -144,7 +147,7 @@ void setup() {
   printBanner();
 
   gripper.attach(SERVO_PIN);
-  // Start centred so the very first motion is small and predictable.
+  // This immediately commands the UNVERIFIED centre placeholder. It may move.
   currentUs = GRIP_MID_US;
   gripper.writeMicroseconds(currentUs);
   delay(END_PAUSE_MS);

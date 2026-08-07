@@ -1,36 +1,25 @@
-# My clearance numbers
+# Gemeten spelingswaarden
 
-> Fill one row per **printer + filament**. These are the gaps you *measured* with
-> the tolerance coin — your printer's truth. Claude reads this file before
-> designing anything that has to fit together.
->
-> All numbers are **radial clearance in mm, per side** (see the guide, step 11).
+> Vul één rij in per geteste combinatie. Dit bestand is de bron voor fysieke meetresultaten;
+> chatberichten zijn dat niet.
 
-How to read the columns:
-- **Press** — tightest gap that pushed in firmly and held (no wobble).
-- **Snug** — gap that slid in snug with no side-to-side play.
-- **Loose** — gap where the pin dropped in and rattled.
+Alle passingswaarden zijn **radiale speling in millimeters, per zijde**. Een waarde van `0.20`
+betekent dus `0.40` mm verschil over de volledige diameter.
 
----
+## Resultaten
 
-## Small printer
+| Printer | Nozzle | Filament (merk, type, kleur) | Procesprofiel / laaghoogte | Nozzle / bed | Olifantsvoetcompensatie | Datum | Klempassing | Nauw schuivend | Los | Notities |
+|---|---|---|---|---|---|---|---:|---:|---:|---|
+|  |  |  |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |  |  |  |
 
-| Filament (brand + type) | Date | Press | Snug | Loose | Notes (temp, layer h, speed) |
-|---|---|---|---|---|---|
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
+## Interpretatie
 
-## 3-colour printer
+- **Klempassing:** stevig indrukken, blijft zitten zonder merkbare speling.
+- **Nauw schuivend:** gecontroleerd beweegbaar zonder duidelijke zijdelingse speling.
+- **Los:** valt gemakkelijk in en heeft merkbare vrije ruimte.
 
-| Filament (brand + type) | Date | Press | Snug | Loose | Notes (temp, layer h, speed) |
-|---|---|---|---|---|---|
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
-
----
-
-### Example (delete once you have your own)
-
-| Filament (brand + type) | Date | Press | Snug | Loose | Notes |
-|---|---|---|---|---|---|
-| Generic grey PLA | 2026-07-13 | 0.10 | 0.20 | 0.45 | 210 °C, 0.2 mm layer, elephant-foot 0.2 |
+Noteer in **Notities** afwijkingen zoals braamvorming, vervormde eerste laag, vochtverdacht
+filament, andere oriëntatie of een meetreeks die te smal bleek. Laat een waarde leeg wanneer die
+passing niet binnen de geprinte reeks voorkwam; vul geen schatting in.

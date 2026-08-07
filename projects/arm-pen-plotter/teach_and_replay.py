@@ -4,7 +4,7 @@
 #  Part of: curious-research / projects/arm-pen-plotter
 # ----------------------------------------------------------------------------
 #  WHAT THIS IS
-#  A tiny, safe tool for the 6-servo arm. You physically "teach" the arm poses
+#  A small controlled-operation tool for the 6-servo arm. You physically teach
 #  by nudging each joint a few degrees at a time (that's "jogging"), snapshot
 #  the pose as a "waypoint", and build up a little list of waypoints. Then you
 #  can "replay" that list slowly to redraw the same move -- the honest,
@@ -15,20 +15,24 @@
 #    - servo     = a motor you command to an exact angle (0..180 deg). Six here.
 #    - jog       = nudge one joint a small step at a time, by eye.
 #    - waypoint  = one snapshot of all six joint angles, saved to replay later.
-#    - clamp     = trim any angle back inside the safe min/max you measured, so
-#                  a bad number can NEVER reach a motor. clamp(200, 20, 120)=120.
-#    - envelope  = the safe angle range per joint, measured by hand once and
-#                  written into arm/calibration.json (YOUR file, YOUR numbers).
+#    - clamp     = trim an angle to the measured min/max in this software route.
+#                  clamp(200, 20, 120)=120; it is not collision detection.
+#    - range     = the measured numeric range per joint, written into
+#                  arm/calibration.json (YOUR file, YOUR numbers).
 #
-#  THE HARD SAFETY RULES (binding -- see repo CLAUDE.md and the envelope guide):
-#    1. This tool REFUSES to run without arm/calibration.json. No calibration,
-#       no motion. There is no override.
+#  CONTROL AND SUPERVISION RULES (see CLAUDE.md and the range guide):
+#    1. This LAPTOP TOOL refuses controlled operation without
+#       arm/calibration.json. This is not a hardware interlock: the companion
+#       Arduino sketch writes 90 degrees during setup(), so a board reset may
+#       move servos before the calibration handshake. Read the README startup
+#       warning and keep the power switch within reach.
 #    2. EVERY value sent to the serial port goes through ONE function --
 #       _send_servo() -- and that function clamps first, always. There is no
-#       other way to reach the port. That is the whole safety design: it is
-#       structurally impossible to send an unclamped angle.
-#    3. Servo power is a SEPARATE, FUSED 5-6 V supply with a shared ground and
-#       a reachable switch -- NEVER the Arduino's 5 V pin.
+#       other send path in the current file. That proves numeric limiting only
+#       for this route; startup and physical collisions remain separate.
+#    3. Servo power is separate from Arduino 5 V, within the exact servo's
+#       specified range and sized/protected from verified data plus measurement.
+#       Share signal ground and keep the cutoff reachable.
 #    4. A human watches every powered move, hand on the switch. Nothing here is
 #       ever "safe unattended". Cut power first, ask questions after.
 #
@@ -56,10 +60,11 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(HERE, os.pardir, os.pardir))
 CALIBRATION_PATH = os.path.join(REPO_ROOT, "arm", "calibration.json")
-ENVELOPE_GUIDE = "guides/arm-envelope-explained/guide.md"
+ENVELOPE_GUIDE = "guides/arm-werkgebied/guide.md"
 
-# The six joints, in the order they appear on the wire (index 0..5). This must
-# match the servo order your Arduino sketch expects at the pins.
+# Six legacy software labels, index 0..5. Their mapping to the physical 6-DOF
+# arm and controller pins is NOT confirmed. Document and verify that mapping
+# before powered use; changing these keys also requires migrating calibration.
 JOINT_ORDER = ["base", "shoulder", "elbow", "wrist_tilt", "wrist_rotate", "gripper"]
 
 # Replay defaults -- deliberately SLOW. A first move should crawl so you have
@@ -77,12 +82,12 @@ DEFAULT_BAUD = 115200
 def clamp(value, lo, hi):
     """Return value trimmed into the inclusive range [lo, hi].
 
-    clamp(200, 20, 120) -> 120   (too high, trimmed down to the safe max)
-    clamp(5,   20, 120) -> 20    (too low,  trimmed up to the safe min)
-    clamp(75,  20, 120) -> 75    (already safe, unchanged)
+    clamp(200, 20, 120) -> 120   (too high, trimmed to measured max)
+    clamp(5,   20, 120) -> 20    (too low, trimmed to measured min)
+    clamp(75,  20, 120) -> 75    (inside the numeric range)
     """
     if lo > hi:
-        # A calibration file with min > max is nonsense and unsafe. Refuse.
+        # A calibration file with min > max is internally inconsistent. Refuse.
         raise ValueError("bad limits: lo (%s) is greater than hi (%s)" % (lo, hi))
     if value < lo:
         return lo
@@ -92,11 +97,11 @@ def clamp(value, lo, hi):
 
 
 class Calibration:
-    """Your measured safe envelope: per-joint min / max / center, in degrees.
+    """Your measured numeric range: per-joint min / max / center, in degrees.
 
     Loaded from arm/calibration.json. If that file is missing or still holds
     the template's PLACEHOLDER values, we refuse to run -- those numbers are
-    not safe for YOUR arm.
+    not measurements of YOUR arm.
     """
 
     def __init__(self, joints, measured_by, measured_on):
@@ -141,7 +146,7 @@ class Calibration:
                 _die("Joint '%s' in %s needs min, max, and center." % (name, path))
             if lo > hi:
                 _die(
-                    "Joint '%s' in %s has min (%s) above max (%s) -- that is unsafe. Re-measure."
+                    "Joint '%s' in %s has min (%s) above max (%s) -- re-measure."
                     % (name, path, lo, hi)
                 )
             joints[name] = {"min": lo, "max": hi, "center": center}
@@ -149,7 +154,7 @@ class Calibration:
         if placeholders:
             _die(
                 "Your %s still holds TEMPLATE placeholder values for: %s.\n"
-                "These are NOT safe for your arm. Measure each joint by hand and replace them --\n"
+                "These are NOT measurements of your arm. Measure each joint and replace them --\n"
                 "the how-to is in %s."
                 % (path, ", ".join(placeholders), ENVELOPE_GUIDE)
             )
@@ -175,10 +180,10 @@ def _refuse_no_calibration(path):
         "  NO CALIBRATION FILE -- refusing to run.\n"
         "  ------------------------------------------------------------------\n"
         "  Expected: %s\n\n"
-        "  This tool will not move the arm until YOU have measured each servo's\n"
-        "  safe min / max / center by hand and written them into that file.\n"
-        "  The clamp is only as safe as those numbers, and nobody else's numbers\n"
-        "  are safe for your arm.\n\n"
+        "  This laptop tool will not send controlled moves until YOU have measured each servo's\n"
+        "  min / max / center and written them into that file.\n"
+        "  The clamp only applies those numeric bounds; it does not detect\n"
+        "  obstacles, wiring problems or unsafe startup.\n\n"
         "  How to make it (about 20 minutes, power OFF first):\n"
         "    1. Read %s\n"
         "    2. Copy the template:\n"
@@ -232,15 +237,15 @@ class Arm:
         self._serial = serial.Serial(self.port, self.baud, timeout=2)
         time.sleep(2.0)  # give the board a moment to reset after the port opens
 
-        # Defense in depth: send the safe limits to the Arduino so it can clamp
-        # on-board too. Even if this laptop code had a bug, the board still
-        # refuses out-of-range angles. Handshake format matches the .ino sketch:
+        # Send the measured numeric limits to the Arduino so the normal command
+        # route also clamps on-board. This does not cover setup() before the
+        # handshake. Handshake format matches the .ino sketch:
         #   L,<joint_index>,<min>,<max>\n
         for i, name in enumerate(JOINT_ORDER):
             lo, hi = self.calib.limits(name)
             self._write_line("L,%d,%d,%d" % (i, int(lo), int(hi)))
             time.sleep(0.02)
-        print("Sent safe limits to the board (it will clamp on-board too).")
+        print("Sent measured limits to the board (normal commands clamp on-board too).")
 
     def close(self):
         if self._serial is not None:
@@ -257,26 +262,26 @@ class Arm:
         """The ONLY function that sends a servo angle. It clamps first, always.
 
         Returns the angle actually sent (post-clamp) so callers can update the
-        believed pose with the real, safe value -- never the raw request.
+        believed pose with the bounded value -- never the raw request.
         """
         lo, hi = self.calib.limits(name)
-        safe = clamp(angle, lo, hi)
+        bounded = clamp(angle, lo, hi)
         idx = JOINT_ORDER.index(name)
         # Wire format matches the .ino sketch:  S,<joint_index>,<angle>\n
-        line = "S,%d,%d" % (idx, int(round(safe)))
+        line = "S,%d,%d" % (idx, int(round(bounded)))
         if self.dry_run:
-            tag = "" if safe == angle else "  (clamped from %s)" % angle
+            tag = "" if bounded == angle else "  (clamped from %s)" % angle
             print("  [dry-run] -> %s%s" % (line, tag))
         else:
             self._write_line(line)
-        return safe
+        return bounded
 
     # -- movement (all routed through _send_servo) --------------------------
     def move_to(self, name, angle):
         """Move ONE joint to an angle (clamped). Updates the believed pose."""
-        safe = self._send_servo(name, angle)
-        self.pose[name] = safe
-        return safe
+        bounded = self._send_servo(name, angle)
+        self.pose[name] = bounded
+        return bounded
 
     def goto_pose(self, target, move_delay=DEFAULT_MOVE_DELAY):
         """Ease ALL joints from the current pose to `target`, one degree at a
@@ -285,25 +290,25 @@ class Arm:
         Interpolating in 1-degree sub-steps keeps the motion gentle instead of
         snapping, which matters a lot on a wobbly hobby arm."""
         # Pre-clamp the target so our step count matches what will actually move.
-        safe_target = {}
+        bounded_target = {}
         for name in JOINT_ORDER:
             lo, hi = self.calib.limits(name)
-            safe_target[name] = clamp(target.get(name, self.pose[name]), lo, hi)
+            bounded_target[name] = clamp(target.get(name, self.pose[name]), lo, hi)
 
         # How many 1-degree steps does the furthest-travelling joint need?
-        spans = [abs(safe_target[n] - self.pose[n]) for n in JOINT_ORDER]
+        spans = [abs(bounded_target[n] - self.pose[n]) for n in JOINT_ORDER]
         steps = int(max(spans)) if spans else 0
         if steps <= 0:
             # Nothing moves; still (re)assert the pose once, clamped.
             for name in JOINT_ORDER:
-                self.move_to(name, safe_target[name])
+                self.move_to(name, bounded_target[name])
             return
 
         start = dict(self.pose)
         for s in range(1, steps + 1):
             frac = s / steps
             for name in JOINT_ORDER:
-                a = start[name] + (safe_target[name] - start[name]) * frac
+                a = start[name] + (bounded_target[name] - start[name]) * frac
                 self.move_to(name, a)   # clamped inside move_to -> _send_servo
             time.sleep(move_delay)
 
@@ -339,15 +344,15 @@ def print_banner(calib):
     print("  SAFETY, every single time:")
     print("   * HAND ON THE FUSED EXTERNAL SUPPLY SWITCH before any powered move.")
     print("   * WATCH every move. If it looks/sounds/smells wrong, KILL POWER first.")
-    print("   * Servo power is a SEPARATE 5-6 V supply, shared ground, fused,")
-    print("     reachable switch -- NEVER the Arduino's 5 V pin.")
+    print("   * Servo power is SEPARATE from Arduino 5 V and within the exact")
+    print("     servo's specified range; shared ground, protected, cutoff reachable.")
     print("   * Every angle this tool sends is CLAMPED to your measured limits.")
-    print("     The clamp is only as safe as the numbers YOU measured.")
+    print("     This is numeric limiting, not collision or startup protection.")
     print(line)
     who = calib.measured_by or "(unnamed)"
     when = calib.measured_on or "(no date)"
     print("  Calibration loaded  --  measured by %s on %s" % (who, when))
-    print("  Safe limits (min / max degrees):")
+    print("  Measured numeric limits (min / max degrees):")
     for name in JOINT_ORDER:
         lo, hi = calib.limits(name)
         print("     %-13s %3d ... %3d   (center %d)"
@@ -453,7 +458,7 @@ def teach_loop(arm, wp_path, wp_data, step_deg):
             after = arm.move_to(name, before + delta)
             print("  %s: %d -> %d%s"
                   % (name, int(before), int(after),
-                     "" if after == before + delta else "  (clamped at a safe limit)"))
+                     "" if after == before + delta else "  (clamped at a measured limit)"))
 
         elif cmd == "set" and len(parts) == 3:
             name = resolve_joint(parts[1])
@@ -468,7 +473,7 @@ def teach_loop(arm, wp_path, wp_data, step_deg):
             after = arm.move_to(name, target)
             print("  %s -> %d%s"
                   % (name, int(after),
-                     "" if after == target else "  (clamped to a safe limit)"))
+                     "" if after == target else "  (clamped to a measured limit)"))
 
         elif cmd == "rec":
             snapshot = {n: int(round(arm.pose[n])) for n in JOINT_ORDER}

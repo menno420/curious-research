@@ -82,24 +82,35 @@ dat zie je in de animatie.
 
 ## Aan de slag
 
+### Eerst: dit programma beweegt direct na startup
+
+De sketch koppelt in `setup()` alle zes servo's aan, stuurt de waarden uit `JOINT_HOME` en
+begint daarna automatisch tussen twee standen heen en weer te bewegen. De meegeleverde waarden
+85–95° en `JOINT_HOME = 90°` zijn **geen gemeten waarden van deze arm**. Een klein bereik rond
+een onbevestigde middenstand is niet automatisch veilig: 90° kan door montage, hoornstand,
+kabels of gereedschap al onbruikbaar zijn.
+
+> Gebruik de sketch niet met servovoeding aan voordat pinvolgorde, min/max en iedere home-waarde
+> op de echte arm zijn gecontroleerd. De clamp begrenst de normale bewegingsroute; hij ziet geen
+> obstakels en bewijst niet dat startup veilig is.
+
 ### Stap 1 · Meet eerst je grenzen op
 
-Bovenin de sketch staat een tabel `JOINT_MIN` / `JOINT_MAX`. Daar staan nu startwaarden van
-85 tot 95 graden in — een spleet van 10 graden rond het midden.
-
-**Dat is expres.** Zo kun je de sketch veilig uitproberen: je ziet hem netjes optrekken en
-afremmen binnen een paar graden, zonder dat een verkeerd getal de arm ergens in kan rammen.
+Bovenin de sketch staat een tabel `JOINT_MIN` / `JOINT_MAX`. Daar staan placeholders van
+85 tot 95 graden in — een kleine band rond een nog onbevestigde 90°-stand. Die kleine band
+beperkt de grootte van de automatische testbeweging, maar maakt de stand niet bewezen veilig.
 
 Vervang ze door je eigen opgemeten waarden. Hoe je die meet staat in
-[`guides/arm-envelope-explained/guide.md`](../../guides/arm-envelope-explained/guide.md).
+[`guides/arm-werkgebied/guide.md`](../../guides/arm-werkgebied/guide.md).
 Meet met marge: blijf een paar graden weg van waar een gewricht mechanisch klem loopt.
 
 ### Stap 2 · Controleer je bedrading
 
-⚠️ **Servovoeding is een aparte voeding.** Nooit de 5V-pin van de Arduino. Gedeelde massa,
-een zekering, en een schakelaar die je kunt bereiken. Zes MG996R samen vastgelopen is in de
-orde van **15 ampère**. De hele rekensom staat in
-[`../arm-pen-plotter/pen_plotter_arm.ino`](../arm-pen-plotter/pen_plotter_arm.ino).
+⚠️ **Servovoeding is een aparte voeding.** Nooit de 5V-pin van de Arduino. Gebruik gedeelde
+massa, een passende zekering en een schakelaar die je direct kunt bereiken. De exacte
+gecombineerde piek- en blokkeerstroom is hier niet geverifieerd: stel eerst de werkelijke
+servovariant vast, controleer de specificatie bij de fabrikant of leverancier en meet de arm
+onder begeleide belasting. Ontwerp de voeding niet op één internetwaarde voor “MG996R”.
 
 ### Stap 3 · Zet de pinnen goed
 
@@ -111,11 +122,13 @@ Pas aan naar de pinnen waar jouw signaaldraden op zitten.
 
 ### Stap 4 · Upload en kijk
 
-Open [`soepele_beweging.ino`](./soepele_beweging.ino) in de Arduino IDE, kies je bordje, en
-klik op het pijltje naar rechts (→). Open daarna **Tools → Serial Monitor** op **115200** —
-daar vertelt de sketch wat hij doet.
+Test de rekenlogica eerst met de servovoeding uit. Open daarna
+[`soepele_beweging.ino`](./soepele_beweging.ino) in de Arduino IDE, kies je bord en klik op
+Upload. Open **Tools → Serial Monitor** op **115200** en lees de startupmelding.
 
-De arm gaat heen en weer tussen twee standen. **Hand bij de schakelaar, ogen erbij.**
+Na bekrachtiging gaat de arm automatisch heen en weer tussen twee standen.
+**Hand bij de uitschakeling, ogen erbij; stop bij brommen, klemmen, reset of onverwachte
+richting.**
 
 ---
 

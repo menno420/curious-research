@@ -21,17 +21,18 @@
 //      magnet_tool.scad) that includes it. The bare plate is only handy as a
 //      quick "does my horn fit?" test print.
 //
-// NO RENDERER HERE
-//   This was written in a container with no OpenSCAD installed, so it has NOT
-//   been rendered or sliced. You are the one who opens it, renders (F6), slices,
-//   loads, starts, and watches every print. Treat any "it'll fit / it'll hold"
-//   as YOUR call to check.
+// RENDER STATUS (2026-08-07)
+//   OpenSCAD 2021.01 rendered the default plate and the no-hub/no-notch branch
+//   to simple manifold STL meshes without warnings. This validates the source
+//   geometry only. The placeholder dimensions, physical fit, strength, slicing
+//   and print behaviour remain unverified.
 //
 // SAFETY (arm rails)
 //   This file makes ONLY the passive mounting interface — there is no motion
-//   code here and none belongs here. The arm moves only inside its calibrated
-//   envelope, through routines that clamp to it, with a human watching. Any tool
-//   that lifts a load is a "check this yourself."
+//   code here and none belongs here. This passive model makes no claim about
+//   Arduino startup or hardware safety. Any powered arm route still needs
+//   measured limits, reviewed startup and supervised testing. Any tool that
+//   lifts a load is a "check this yourself."
 // =============================================================================
 
 
@@ -50,23 +51,22 @@
 // =============================================================================
 
 // -- The two horn screws (the bolt pattern every tool shares) --
-horn_span     = 16.0;   // centre-to-centre distance between the two horn screws
+horn_span     = 16.0;   // PLACEHOLDER: centre-to-centre distance between the two horn screws
                         // (mm). Measure hole-centre to hole-centre on your horn.
-horn_screw_d  = 2.2;    // screw CLEARANCE diameter (mm). The M2 self-tappers that
-                        // ship with 9 g servos slide freely at 2.2. Bigger screw?
-                        // Use its shaft diameter + about 0.2 mm.
+horn_screw_d  = 2.2;    // PLACEHOLDER: screw clearance diameter (mm). Measure the
+                        // real fastener and validate it with a thin test print.
 
 // -- Plate size + thickness --
-mount_th      = 3.0;    // plate thickness (mm). 3 mm is stiff enough for light
-                        // tools in PETG; go 4 mm if a tool feels bendy.
+mount_th      = 3.0;    // PLACEHOLDER: plate thickness (mm). Determine from the
+                        // real load, material, orientation and a supervised test.
 plate_w       = 28.0;   // plate width, across the two screws (mm).
 plate_front   = 10.0;   // how far the plate reaches FORWARD of the horn centre
                         // (mm). Tools that need more room pass a bigger value.
 plate_back    =  8.0;   // how far it reaches BEHIND the horn centre (mm).
 
 // -- Keying feature #1: the hub recess (centres the plate, resists wobble) --
-// Most 9 g horns have a raised round hub around the centre boss. A shallow recess
-// that drops over that hub self-centres the plate on the shaft. With the two
+// If the measured horn has a raised round hub, a shallow recess can centre the
+// plate on the shaft. With the two
 // offset screws, it stops the plate shifting or pivoting.
 horn_hub_d    = 8.0;    // diameter of your horn's raised centre hub (mm).
                         // Set to 0 to switch the hub recess OFF.

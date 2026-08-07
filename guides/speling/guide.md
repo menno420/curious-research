@@ -1,114 +1,118 @@
-# Speling tussen onderdelen — waarom ze klemmen, en het gaatje lucht dat het oplost
+# Speling tussen geprinte onderdelen meten en hergebruiken
 
-**Bekijk het liever:** open [`index.html`](./index.html) in je browser — die animeert deze
-hele pagina in ongeveer 20 seconden. *(Hoe je hem opent staat onderaan.)*
+> Open [`index.html`](./index.html) voor de korte animatie. De animatie legt het principe
+> uit; de coupon en je meetlog leveren de ontwerpwaarde.
 
-Twee onderdelen die je op **precies dezelfde maat** print, passen niet. Ze lassen aan elkaar
-vast tot één klomp. De oplossing is een bewust gelaten laagje lucht — maar daar zitten twee
-dingen in waar bijna iedereen de eerste keer over struikelt: die ruimte telt **per kant**, en
-de **onderkant** van een gat liegt over de pasvorm.
+## Welk probleem lost dit op?
 
-Hier is het hele idee in vier stappen.
+Een pen en gat die in CAD exact dezelfde nominale maat hebben, klemmen na FDM-printen vaak
+of hechten lokaal aan elkaar. Lijnbreedte, materiaalstroom, krimp, laagoriëntatie en de
+eerste laag veranderen de werkelijke geometrie. Deze workflow bepaalt doelbewust de speling
+voor een gewenste pers-, schuif- of losse passing.
 
-> **Woorden die je hieronder tegenkomt**
-> - **Speling** — de ruimte die je expres tussen twee onderdelen laat zodat ze passen.
->   In slicers en CAD heet dit *clearance* of *tolerance*.
-> - **FDM** — het printen met gesmolten plastic dat jouw machine doet. Het plastic is nog
->   zacht als het neerkomt, en dát is precies waaróm die speling nodig is.
-> - **Slicer** — het programma dat je 3D-model omzet in instructies voor de printer. Bij jou
->   is dat Bambu Studio.
+## Waarom dit voor jouw werkplaats telt
 
----
+Dezelfde Fusion-parameter kan op de A1 en A1 mini een andere passing geven, zeker na een
+wisseling van materiaal, nozzle, oriëntatie of profiel. Een kleine coupon maakt van een gok
+een herbruikbare ontwerpwaarde en verbindt CAD rechtstreeks met fabricage en test.
 
-## De vier stappen, in gewone taal
+## Benodigdheden
 
-### 1. Nul speling mislukt — de onderdelen lassen vast
+- Bambu Lab A1 of A1 mini en Bambu Studio met het juiste profiel;
+- het [pasmuntproject](../../projects/tolerance-test-coin/) of een eigen parametrische
+  coupon;
+- hetzelfde materiaal en dezelfde oriëntatie als het uiteindelijke onderdeel;
+- schuifmaat en een meetlog.
 
-Een pen en een gat die je even groot tekent, schuiven niet in elkaar. FDM-plastic is zacht op
-het moment dat het neergelegd wordt, dus het puilt uit in elke ruimte die je overlaat — en die
-was er niet. De twee onderdelen smelten samen tot één geheel.
+## Belangrijk onderscheid: per kant of over de diameter
 
-**Een gat moet dus altijd iets groter geprint worden dan de pen die erin gaat.**
+Bij een ronde pen-gatcombinatie is de diametrale speling tweemaal de radiale speling:
 
-### 2. Speling erbij — en die telt PER KANT
-
-Laat je ruimte, dan schuift de pen erin. De valkuil: die ruimte zit aan **beide** wanden van
-het gat, dus hij **telt dubbel over de breedte**.
-
-```
-0,20 mm aan de bovenkant
-0,20 mm aan de onderkant
-------------------------- +
-0,40 mm speling over de diameter
+```text
+0,20 mm vrije ruimte per kant
+× 2 kanten
+= 0,40 mm verschil tussen gatdiameter en pendiameter
 ```
 
-Je ontwerpt dus **per kant**, en de totale speling is het **dubbele** daarvan. Wil je 0,40 mm
-totaal? Teken dan 0,20 mm per kant.
+Leg in Fusion vast welke grootheid je parameter bedoelt. Een parameter `speling_per_kant`
+voorkomt dat 0,40 mm per ongeluk nogmaals aan beide kanten wordt toegevoegd.
 
-**Dit vergeten is de klassieke eerste-print-fout:** mensen tekenen 0,40 mm per kant en houden
-een onderdeel over dat rammelt.
+## Stappenplan
 
-Een goed startgetal voor iets dat moet schuiven is **0,20 mm per kant**. Laat daarna het
-muntje (hieronder) je vertellen wat het échte getal van jouw printer is.
+1. **Kies de functie van de passing.** Noteer of het onderdeel geperst, met handdruk
+   gemonteerd, vrij geschoven of bewust los moet worden.
+2. **Leg de productiecombinatie vast.** Noteer printer, nozzle, materiaal, plaat, profiel,
+   oriëntatie en relevante slicercorrecties.
+3. **Maak een reeks.** Kies meerdere oplopende spelingen per kant rond een redelijke
+   startwaarde. `0,20 mm per kant` is hier slechts een **experimenteel middenpunt**, geen
+   printerspecificatie.
+4. **Controleer het model.** Meet in CAD zowel pen- als gatmaat en controleer dat labels na
+   het slicen leesbaar blijven.
+5. **Controleer Preview.** Kijk vooral naar de eerste lagen, dunne wanden en de werkelijk
+   gegenereerde opening.
+6. **Print de coupon.** Blijf bij de eerste laag en laat de coupon afkoelen voordat je de
+   passing beoordeelt.
+7. **Test zonder forceren.** Plaats elke pen meerdere keren. Classificeer de passing en
+   noteer eventuele richtingafhankelijkheid.
+8. **Meet boven en onder.** Als alleen de onderzijde te krap is, onderzoek je de eerste laag
+   afzonderlijk voordat je de hele CAD-speling vergroot.
+9. **Bewaar het resultaat.** Noteer de gekozen waarde met alle omstandigheden. Herhaal de
+   coupon bij een relevante wijziging; combineer de printers niet tot één ongedocumenteerd
+   getal.
 
-### 3. De pasvormladder — vier soorten passing, van strak naar rammelig
+## Olifantsvoet afzonderlijk testen
 
-Meer ruimte = lossere passing:
+Een sterk aangedrukte eerste laag kan buitencontouren verbreden en gaten onderaan vernauwen.
+Controleer eerst of de afwijking werkelijk tot de eerste lagen beperkt blijft. Test daarna
+olifantsvoetcompensatie in kleine stappen, bijvoorbeeld 0,10 en 0,20 mm, terwijl alle andere
+waarden gelijk blijven. Kies de kleinste correctie die het ondervlak herstelt zonder de
+buitenmaat onnodig te verkleinen.
 
-| Passing | Hoe het voelt | Pak hem wanneer |
-|---|---|---|
-| **Klempassing** *(press fit)* | Strak. De onderdelen houden zichzelf vast en moeten er met een stevige duw of een klem in. | Je wilt dat iets blíjft zitten, zonder lijm. |
-| **Nauwe passing** *(snug / push fit)* | Gaat er met de hand in, met lichte druk. Geen speling als hij zit. | Je zet het in elkaar maar het hoeft niet te bewegen. |
-| **Glijpassing** *(sliding fit)* | Beweegt vrij, met een heel klein beetje speling. | Een asje dat moet draaien, of een dekseltje dat schuift. |
-| **Losse passing** *(loose fit)* | Valt erin en rammelt. | Makkelijk in elkaar zetten is belangrijker dan precisie. |
+De exacte instelling en standaardwaarde kunnen per Bambu Studio-versie of profiel wijzigen.
+Zoek op `elephant` in de instellingen in plaats van een oud menupad te vertrouwen.
 
-### 4. De olifantenvoet maakt de onderkant scheef
+## Zo controleer je het resultaat
 
-De nozzle drukt die allereerste laag in het hete bed, dus die spreidt **breder** uit dan alle
-lagen erboven. Bij een gat puilt die platgedrukte eerste laag naar **binnen**, waardoor de
-**onderkant van het gat nauwer is dan de bovenkant**.
+De proef is geslaagd als de gekozen pen meerdere keren met de gewenste kracht kan worden
+geplaatst en verwijderd, zonder vijlen of forceren, en deze velden zijn ingevuld:
 
-Een pen kan dus bovenin prima zakken en onderin vastlopen. Het onderdeel liegt over zijn eigen
-pasvorm.
+```text
+printer / nozzle / materiaal:
+profiel / oriëntatie:
+speling per kant:
+olifantsvoetcompensatie:
+passing bij boven- en onderzijde:
+datum / besluit:
+```
 
-**De oplossing in één regel:** zet **elephant foot compensation** aan (ongeveer `0,2 mm`) in
-je slicer. Die schaaft de platgedrukte eerste laag terug, zodat het gat van boven tot onder
-even groot is.
+## Veelgemaakte fouten
 
-> De instelling heet in Bambu Studio ook letterlijk **"Elephant foot compensation"**. Waar hij
-> precies in het menu staat heb ik hier niet nagekeken — gebruik het zoekveld in de
-> instellingen en typ *elephant*. Ik zeg liever dat ik het niet zeker weet dan dat ik je een
-> menupad geef dat ik verzonnen heb.
+- diametrale speling verwarren met speling per kant;
+- een PLA-resultaat zonder proef voor PETG of een andere oriëntatie gebruiken;
+- een gat op slechts één hoogte meten;
+- slicercorrectie en CAD-speling tegelijk veranderen;
+- een perspassing beoordelen door met gereedschap te forceren;
+- één waarde voor beide printers opschrijven zonder vergelijkingsproef.
 
----
+## Wanneer vraag je Claude om hulp?
 
-## De echte getallen voor *jouw* printer
+- *“Maak een parametrische Fusion-coupon met deze vijf spelingen per kant en reliëflabels.”*
+- *“Hier zijn mijn A1- en A1-mini-resultaten. Welke waarden kan ik hergebruiken en welke
+  moet ik apart bewaren?”*
+- *“Mijn maat klopt bovenaan maar niet in de eerste twee lagen. Geef één test voor
+  olifantsvoetcompensatie en leg uit wat ik moet meten.”*
 
-De getallen hierboven zijn het *idee*. Wat jouw machine echt nodig heeft hangt af van je
-filament, de temperatuur, de printsnelheid en de vorm van het onderdeel — elke printer is net
-even anders.
+## Bronnen en bewijsniveau
 
-Wil je het meten, print dan het bijbehorende projectje:
+- **Praktijkadvies:** 0,20 mm per kant en de genoemde compensatiestappen zijn startwaarden,
+  geen garanties.
+- **Experiment:** het [pasmuntproject](../../projects/tolerance-test-coin/) en jouw meetlog
+  bepalen de waarde voor één vastgelegde combinatie.
+- **Nog bevestigen:** de exacte locatie en standaardwaarde van de Bambu Studio-instelling
+  moeten in de gebruikte softwareversie worden gecontroleerd.
 
-- **[Het tolerantiemuntje →](../../projects/tolerance-test-coin/)** — één klein printje met
-  pennetjes op een reeks spelingen, zodat je de klem-, nauwe, glij- en losse maat van jouw
-  printer zó van het muntje afleest.
+## Animatie openen
 
----
-
-## Hoe je de animatie opent
-
-Dubbelklik op `guides/speling/index.html` — hij opent in je browser. Er wordt niets
-geïnstalleerd en er gaat niets online.
-
-Of pak hem op je telefoon, zonder account, via
-[de website](https://menno420.github.io/curious-research/).
-
-> *Eerlijk erbij: de animatie laat het idee zien, niet exacte getallen. Je filament,
-> temperatuur, snelheid en vorm schuiven de echte waarden allemaal op — het muntje meet jouw
-> printer, deze pagina laat zien waaróm die meting ertoe doet.*
-
----
-
-*Dit is de Nederlandse versie. Het Engelse origineel staat in
-[`guides/how-print-clearance-works/`](../how-print-clearance-works/) en blijft daar staan.*
+Dubbelklik op `guides/speling/index.html`. Er wordt niets geïnstalleerd. Het oude pad
+[`guides/how-print-clearance-works/`](../how-print-clearance-works/) verwijst naar deze ene
+actuele Nederlandse bron.

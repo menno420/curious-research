@@ -47,6 +47,32 @@ Every `guides/<topic>/index.html` must be:
 - End with a **verify** line: the one command/URL/observation that proves the whole thing
   worked.
 
+### Vaste inhoud voor een uitvoeringsgids
+
+Elke belangrijke `guide.md` gebruikt deze volgorde. Een bestaande gids mag extra uitleg
+houden, maar verbergt de uitvoering niet tussen theorie:
+
+```markdown
+# Onderwerp
+
+## Welk probleem lost dit op?
+## Waarom dit voor jouw werkplaats telt
+## Benodigdheden
+## Stappenplan
+## Zo controleer je het resultaat
+## Veelgemaakte fouten
+## Wanneer vraag je Claude om hulp?
+## Bronnen en bewijsniveau
+```
+
+- Verwijs voor vaste apparatuur en voorkeuren naar `docs/workshop-profile.md`; kopieer de
+  inventaris niet in iedere gids.
+- Zet onbekende machinegegevens boven de stappen onder **Eerst bevestigen**. Vul ze niet met
+  algemene internetwaarden.
+- Een instelling eindigt met een waarneembaar gevolg: maat, foto, geluid, spaander, rand of
+  ander meetpunt.
+- Bronlabels volgen `docs/knowledge-policy.md`.
+
 ## File conventions
 
 ```

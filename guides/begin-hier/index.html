@@ -101,7 +101,7 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
     <g id="scanline">
       <line class="scan" x1="352" y1="120" x2="478" y2="120"/>
     </g>
-    <text class="small" x="415" y="210" text-anchor="middle">Claude leest alles</text>
+    <text class="small" x="415" y="210" text-anchor="middle">Claude leest de relevante bestanden</text>
   </g>
 
   <!-- ============ claude bouwt de uitleg ============ -->
@@ -118,7 +118,7 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
   <!-- ============ de plank ============ -->
   <g id="saveG">
     <rect class="shelfbar" x="512" y="246" width="266" height="7" rx="3"/>
-    <text class="small" x="645" y="272" text-anchor="middle">bewaard — staat er morgen nog</text>
+    <text class="small" x="645" y="272" text-anchor="middle">getest + als bestand bewaard</text>
   </g>
 
   <!-- ============ weken later ============ -->
@@ -137,7 +137,7 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
     <rect class="ghost" x="530" y="80" width="120" height="88" rx="9"/>
     <line class="xmark" x1="556" y1="106" x2="624" y2="142"/>
     <line class="xmark" x1="624" y1="106" x2="556" y2="142"/>
-    <text class="small" x="590" y="190" text-anchor="middle">gewone chat: weg</text>
+    <text class="small" x="590" y="190" text-anchor="middle">alleen chat: geen bronbestand</text>
   </g>
 
 </svg>
@@ -159,17 +159,15 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
 
 <div class="recap">
   <h2>Wat je net zag</h2>
-  <p>Je stelt een gewone vraag over je eigen spullen. Claude leest deze hele map — je printers,
-  je Arduino, je robotarm, en alles wat hier al eerder is uitgelegd — en bouwt daar een uitleg
-  van: tekst die je kunt lezen, een filmpje dat het laat zien, en meestal één instelling die je
-  vanavond kunt proberen.</p>
-  <p><b>En dan het belangrijkste:</b> die uitleg <i>blijft bewaard</i>. In een gewone chat is je
-  antwoord weg zodra je het venster sluit. Hier komt het op de plank te staan. Na tien vragen heb
-  je tien uitleggen. Na een half jaar heb je een boek dat alleen over <i>jouw</i> machines gaat —
-  geschreven terwijl je gewoon aan het knutselen was.</p>
-  <p><b>Eerlijk erbij:</b> dit plaatje laat de opslag simpeler zien dan hij is. Er zit een
-  bewaarstap tussen (Claude maakt een voorstel, jij klikt op <b>Merge</b>). Dat is één klik, en
-  hij staat uitgelegd in <code>guides/how-a-pr-flows/</code>.</p>
+  <p>Start je Claude Code vanuit deze map, dan leest het eerst de vaste instructies en opent het
+  daarna de relevante gidsen, projecten en research. Zo past het antwoord bij je werkplaats in
+  plaats van bij een willekeurige printer of arm.</p>
+  <p><b>Dan komt de belangrijke stap:</b> test het antwoord. Alleen een bevestigde ontdekking
+  hoort als bestand op de plank. Vraag Claude waar hij thuishoort, lees de wijziging na en maak
+  een kopie van je lokale map of publiceer hem later met GitHub.</p>
+  <p><b>Eerlijk erbij:</b> een chat bewaart de repository niet automatisch. Claude Code kan een
+  bestand voorstellen of lokaal wijzigen; jij controleert of het klopt. De volledige eerste
+  installatie staat in <code>docs/claude-usage-guide.md</code>.</p>
 </div>
 
 <script>
@@ -183,19 +181,19 @@ iets vraagt over je printer, je Arduino of je robotarm.</p>
       html: 'Je vraagt gewoon wat je wilt weten — <b>in het Nederlands</b>, in je eigen woorden. Geen commando’s, geen codetaal. "Mijn print heeft overal draadjes" is een prima vraag.' },
     { on: ["bubbleG","readG"],
       step: "Stap 2 van 5",
-      html: 'Claude leest <b>je hele werkplaatsmap</b>: welke printers je hebt, je robotarm, je Arduino-spullen, en alles wat hier eerder is uitgelegd. Daarom past het antwoord bij <i>jouw</i> machines en niet bij die van een willekeurige video.' },
+      html: 'Start Claude Code <b>in deze map</b>. Het leest eerst het werkplaatsprofiel en opent daarna de relevante gids of research. Daarom past het antwoord bij <i>jouw</i> machines en niet bij die van een willekeurige video.' },
     { on: ["bubbleG","readG","buildG"],
       step: "Stap 3 van 5",
       html: 'Claude bouwt er een <b>uitleg</b> van: leesbare tekst, een filmpje dat de beweging laat zien, en meestal <b>één instelling</b> die je vanavond kunt veranderen om het verschil te zien.' },
     { on: ["readG","buildG","saveG"],
       step: "Stap 4 van 5",
-      html: 'De uitleg gaat <b>op de plank</b> — hij wordt bewaard in deze map. Morgen staat hij er nog. Volgende maand ook. Je hoeft niets op te slaan; dat regelt Claude.' },
+      html: 'Test de uitleg eerst. Werkt hij? Laat Claude hem dan op de <b>juiste bestaande plek</b> als bestand bewaren en lees de wijziging na. Een chat doet dat niet vanzelf.' },
     { on: ["readG","buildG","saveG","weeksG"],
       step: "Stap 5 van 5",
-      html: 'Elke vraag legt er één bij — die groene is die van vandaag. Na een tijdje heb je <b>je eigen boek</b>: over jouw printers, jouw arm, jouw Arduino. Dat is het hele idee van deze map.' },
+      html: 'Elke <b>bevestigde</b> ontdekking kan erbij — die groene is die van vandaag. Na een tijdje heb je je eigen gecontroleerde werkplaatsboek, zonder dezelfde feiten overal te kopiëren.' },
     { on: ["readG","buildG","saveG","weeksG","lostG"],
       step: "Waarom niet gewoon chatten?",
-      html: 'In een <b>gewone chat</b> was je antwoord blijven staan waar dat kruis nu staat — en weg zodra je het venster sluit. Volgende week begin je dan weer bij nul. Hier stapelt het op. <b>Dat is het enige echte verschil</b>, en het is een groot verschil.' }
+      html: 'Een <b>chatantwoord</b> is nog geen bron van waarheid. In deze map krijgt een getest resultaat een vaste plek, datum en bewijsniveau. Daardoor kan een volgende sessie het gericht terugvinden.' }
   ];
 
   var all = ["bubbleG","readG","buildG","saveG","weeksG","lostG"];

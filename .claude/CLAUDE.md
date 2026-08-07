@@ -5,7 +5,9 @@ you who you are almost certainly talking to, what language to answer in, whether
 write, and the teaching doctrine that binds everything you make here. It is the source of
 truth; this file only points at it.
 
-Then, if you need it: [`docs/current-state.md`](../docs/current-state.md) — what is true
+Then read [`docs/workshop-profile.md`](../docs/workshop-profile.md) for the canonical user,
+hardware and software context. If you need repository status, read
+[`docs/current-state.md`](../docs/current-state.md) — what is true
 right now, and the open questions waiting on the owner.
 
 ## The lanes
@@ -19,7 +21,7 @@ Flat, no layering rules. Keep each thing in its lane:
 | `projects/` | Finished builds with their own docs, sketches and `.scad` sources |
 | `arm/` | The robot-arm lane — the calibration template and its README |
 | `research/` | The capability dossier |
-| `docs/` | Four files, all still live: `teaching-style.md` (binding), `git-for-makers.md`, `idea-ritual.md`, `current-state.md` |
+| `docs/` | Canonical profile, Claude usage, evidence policy, teaching rules and repository status |
 | `site/` | The read-only public website (plain HTML/CSS/JS, no build step) |
 
 ## Verifying a change

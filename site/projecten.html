@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bouwprojecten — werkplaatsassistent</title>
+<meta name="description" content="Nederlandse bouwroutes voor makerprojecten, met onderdelen, stappen, tests en bronbestanden.">
+<link rel="stylesheet" href="style.css">
+<style>
+  .terug{display:inline-block;margin-top:24px;color:var(--accent);font-weight:700;text-decoration:none}
+  .inhoud{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:28px 0}
+  .inhoud a{padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--accent);text-decoration:none;font-weight:700}
+  article{scroll-margin-top:20px;margin-top:42px;padding:24px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  article h2{margin:0 0 4px;font-size:1.35rem}article h3{font-size:1.02rem;margin:1.45em 0 .35em}article p,article li{color:var(--muted)}article li{margin:.35em 0}article strong{color:var(--ink)}
+  .status{display:inline-block;padding:4px 9px;border-radius:999px;background:var(--ok-soft);color:var(--ok);font:700 11px system-ui;letter-spacing:.04em}
+  .waarschuwing{border-left:5px solid #dc2626;background:#dc262610;padding:13px 15px;border-radius:9px;color:var(--ink)}
+  .bestanden{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.bestanden a{padding:8px 11px;border:1px solid var(--line);border-radius:9px;color:var(--accent);text-decoration:none;font-weight:700}
+  .check{border-left:5px solid var(--ok);padding-left:14px;color:var(--ink)}
+</style>
+</head>
+<body><div class="wrap">
+<a class="terug" href="index.html">← Terug naar alle gidsen</a>
+<header><p class="kicker">Bouwen met een testplan</p><h1>Projecten, eerst uitgelegd</h1><p class="lead">Je hoeft niet eerst door broncode te zoeken. Kies wat je wilt bouwen, lees waarom het nuttig is en ga pas daarna naar de bestanden.</p></header>
+
+<nav class="inhoud" aria-label="Projecten">
+  <a href="#pasmunt">🪙 Pasmunt</a><a href="#filamentweger">⚖️ Filamentweger</a><a href="#penplotter">✍️ Penplotter</a><a href="#soepele-arm">🌊 Soepele arm</a><a href="#gereedschap">🧲 Gereedschap</a>
+</nav>
+
+<article id="pasmunt">
+  <span class="status">Printertest</span><h2>🪙 Pasmunt voor echte speling</h2>
+  <h3>Wat is dit en wat doet het?</h3><p>Een kleine print met pennen en gaten met oplopende speling. Je voelt welke combinatie klemt, schuift of los zit en bewaart dat resultaat per printer en materiaal.</p>
+  <h3>Waarom bouwen?</h3><p>Een passing uit een tabel is een startpunt; dit project maakt er een gemeten ontwerpwaarde voor jouw A1 of A1 mini van. Daarmee ontwerp je klik-, schuif- en perspassingen doelgerichter.</p>
+  <h3>Benodigde onderdelen en gereedschappen</h3><ul><li>Bambu Lab A1 of A1 mini, filament en Bambu Studio.</li><li>OpenSCAD om het meegeleverde parametrische model naar STL te renderen. Wil je in Fusion blijven, vraag Claude het proefstuk als parametrische Fusion-schets op te zetten.</li><li>Schuifmaat is nuttig, maar de voeltest blijft onderdeel van het resultaat.</li></ul>
+  <p class="check"><strong>Bronstatus:</strong> de standaardreeks en een alternatieve parameterreeks renderen in OpenSCAD 2021.01 zonder waarschuwingen naar manifold STL. Fysieke passing blijft per printer, materiaal en profiel te meten.</p>
+  <h3>Bouwstappen</h3><ol><li>Maak de STL uit het SCAD-bestand en laad hem in Bambu Studio.</li><li>Kies het juiste printer-, nozzle- en materiaalprofiel; zet olifantsvoetcompensatie bewust.</li><li>Print munt en pennen samen.</li><li>Test elke pen zonder hem te forceren en classificeer de passing.</li><li>Noteer printer, materiaal, profiel en winnende speling in het resultatenbestand.</li></ol>
+  <h3>Testen</h3><p class="check"><strong>Geslaagd:</strong> je kunt één waarde aanwijzen voor een schuifpassing en, indien relevant, één voor een perspassing. Herhaal bij een ander materiaal of duidelijk gewijzigd profiel.</p>
+  <h3>Mogelijke verbetering</h3><p>Maak dezelfde geometrie in Fusion 360 en voeg labels toe die na slicen in Preview nog leesbaar zijn.</p>
+  <h3>Bestanden</h3><div class="bestanden"><a href="https://github.com/menno420/curious-research/blob/main/projects/tolerance-test-coin/print-and-test-guide.md">Bouwgids</a><a href="https://github.com/menno420/curious-research/blob/main/projects/tolerance-test-coin/tolerance-test-coin.scad">Parametrisch model</a><a href="https://github.com/menno420/curious-research/blob/main/projects/tolerance-test-coin/clearance-results.md">Meetlog</a></div>
+</article>
+
+<article id="filamentweger">
+  <span class="status">Arduino + meten</span><h2>⚖️ Filamentweger</h2>
+  <h3>Wat is dit en wat doet het?</h3><p>Een 5&nbsp;kg-loadcell met HX711 meet het totale spoelgewicht. Na kalibratie en aftrek van het gemeten lege spoelgewicht krijg je een praktische schatting van resterend filament.</p>
+  <h3>Waarom bouwen?</h3><p>Je vervangt “waarschijnlijk genoeg” door een reproduceerbare controle vóór een lange print. Het is een momentopname die je opnieuw tarreert, geen permanent precisie-instrument.</p>
+  <h3>Benodigde onderdelen en gereedschappen</h3><ul><li>Arduino Uno of Nano, rechte 5&nbsp;kg-loadcell, HX711-module en stijve basis met platform.</li><li>Bekend kalibratiegewicht; voor de optionele derde fase ook een knop en SSD1306-I²C-OLED.</li><li>Arduino IDE en de bibliotheek <code>HX711_ADC</code>; voor OLED ook Adafruit SSD1306 en GFX.</li></ul>
+  <h3>Bouwstappen</h3><ol><li>Monteer één kant van de loadcell star; belast alleen de vrije kant zonder torsie.</li><li>Bedraad loadcell → HX711 → Arduino volgens de tabel in de README.</li><li>Draai fase 1 van de sketch, tarreer leeg en bereken met een bekend gewicht de kalibratiefactor.</li><li>Zet die factor in de sketch en meet het lege gewicht van jouw echte spoel.</li><li>Draai fase 2 voor Serial-uitvoer; voeg pas daarna desgewenst knop en OLED toe.</li></ol>
+  <h3>Testen</h3><p class="check"><strong>Geslaagd:</strong> drie herhaalde plaatsingen van hetzelfde gewicht geven een bruikbare, vergelijkbare uitkomst. Noteer spreiding en laat het systeem steeds stabiliseren.</p>
+  <h3>Mogelijke verbetering</h3><p>Bewaar per spoeltype een zelf gemeten leeggewicht en toon naast gram ook een onzekerheidsmarge; vermijd schijnprecisie.</p>
+  <h3>Bestanden</h3><div class="bestanden"><a href="https://github.com/menno420/curious-research/tree/main/projects/spool-weight-scale">Projectuitleg</a><a href="https://github.com/menno420/curious-research/blob/main/projects/spool-weight-scale/spool_scale.ino">Arduino-sketch</a></div>
+</article>
+
+<article id="penplotter">
+  <span class="status">Robotarm — nog bevestigen</span><h2>✍️ De arm als penplotter</h2>
+  <h3>Wat is dit en wat doet het?</h3><p>Een zwevende penhouder en een teach-and-replay-programma: je jogt de zes gewrichten, bewaart waypoints en speelt die gecontroleerde opdrachten langzaam terug.</p>
+  <h3>Waarom bouwen?</h3><p>Het verbindt mechanica, servolimieten, seriële communicatie en testen in één zichtbaar resultaat. Verwacht karaktervolle, wiebelige lijnen; MG996R-klasse servo’s maken dit geen precisieplotter.</p>
+  <h3>Benodigde onderdelen en gereedschappen</h3><ul><li>De bestaande 6-DOF-arm, pen, papier en geprinte zwevende penhouder.</li><li>Arduino, USB-kabel en Windows-pc met Arduino IDE en Python.</li><li>Een passende externe servovoeding met gedeelde massa, zekering en bereikbare uitschakeling. Exacte stroomcapaciteit moet bij de werkelijke servovariant en belasting worden vastgesteld.</li></ul>
+  <p class="waarschuwing"><strong>Bekende startupbeperking:</strong> de huidige Arduino-sketch koppelt de servo’s aan en schrijft 90° vóór de gemeten limieten zijn ontvangen. De laptopworkflow vereist kalibratie vóór gecontroleerde bediening, maar dat bewijst niet dat de arm bij reset stil blijft. Gebruik deze sketch niet voor powered startup voordat die 90°-stand op de echte arm is beoordeeld en een startupstrategie onder toezicht is getest.</p>
+  <h3>Bouwstappen</h3><ol><li>Lees eerst <code>arm/README.md</code> en meet per gewricht min, max en midden met servovoeding uit.</li><li>Maak en controleer <code>arm/calibration.json</code>; oefen de laptoptool eerst zonder seriële poort.</li><li>Pas de penhouder aan de gemeten pen en mechanische interface aan, render en print.</li><li>Controleer pinvolgorde, voeding en uitschakeling. Beoordeel de startupwaarschuwing vóór bekrachtiging.</li><li>Leer eerst twee punten voor één korte lijn; houd snelheid laag en kijk mee.</li></ol>
+  <h3>Testen</h3><p class="check"><strong>Softwaretest:</strong> ontbrekende kalibratie blokkeert de gecontroleerde laptopworkflow en alle uitgaande doelhoeken worden begrensd. <strong>Hardwaretest:</strong> startup en iedere beweging blijven afzonderlijke, begeleide controles.</p>
+  <h3>Mogelijke verbetering</h3><p>Los eerst startup zonder onverwachte sprong aantoonbaar op. Meet daarna herhaalbaarheid voordat SVG-import of inverse kinematica wordt toegevoegd.</p>
+  <h3>Bestanden</h3><div class="bestanden"><a href="https://github.com/menno420/curious-research/tree/main/projects/arm-pen-plotter">Projectbestanden</a><a href="guides/arm-werkgebied/index.html">Limieten meten</a><a href="guides/arm-herhaalbaarheid-meten/index.html">Herhaalbaarheid meten</a></div>
+</article>
+
+<article id="soepele-arm">
+  <span class="status">Robotarm — experiment</span><h2>🌊 Soepele beweging</h2>
+  <h3>Wat is dit en wat doet het?</h3><p>Een Arduino-sketch die een grote hoekopdracht opdeelt in kleine, synchroon getimede stappen met een S-curve. Gewrichten trekken daardoor rustiger op en remmen samen af.</p>
+  <h3>Waarom bouwen?</h3><p>Minder abrupte doelwisselingen beperken mechanische schokken en maken gedrag beter observeerbaar. Het repareert geen speling, ondergedimensioneerde voeding of slechte constructie.</p>
+  <h3>Benodigde onderdelen en gereedschappen</h3><ul><li>De 6-DOF-arm, Arduino IDE en USB-verbinding.</li><li>Eigen gemeten limieten, gecontroleerde pinvolgorde en een geschikte externe servovoeding met gedeelde massa en uitschakeling.</li></ul>
+  <p class="waarschuwing"><strong>Let op:</strong> ook deze sketch koppelt servo’s aan en stuurt de ingestelde <code>JOINT_HOME</code>-waarden bij startup. De meegeleverde 90°-waarden zijn geen bewezen veilige stand voor jouw montage.</p>
+  <h3>Bouwstappen</h3><ol><li>Vervang pinnen, min/max en home door waarden die op deze arm zijn gecontroleerd.</li><li>Test de rekenlogica eerst met servovoeding uit via Serial.</li><li>Begin met één korte beweging, lage maximale snelheid en zonder gereedschap of last.</li><li>Vergelijk lineaire interpolatie en S-curve met verder exact dezelfde route.</li><li>Noteer trilling, geluid, eindpositie en eventuele voedingsreset.</li></ol>
+  <h3>Testen</h3><p class="check"><strong>Geslaagd:</strong> alle gewrichten komen samen aan, doelen blijven binnen de gemeten limieten en de S-curve geeft een waarneembaar rustiger begin/einde zonder nieuwe instabiliteit.</p>
+  <h3>Mogelijke verbetering</h3><p>Vervang globale timing door een niet-blokkerende opdrachtenwachtrij en meet het verschil aan de penpunt in plaats van alleen op het oog.</p>
+  <h3>Bestanden</h3><div class="bestanden"><a href="https://github.com/menno420/curious-research/tree/main/projects/arm-soepele-beweging">Uitleg en sketch</a><a href="guides/arduino-zonder-blokkeren/index.html">Niet-blokkerend werken</a></div>
+</article>
+
+<article id="gereedschap">
+  <span class="status">Mechanische interface</span><h2>🧲 Verwisselbaar gereedschap</h2>
+  <h3>Wat is dit en wat doet het?</h3><p>Een parametrische montage-interface voor de pols, met een passieve magneethouder en een servo-aangedreven grijper als voorbeelden. Het doel is één herhaalbaar gaten- en centreerpatroon voor meerdere tools.</p>
+  <h3>Waarom bouwen?</h3><p>Je meet de polsinterface één keer en voorkomt dat elk nieuw gereedschap een net andere montage krijgt. Dat maakt ontwerp, wisselen en testen consistenter.</p>
+  <h3>Benodigde onderdelen en gereedschappen</h3><ul><li>Schuifmaat, printer, bevestigingsmateriaal en het werkelijke servohoorntje.</li><li>Voor de magneettool: passende magneet en veilige perspassing. Voor de grijper: geschikte servo, tandwieldelen en externe servovoeding.</li><li>OpenSCAD voor de huidige parametrische bron; Fusion 360 kan worden gebruikt om dezelfde interface opnieuw op te zetten.</li></ul>
+  <p class="check"><strong>Bronstatus:</strong> de onderhouden OpenSCAD-configuraties exporteren zonder waarschuwingen naar manifold STL. Dit bewijst geen maatvoering, tandingreep, houdkracht of belastbaarheid.</p>
+  <h3>Bouwstappen</h3><ol><li>Meet hoorn, gatenpatroon, naaf en beschikbare schroeflengte.</li><li>Werk eerst alleen de standaardplaat bij en print een dun teststuk.</li><li>Controleer centrering, oriëntatiesleutel, schroefvrijheid en kabelroute.</li><li>Bouw daarna één passieve tool; test massa en vasthouden op de werkbank.</li><li>Voeg de actieve grijper pas toe na een afzonderlijke één-servotest buiten de arm.</li></ol>
+  <h3>Testen</h3><p class="check"><strong>Geslaagd:</strong> dezelfde plaat kan herhaald worden verwijderd en gemonteerd zonder merkbare verdraaiing; alle tools delen exact dezelfde interface en botsen niet met de pols.</p>
+  <h3>Mogelijke verbetering</h3><p>Leg de interface in één Fusion-mastercomponent vast en publiceer een lege tooltemplate met gebruikersparameters voor gaten, offset en massa.</p>
+  <h3>Bestanden</h3><div class="bestanden"><a href="https://github.com/menno420/curious-research/tree/main/projects/effector-mount">Projectbestanden</a><a href="https://github.com/menno420/curious-research/blob/main/projects/effector-mount/mount_standard.scad">Interfacebron</a><a href="https://github.com/menno420/curious-research/blob/main/projects/effector-mount/gripper_test.ino">Grijper-banktest</a></div>
+</article>
+
+<footer><p>Bewaar gemeten uitkomsten in de repository. Een goed project eindigt niet bij “het werkte”, maar bij de instellingen en testvoorwaarden waarmee het opnieuw werkt.</p></footer>
+</div></body></html>

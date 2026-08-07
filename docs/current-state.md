@@ -1,355 +1,206 @@
-# curious-research — current state
+# Huidige staat van curious-research
 
-*Agent-facing. Written in English on purpose (`CLAUDE.md` §0). Last rewritten 2026-08-07 —
-the day the fleet machinery was removed, the website went live, and the repo was prepared
-for handover. The fleet-side record of that day is
-`menno420/fleet-manager` → `docs/findings/2026-08-07-curious-research-handover.md`.*
+*Agent-facing statusdocument. Laatst inhoudelijk gecontroleerd: 2026-08-07. Gebruik geen oude
+aantallen uit commits of gesprekken; bepaal inventaris altijd uit de huidige mappen en
+`guides/README.md`.*
 
-Read [`../CLAUDE.md`](../CLAUDE.md) section 0 first — who you are talking to, what language
-to answer in, and whether you can write. This file is the second read: what is actually
-here, and what is still open.
+## Rol van de repository
 
-## What this repo is now
+Dit is een Nederlandse kennislaag voor een ervaren hobby-maker, niet alleen een verzameling
+researchnotities. Claude hoort eerst de werkplaatscontext te lezen, daarna relevante bestaande
+kennis en pas dan een antwoord of wijziging te maken.
 
-A gift and a workshop notebook for a Dutch hobby maker: two 3D printers (one small, one
-3-colour), a 6-servo robot arm, a busy Arduino bench. Everything in it is meant to be read
-by him, in Dutch, and to teach by showing.
+De bronnen zijn gescheiden:
 
-**Known about his setup as of 2026-08 (his own words, via the owner) — read `CLAUDE.md` §0
-for the full table:**
+| Soort waarheid | Enige thuisbasis |
+|---|---|
+| Eigenaar, hardware, software, vaardigheid en onbekende gegevens | [`workshop-profile.md`](workshop-profile.md) |
+| Gedrag van Claude in deze repository | [`../CLAUDE.md`](../CLAUDE.md) |
+| Bewijsniveaus en promotie van claims | [`knowledge-policy.md`](knowledge-policy.md) |
+| Guideformat en uitlegkwaliteit | [`teaching-style.md`](teaching-style.md) |
+| Actieve gidsinventaris en compatibele oude paden | [`../guides/README.md`](../guides/README.md) |
+| Ruwe researchprovenance | [`../research/dossiers/README.md`](../research/dossiers/README.md) |
+| Korte gepubliceerde kenniskaarten | `KENNIS` in [`../site/kennis.html`](../site/kennis.html) |
 
-- **Printers: Bambu Lab A1 mini + A1 with AMS Lite.** So the slicer is **Bambu Studio**. This
-  closes the long-standing "which slicer?" question — the printing guides can now name real
-  menus instead of saying "your slicer".
-- **He draws everything in Fusion 360** (free version): 2D for **laser cutting and CNC
-  milling**, 3D for the printers. He cuts and mills — a whole capability lane this repo has
-  never addressed.
-- **He already uses Claude weekly**, on the **free** tier, mixed with ChatGPT, Copilot and
-  Chaton. He is new to *GitHub*, not to Claude; the pitch is persistence, not capability.
-  Free tier also means: keep guides self-contained, do not assume long sessions.
+Dupliceer werkplaatsfeiten niet in gidsen. Voeg ontbrekende hardwaregegevens eerst aan het profiel
+toe, met herkomst en bewijsniveau.
 
-**It is complete for its purpose and it still grows.** A session that only walks him through
-what is already here is an excellent session. A session that adds a guide is also an
-excellent session. Neither is the failure mode; manufacturing busywork is.
+## Giftklare gebruikersroute
 
-## What is here
+De normale route is volledig Nederlands:
 
-**18 guides** in `guides/`, each a folder with an animated `index.html` and a step-by-step
-`guide.md` companion (indexed in `guides/README.md`):
+1. [`../README.md`](../README.md) — cadeau-ingang en kaart van de repository;
+2. [`../guides/begin-hier/`](../guides/begin-hier/) — eerste contextcontrole en echte vraag;
+3. [`claude-usage-guide.md`](claude-usage-guide.md) — Claude Pro en Claude Code op Windows;
+4. [`../site/index.html`](../site/index.html) — gidsen gegroepeerd per werkplaatstype;
+5. [`../site/projecten.html`](../site/projecten.html) — projectuitleg vóór broncode;
+6. [`../site/kennis.html`](../site/kennis.html) — korte antwoorden met vijf bewijslabels.
 
-| Guide | What it teaches | Lang |
-|---|---|---|
-| `begin-hier` | The Dutch front door — what this place is and what to try tonight | 🇳🇱 |
-| `windows-gereedschap` | Free Windows downloads, with direct links (no `index.html` — it is a link list, nothing moves) | 🇳🇱 |
-| `bambu-studio` | **Read this before any tuning guide.** What his A1 already does for him, and which guides therefore still apply | 🇳🇱 |
-| `fusion-python` | Loading a Python script into Fusion 360 — he asked for this one himself | 🇳🇱 |
-| `vulling` | What % to actually use, and why walls matter more *(translation of `infill`)* | 🇳🇱 |
-| `speling` | Why parts jam, and the gap that fixes it *(translation of `how-print-clearance-works`)* | 🇳🇱 |
-| `arm-werkgebied` | The arm's safe envelope and the clamp *(translation of `arm-envelope-explained`)* | 🇳🇱 |
-| `start-here` | The original English welcome tour (Dutch version: `begin-hier`) | 🇬🇧 |
-| `how-a-pr-flows` | The change → review → merge loop, animated. The quality bar for every explainer | 🇬🇧 |
-| `what-can-claude-see` | Turning a photo or an error message into a fix | 🇬🇧 |
-| `first-layer` | First-layer adhesion — the foundation every print stands on | 🇬🇧 |
-| `retraction-vs-stringing` | Why prints grow hairs and how to stop it | 🇬🇧 |
-| `temperature-tower` | One print that finds your filament's best nozzle heat | 🇬🇧 |
-| `part-cooling` | The fan % behind droopy overhangs and brittle PETG | 🇬🇧 |
-| `infill` | English original of `vulling` | 🇬🇧 |
-| `how-print-clearance-works` | English original of `speling` | 🇬🇧 |
-| `lithophane-night-light` | Photo → glowing printed panel, end to end | 🇬🇧 |
-| `arm-envelope-explained` | English original of `arm-werkgebied` | 🇬🇧 |
+Oude Engelstalige guidepaden voor start, infill, speling en armwerkgebied bestaan alleen als
+compatibele verwijzing naar de Nederlandse bron. De actieve Bambu-, Fusion-, Arduino-, robotarm-,
+laser- en CNC-gidsen zijn herschreven als uitvoeringsroutes.
 
-**Translation is underway (owner directive 2026-08-07): translate the English guides properly
-into Dutch, and leave the originals where they are correct.** Three are done. The order is
-taken from `guides/bambu-studio/`, not from how important a topic is in 3D printing generally
-— that table was written for his actual machines and it inverts the obvious ranking. Remaining,
-in order: `lithophane-night-light` · `part-cooling` · `what-can-claude-see` ·
-`temperature-tower` and `retraction-vs-stringing` (both conditional — only for filament without
-a Bambu profile) · `first-layer` **partially**, since the A1 auto-levels and auto-sets Z-offset,
-so only the "what a good first layer *looks like*" half still applies to him ·
-`how-a-pr-flows` last, and arguably never — `CLAUDE.md` says do not teach him the machinery.
+## Inhoud die nu beschikbaar is
 
-**Two traps found while translating, worth carrying forward:**
-- A guide can be reached from **more than one shelf tile**. `arm-envelope-explained` had two,
-  and the second carries an `Open klus` badge rather than a language badge. Check for
-  duplicates before repointing; a single find-and-replace gets this wrong.
-- Verify the animation survived translation by **fingerprint, not by eye**: strip strings and
-  comments from both scripts and compare the remaining lines, then `node --check`. An early
-  attempt at this stripped both files to zero lines and reported "identical", which is a green
-  number computed from nothing.
+### Bambu Lab en 3D-printen
 
-Until a guide is translated, **summarise it in Dutch when he opens it.**
+- één overkoepelende Bambu Studio-diagnose voor A1/A1 mini;
+- eerste laag zonder generieke handmatige Z-offset;
+- stringing met vocht/temperatuur/retraction als afzonderlijke proeven;
+- temperatuurreeks met controle dat de temperatuur echt verandert;
+- onderdeelkoeling met vorm én laaghechting als criteria;
+- vulling, speling en lithofaan van proef naar gemeten ontwerpwaarde.
 
-**5 buildable projects** in `projects/`:
+Normale materialen, nozzlevarianten en eigen profielafwijkingen zijn nog niet bevestigd. Guides
+moeten daarom vanuit het echte geselecteerde profiel werken.
 
-- `tolerance-test-coin/` — parametric OpenSCAD clearance coin, print-and-measure guide,
-  results template. Ships `.scad` source only; he renders the STL himself.
-- `arm-pen-plotter/` — teach-mode waypoint recorder/replayer (`teach_and_replay.py`, refuses
-  to run without `arm/calibration.json` and clamps every value it sends), a matching Arduino
-  sketch that clamps on-board too, a printable floating pen holder, and an animated explainer.
-- `spool-weight-scale/` — an HX711 load-cell "how much filament is left?" gauge, honest about
-  what a cheap load cell can and cannot tell you.
-- `arm-soepele-beweging/` — **Dutch**. Why the arm moves in bursts (`servo.write()` has no
-  speed input — it means "be there now") and the three layers that fix it: stream nearby
-  targets at 50 Hz, coordinate all joints to one duration, and ease in/out with `3t²−2t³`.
-  A clamped non-blocking Arduino sketch whose joint limits start deliberately narrow
-  (85–95°) so it is safe to run before calibration, plus an animated explainer comparing
-  slam / linear / S-curve with a live velocity graph. Leaves an open question for him:
-  should the shoulder and the base share one speed limit?
-- `effector-mount/` — swappable arm tooling on one standard printable interface: the mount
-  plate, a passive magnet tool, and a single-servo rack-and-pinion 2-finger gripper.
+### Fusion en productie
 
-**14 ideas** in `ideas/`, one file each, every one carrying a state line. Ten have been
-through the ritual in [`idea-ritual.md`](idea-ritual.md): eight `build`, one `park`
-(arm-camera-timelapse — a phone is too heavy for the arm's far end), one `think-more`
-(filament-drybox-logger, waiting on the question below). Five build verdicts have shipped;
-three are verdict-build-not-yet-started (drawer-organizer-generator,
-multicolor-keychain-factory, sound-reactive-desk-lamp); two are one-liners still waiting for
-the ritual (arm-print-removal, explain-my-slicer).
+- Python-script maken en uitvoeren in de huidige Fusion-interface;
+- lasersnijden: Fusion-schets → DXF → importcontrole → kerf-/passingcoupon → proefsnede →
+  assemblage;
+- CNC: body → Manufacture Setup/WCS → toolrecord → banen → simulatie → postprocess → air cut →
+  eerste snede.
 
-**`arm/`** — `README.md` plus `calibration.example.json`, a 6-servo `min`/`max`/`center`
-template with every value still `PLACEHOLDER`. The hardware is now identified (2026-08-07):
-a 6-DOF kit on **6 × MG996R** analog servos — and, importantly, **already assembled, wired
-and moving under program control from a laptop**, on a proper enclosed switching supply with
-a distribution board. He is well past first power-up; do not pitch arm work at beginners'
-wiring. What that means, plus the absence of position feedback and the already-occupied
-gripper channel, is written up in `arm/README.md` — read it before designing any arm work. The measured file belongs **in** the repo
-once it exists (servo angles are numbers, not personal data) and it is the clamp target
-every motion routine points at. It does not exist yet.
+Exact lasermodel, laserprincipe/software, CNC-machine, controller, spindel en frezen zijn nog
+onbekend. Daarom staan er geen universele snelheden, vermogens, postprocessors of feeds/speeds in
+het profiel.
 
-**`research/`** — the grounded-knowledge lane.
-- `possibility-dossier.md` — the cited map of what the bench and Claude can do together.
-- `deep-research-prompts.md` — six ready-to-paste deep-research prompts (Arduino, Bambu
-  printing, Fusion 360, servos, laser cutting, CNC milling) with a fixed output contract:
-  short cards, a real number each, a source URL, a confidence mark, and a mandatory
-  "myths and outdated advice" section. **Read this before commissioning any research** — the
-  format is what makes the answers browsable rather than a wall of text.
-- `dossiers/` — **populated 2026-08-07: 11 files, all six topics.** Six ChatGPT reports
-  (`<topic>.md`) and five Gemini reports (`<topic>-gemini.md`); the sixth Gemini run,
-  **`lasersnijden`, was never produced**, so the topic with the highest physical risk is the
-  one with **no corroboration**. 211 cards total, graded 167 SOLID / 41 COMMON / 3 DISPUTED.
-  Every file carries a provenance header.
+### Arduino
 
-  Three things a session must know before using them:
-  - **The contract said keep raw research in English. ChatGPT returned Dutch.** Saved as
-    received. The rule should probably be relaxed to "as received"; the "cut, do not
-    translate" step into `site/kennis.html` is unaffected.
-  - **Both tools leak citation artifacts, and only one leaks visibly.** ChatGPT emits
-    `cite…turn…` runs wrapped in **invisible private-use characters** (U+E201/U+E202, 879 of
-    them); Gemini emits `start_span`/`end_span`, which PDF extraction turns into markdown-link
-    shapes. **Strip both before any text reaches the site.** They are deliberately not stripped
-    from the raw files — those are labelled unedited and a silent edit would make that a lie.
-  - **Gemini's citations are not machine-checkable from these files.** PDF extraction truncates
-    long URLs mid-path, so a dead-looking link there may be an extraction artifact. Of the
-    ChatGPT set, 149 URLs checked: 132 live, 15 bot-blocked, **1 genuinely dead** — and that one
-    is in `lasersnijden.md`.
+De gids `arduino-zonder-blokkeren` bevat een uitvoerbare `millis()`-workflow en voorbeeldsketch.
+Het exacte Arduino-bord en gebruikte sensorinventaris zijn nog niet vastgelegd; bordspanning en
+pinmogelijkheden mogen niet worden aangenomen.
 
-  Safety-relevant claims — fumes, materials that must not be cut, laser class, power — get
-  verified against a primary source before they reach him. **That verification has not started.**
+### Robotarm
 
-**`site/`** — the read-only public website, live at
-https://menno420.github.io/curious-research/. Plain HTML/CSS/JS, no build step, published by
-`.github/workflows/pages.yml`.
-- `index.html` — the shelf: every guide and project as a card, grouped.
-- `kennis.html` — the browsable reference. Topic tabs (arm · printing · Fusion · Arduino ·
-  laser · milling), collapsible sections, and short cards each carrying a confidence badge
-  (ZEKER / MEESTAL / BETWIST) and a source link. Search runs across every topic at once.
-  **All content lives in one `KENNIS` object at the top of the file** — adding a card is
-  editing a list, no build step. Empty topics say so honestly rather than being hidden.
+Bevestigd:
 
-**`docs/`** — four files, all live: [`teaching-style.md`](teaching-style.md) (binding — the
-spec and quality bar for explainers), [`git-for-makers.md`](git-for-makers.md) (git in bench
-terms), [`idea-ritual.md`](idea-ritual.md) (the 8 questions), and this file.
+- zelfgebouwde 6-DOF-arm;
+- MG996R-klasse servo's;
+- projecten voor penplotter, soepele beweging, herhaalbaarheid en verwisselbaar gereedschap.
 
-## CI
+Nog niet bevestigd:
 
-One check: `substrate-gate` (`.github/workflows/substrate-gate.yml`). It runs
-`.github/scripts/check_links.py`, which walks every `.md` and `.html` file and fails on a
-relative link pointing at a file that does not exist. Run it before pushing:
+- exacte fabrikant/variant per servo;
+- pinvolgorde en draairichting op de echte arm;
+- gemeten min/max/midden per gewricht;
+- voedingsspanning, continue/piekstroom, zekering en draadcapaciteit;
+- echte payload en herhaalbaarheid;
+- veilig gecontroleerde startupstand.
 
-```
+Kritisch broncodefeit: `projects/arm-pen-plotter/pen_plotter_arm.ino` koppelt in `setup()` alle
+servo's aan en schrijft 90° voordat gemeten limieten zijn ontvangen. De laptoptool vereist een
+geldig kalibratiebestand vóór **gecontroleerde bediening**, maar dat verhindert deze fysieke
+startupopdracht niet. De smooth-motion-sketch stuurt eveneens direct zijn `JOINT_HOME` en begint
+daarna automatisch te bewegen. Negentig graden is geen bewezen gezamenlijke startupstand.
+
+Zie [`../arm/README.md`](../arm/README.md) en gebruik geen powered armproject voordat startup,
+pinvolgorde en homewaarden op de echte arm onder toezicht zijn opgelost en vastgelegd.
+
+### OpenSCAD-modellen
+
+Op 2026-08-07 zijn alle huidige `.scad`-bronnen met OpenSCAD 2021.01 gerenderd. De controle omvat
+de standaardconfiguraties en relevante alternatieve parameterpaden die in
+`.github/scripts/check_openscad.sh` staan. Alle exports zijn eenvoudige manifold STL-meshes zonder
+waarschuwingen. De grijper had aanvankelijk nul-diktecontact tussen tanden en tandvoet; een
+expliciete overlap in de bron heeft dat meshprobleem opgelost.
+
+Deze status bewijst syntactisch en geometrisch renderbare bron, niet de fysieke maatvoering,
+sterkte, passing, tandingreep, slicing of printkwaliteit. Er worden daarom geen gegenereerde STL's
+als bewezen onderdelen gepubliceerd. De parametrische `.scad`-bestanden blijven de master.
+
+## Projectarchitectuur
+
+De maker landt vanuit de site op [`../site/projecten.html`](../site/projecten.html), niet direct
+op een GitHub-directory. Ieder project heeft daar:
+
+- wat het is en doet;
+- waarom het nuttig is;
+- benodigdheden;
+- bouwstappen;
+- testcriterium;
+- mogelijke verbetering;
+- pas daarna links naar bronbestanden.
+
+Die pagina behandelt de pasmunt, filamentweger, penplotter, soepele armbeweging en verwisselbaar
+gereedschap. Diepere bron-README's kunnen historische Engelstalige ontwerpnotities bevatten; zij
+zijn niet de eerste gebruikerservaring en mogen geen sterkere veiligheidsclaim maken dan de
+Nederlandse projectroute.
+
+## Vertrouwen en provenance
+
+De site gebruikt uitsluitend:
+
+- `verified` / **Geverifieerd**;
+- `supported` / **Onderbouwd**;
+- `practical` / **Praktijkadvies**;
+- `confirm` / **Nog bevestigen**;
+- `experimental` / **Experiment**.
+
+Een bronlink alleen is onvoldoende voor **Geverifieerd**; de geopende primaire bron moet precies
+de claim dragen en een controledatum hebben. Onbevestigde servo-, voeding-, laser- en CNC-waarden
+blijven expliciet meetwerk.
+
+De bestanden in `research/dossiers/` zijn ongewijzigde uitvoer van onderzoeksruns. De
+provenancetabel vermeldt tool, onderwerp en corroboratiestatus. Lasersnijden heeft maar één
+onafhankelijke run en verdient extra controle. Oude labels in ruwe dossiers zijn geen huidige
+goedkeuring; iedere claim wordt opnieuw beoordeeld voordat hij in een gids of kenniskaart komt.
+
+## Claude en persistentie
+
+[`claude-usage-guide.md`](claude-usage-guide.md) beschrijft twee routes:
+
+- Claude Code starten vanuit de uitgepakte repositorymap;
+- relevante bestanden uploaden als Claude Project knowledge.
+
+We claimen geen automatische repositorymemory. Chatantwoorden wijzigen geen bestand; lokale
+automatische notities zijn niet automatisch gedeeld of geback-upt. Een getest resultaat wordt
+pas durable kennis na gecontroleerde bestandswijziging en back-up/publicatie.
+
+## Site en navigatie
+
+De statische site heeft geen hardgecodeerd totaal aantal gidsen of projecten in de kop. De
+kennisbank telt kaarten dynamisch uit het `KENNIS`-object. Nieuwe gidsen worden in
+`guides/README.md` én `site/index.html` opgenomen; oude dubbele bronnen worden als alias behouden
+of verwijderd, niet apart verder onderhouden.
+
+GitHub Pages assembleert `site/` plus de HTML onder `guides/`. Markdown blijft leesbaar via de
+repository. Na wijzigingen aan site of gidsen moet de Pages-deploy afzonderlijk worden
+gecontroleerd; een groene linkcheck bewijst niet dat de openbare site al is bijgewerkt.
+
+## Validatie vóór publicatie
+
+Voer minimaal uit:
+
+```bash
 python3 .github/scripts/check_links.py
+python3 -m py_compile projects/arm-pen-plotter/teach_and_replay.py
+bash .github/scripts/check_openscad.sh
 ```
 
-The workflow name and job id must both stay `substrate-gate` — a branch ruleset on `main`
-requires that exact status-check context, and a required check that never reports leaves
-every PR pending forever. `auto-merge-enabler.yml` arms GitHub-native auto-merge on
-`claude/*` PRs so they land themselves on green.
+Controleer daarnaast:
 
-`check_links.py` deliberately **skips `research/dossiers/`** — those files are verbatim
-third-party output kept unedited, and both research tools leak citation artifacts, one of
-them link-shaped. The skip is a path prefix, so a future `guides/dossiers/` would still be
-checked. Reasoning is in the script's docstring.
+- JavaScript-syntax van iedere HTML-`script`;
+- alle actieve guidepagina's hebben `lang="nl"`;
+- geen oude labels `ZEKER`, `MEESTAL` of `BETWIST` meer als kennisstatus;
+- geen vaste inventarisaantallen in gebruikersdocumentatie;
+- geen claim “geen kalibratie = geen fysieke beweging”;
+- geen claim dat chat, Claude Projects of lokale auto-memory de repository automatisch bijwerkt;
+- links en navigatie vanaf `site/index.html`, `site/projecten.html` en `guides/README.md`.
 
-### PUBLISHING IS UNRELIABLE — read this before you touch `site/`
+De verplichte `substrate-gate` installeert OpenSCAD en voert de rendercontrole bij iedere PR en
+push naar `main` opnieuw uit. Arduino-sketches kunnen pas betrouwbaar tegen een boardprofiel worden
+gecompileerd nadat het exacte board en de benodigde libraries zijn vastgelegd.
 
-`MEASURED 2026-08-07.` **A merge does not publish the site.** PR #68 changed `site/index.html`
-— squarely inside `pages.yml`'s push path filter — merged at 12:47:23Z, and **zero** `pages`
-runs followed. The consequence was live and silent: `/guides/vulling/index.html` returned 404
-while the shelf still pointed at the old guide. Every check green, no error anywhere, wrong
-site.
+## Vragen die alleen de maker kan sluiten
 
-**Cause:** GitHub suppresses workflow runs for events triggered by `GITHUB_TOKEN`, and
-`auto-merge-enabler.yml` lands `claude/*` PRs with exactly that token. The `schedule` safety
-net added in PR #65 is best-effort — GitHub does not guarantee scheduled runs and they are
-routinely delayed or dropped.
+1. Welke materialen, nozzleformaten en eigen Bambu-profielen gebruikt hij normaal?
+2. Welk exact lasermerk/model, principe, lens/focusmethode en software gebruikt hij?
+3. Welke CNC, controller, spindel, collets en frezen staan er?
+4. Welke Arduino-borden en veelgebruikte sensoren liggen er?
+5. Welke exacte servovarianten, pinvolgorde en voeding heeft de arm?
+6. Wat zijn de gemeten gewrichtslimieten, homewaarden en startupresultaten?
 
-**Until this is fixed, after every merge that touches `site/**` or `guides/**`:**
-
-```
-curl -s -X POST -H "Authorization: Bearer $GITHUB_PAT" \
-  -H "Accept: application/vnd.github+json" \
-  https://api.github.com/repos/menno420/curious-research/actions/workflows/pages.yml/dispatches \
-  -d '{"ref":"main"}'
-```
-
-Then verify the live URL actually changed — do not assume the dispatch worked.
-
-### …and how it is fixed — `MEASURED`, no new credential
-
-**The owner ruled out adding a `ROUTINE_PAT`** (2026-08-07). It turned out not to be needed.
-
-`MEASURED` on PR #72: the same merge performed with the **account PAT** — attributed to a real
-user rather than `GITHUB_TOKEN` — **does** fire `pages`, a `push` run within 20 seconds,
-completed green. The suppression is about *who* the merge is attributed to, not about merging.
-`auto-merge-enabler.yml`'s own comment already preferred a PAT "so the eventual merge attributes
-to a real user"; it just fell back to `GITHUB_TOKEN` when no PAT existed.
-
-So the enabler now **refuses to arm any PR touching `site/` or `guides/`** and says why in a
-run notice. Those PRs are merged via the API instead:
-
-```
-curl -s -X PUT -H "Authorization: Bearer $GITHUB_PAT" \
-  -H "Accept: application/vnd.github+json" \
-  https://api.github.com/repos/menno420/curious-research/pulls/<N>/merge \
-  -d '{"merge_method":"squash","sha":"<head-sha>"}'
-```
-
-Everything else still auto-merges as before. **Always verify the live URL changed afterwards** —
-this failure gives no error, so the only proof is the site itself.
-
-Moving off GitHub Pages onto Railway is an owner-stated goal and would retire the whole failure
-mode; remove this carve-out then, or if a `ROUTINE_PAT` ever appears.
-
-## Open questions — waiting on the owner
-
-Five things nobody but the owner can answer. Each unblocks concrete work.
-
-0. **OpenSCAD or Fusion 360 — which way do the designs go?** This is the newest and probably
-   the biggest. Every design in `projects/` ships as `.scad`, and
-   `guides/windows-gereedschap/` tells him to install OpenSCAD. But he already models in
-   **Fusion 360** and knows it well. The real trade-off, stated honestly:
-   - **OpenSCAD** — the model is *text*, so Claude can write and edit the design directly.
-     He only renders and exports. That is why the repo chose it.
-   - **Fusion 360** — far more capable and already in his hands, but the files are binary,
-     so Claude cannot author them.
-   - **The third path, probably the best one:** Fusion 360 has a **Python scripting API**.
-     Claude can write a Fusion script that he runs *inside* Fusion to generate parametric
-     geometry — keeping Claude's ability to author designs AND the tool he already knows.
-     Not yet tried here; would need a guide and one worked example.
-
-1. **Drybox: design A or L?** `ideas/filament-drybox-logger.md` sits at `think-more` on
-   exactly one question — alarm or logger. **A** is the traffic-light alarm (recommended:
-   it does something visible on the bench); **L** is the passive humidity logger. Either
-   answer flips the idea to `build` and a project follows.
-2. **The arm calibration measurement.** `arm/calibration.json` does not exist, and until it
-   does, `projects/arm-pen-plotter/teach_and_replay.py` refuses to start by design. This is
-   now the ONLY thing standing between a working arm and the repo's arm projects — the
-   hardware side is already done (see `arm/README.md`). Follow
-   `guides/arm-envelope-explained/`, copy `arm/calibration.example.json` to
-   `arm/calibration.json`, fill in the measured min/max/center for each of the six servos,
-   commit it. This unblocks the whole arm lane.
-3. **The stale-branch sweep.** Roughly 37 merged `claude/*` branches survive on origin,
-   left behind when the old agent fleet's dead sessions re-pushed branches GitHub had
-   already auto-deleted. They are all merged and safe to delete by hand at
-   `https://github.com/menno420/curious-research/branches`; each PR page keeps a "Restore
-   branch" button. The sessions that could re-create them no longer exist, so once swept
-   they stay gone. Cosmetic, not urgent.
-
-## In flight right now (2026-08-07)
-
-**Twelve deep-research runs are out** — the six prompts in
-`research/deep-research-prompts.md`, sent to both ChatGPT deep research and Gemini deep
-research. When they land:
-
-1. Save each raw result to `research/dossiers/<topic>.md`, unedited, with the date and
-   which tool produced it.
-2. Verify the `SOLID` claims that touch safety before any of it reaches him — power
-   figures, fumes, materials that must not be lasered, laser class. A research tool will
-   confidently mislabel these.
-3. Cut into Dutch cards in `site/kennis.html`. **Cut, do not translate** — a 120-word
-   English card is a ~60-word Dutch one once the filler is gone. `lasersnijden` and
-   `frezen` are currently visible, deliberately empty tabs.
-
-**Then the handover:** the owner is writing an introduction email and gifting a Claude
-subscription. That changes the pitch from "your answers stop evaporating" to "…and Claude
-can read the whole workshop before it answers". The maker is on the free tier today.
-
-### Owner direction 2026-08-07: **implementation guides, not more safety documentation**
-
-Verbatim: *"We should also not be too worried about safety documentation, what I need is
-implementation guides."*
-
-Read this correctly, because it is a steer on **effort**, not a licence to strip anything:
-
-- **The safety content already written stays**, and `CLAUDE.md` §2's hard rules stay binding.
-  Those are cheap to keep and expensive to be wrong about, and he did not ask for their
-  removal.
-- **The `lasersnijden` safety cards were a one-time base**, not a programme. "Never put PVC in
-  a laser" is written once and is then done.
-- **Effort now goes to "how do I actually do this".** When a safety fact genuinely belongs in
-  an implementation guide (the extraction running before the cut, the clamp before the move),
-  it rides *inside* the steps rather than becoming its own document.
-
-**Next work, implementation-first and largest first:**
-
-1. **Laser and CNC are still the biggest blind spot** (see the section below) and are now also
-   the biggest *implementation* gap. He draws 2D in Fusion for both, and there is no guide on
-   getting from a Fusion sketch to a cut part: export, units, kerf compensation, tabs, the
-   sheet layout. `guides/fusion-python/` is the natural foundation — parametric 2D
-   (finger-jointed boxes, hole patterns, panel layouts) is exactly the work that is miserable
-   with a mouse and pleasant with a script.
-2. **The `frezen` tab** — fill it as implementation (feeds, workholding, toolpaths, what
-   actually breaks a cutter), not as a hazard list.
-3. **The seven remaining guide translations** — these already *are* implementation guides;
-   order and traps are in the guides table above.
-4. Dutch project pages so `Bouwprojecten` stops sending him to GitHub to read `.scad` source.
-5. A repeatability guide for the arm, now that smooth motion exists.
-6. Rewriting the printing guides with Bambu Studio's real menu names — the smaller half of
-   that job; `guides/bambu-studio/` explains why.
-
-## Answered, and the work they unblocked
-
-- **Which slicer? → Bambu Studio.** He runs a **Bambu Lab A1 mini** and an **A1 with AMS
-  Lite**. Acted on in `guides/bambu-studio/` — but NOT the way it first looked. The A1 series
-  auto-calibrates bed level, Z-offset, resonance and flow dynamics **before every print**, so
-  several tuning guides here are aimed at printers he does not own. Rather than renaming menus
-  across five English guides, one Dutch guide now says which of them still apply to him and
-  which are already done by his machine. Renaming menus inside those five is still available
-  work, but it is now the smaller half of the job.
-- **OpenSCAD or Fusion 360? → both, and he asked for the bridge himself.** He wrote, in his
-  own words, that he hopes to learn *"hoe ik een programma in python kan inladen in
-  fusion360"*. So the third path is not a proposal any more, it is a request:
-  `guides/fusion-python/` now teaches it, with a worked script. The existing `.scad` files
-  stay as they are — nothing is broken, and OpenSCAD is still the easiest way for Claude to
-  hand over a whole model. Fusion scripting is the better path when he wants it *in the tool
-  he actually draws in*.
-
-## Not yet addressed at all — laser and CNC
-
-He draws 2D in Fusion for **laser cutting and CNC milling**, and this repo has nothing about
-either. Every guide assumes a 3D printer. That is the biggest blind spot in the collection,
-and the Fusion scripting guide is the natural bridge: parametric 2D (finger-jointed boxes,
-hole patterns, panel layouts) is exactly the work that is miserable with a mouse.
-
-## History — the machinery that used to be here
-
-This repo was built by an autonomous agent fleet that no longer exists. On 2026-08-07 its
-machinery was removed: `bootstrap.py` and `.substrate/`, the 37 `.sessions/` cards, the
-`control/` lane with its ORDER/PROPOSAL protocol addressed to a manager seat, and sixteen
-generated `docs/` files that formed a routing tree nobody reads. `.claude/settings.json`
-lost its four `bootstrap.py` hooks in the same pass (the `PreToolUse` matcher was `*`, so
-leaving them wired while deleting the script would block every tool call in every future
-session — that exact mistake stranded one earlier session).
-
-If you find a doc, a comment, or a link still addressing a "seat", a "manager", a "kit", or
-a session card: it is a leftover, not an instruction. Remove it. Do not rebuild any of it.
+Zodra een antwoord is gemeten of uit een primaire bron komt: werk eerst
+`workshop-profile.md` bij, voeg datum/herkomst toe en laat gidsen ernaar verwijzen.

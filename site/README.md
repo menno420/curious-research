@@ -1,78 +1,51 @@
-# `site/` — the public website
+# `site/` — openbare Nederlandse ingang
 
-Agent-facing note (English on purpose; the site itself is Dutch).
+**Live:** <https://menno420.github.io/curious-research/>
 
-**Live at:** https://menno420.github.io/curious-research/
+De site is statisch en alleen-lezen. Voeg geen tokens, uploadformulier of schrijffunctie toe;
+alles in GitHub Pages is publiek. De repositorybestanden blijven de bron van waarheid.
 
-## What this is
+## Bestanden
 
-The shop window. On github.com the animated guides render as raw HTML source, which sells
-nothing. This site serves them properly, so the maker can watch them on his phone at the
-printer with no GitHub account and no Claude subscription.
-
-**Read-only.** The page never writes anything back. Do not add editing to it — a Pages site
-is static, so any token in its JavaScript is public, GitHub's secret scanning auto-revokes
-exposed tokens, and it would break the no-secrets-in-files rule in `CLAUDE.md` §2. If
-editing is ever wanted, the token has to live in a small serverless function (a Cloudflare
-Worker or similar) that the page calls, gated by a shared password — never in the page.
-
-## Files
-
-| File | What |
+| Bestand | Functie |
 |---|---|
-| `index.html` | The shelf — every guide as a card, grouped, with a one-line Dutch description |
-| `style.css` | All the styling. Design tokens match the guides' own, so it reads as one thing |
+| `index.html` | Gidsen per werkplaatstype, zonder handmatig totaal aantal |
+| `projecten.html` | Uitleg, onderdelen, bouwroute en test vóór links naar projectbroncode |
+| `kennis.html` | Korte kenniskaarten uit één `KENNIS`-object met vijf bewijsniveaus |
+| `style.css` | Gedeelde vormgeving zonder framework of buildstap |
 
-Plain HTML and CSS. **No build step, no framework, no dependencies** — deliberately, so any
-future session can edit it as easily as any other file in the repo. Keep it that way.
+De kaarten in `kennis.html` worden dynamisch geteld. Gidsinventaris wordt beheerd in
+`guides/README.md`; kopieer geen totaalaantal naar de site.
 
-## Editing it
+## Een gids toevoegen
 
-Adding a guide? Add a `<a class="kaart">` block to the right `<section>` in `index.html`:
+Voeg aan de juiste sectie van `index.html` een kaart toe:
 
 ```html
 <a class="kaart" href="guides/<slug>/index.html">
-  <span class="icoon">🖨️</span>
+  <span class="icoon">🛠️</span>
   <h3>Nederlandse titel</h3>
-  <p>Eén zin, in het Nederlands, over wat je eraan hebt.</p>
-  <span class="merk nl">Nederlands</span>
+  <p>Welk probleem de maker hiermee uitvoert en controleert.</p>
+  <span class="merk nl">Uitvoeringsgids</span>
 </a>
 ```
 
-The badge is `merk nl` for a Dutch guide, `merk en` for one of the older English ones.
+De live site plaatst `guides/` naast `index.html`. Voor een lokale preview die dezelfde structuur
+gebruikt:
 
-Note the `href` is `guides/…`, not `../guides/…`: on the live site `guides/` sits next to
-`index.html`. Opening `site/index.html` straight off disk will 404 on the guide links —
-that is expected, not a bug. To preview the real layout:
-
-```
-python3 -m http.server --directory site 8000   # shelf only
-```
-
-or assemble it exactly as CI does:
-
-```
-mkdir -p /tmp/preview && cp -r site/. /tmp/preview/ && cp -r guides /tmp/preview/guides
-python3 -m http.server --directory /tmp/preview 8000
+```bash
+preview_dir=$(mktemp -d)
+cp -r site/. "$preview_dir/"
+cp -r guides "$preview_dir/guides"
+python3 -m http.server --directory "$preview_dir" 8000
 ```
 
-## Publishing
+## Publicatie
 
-**Know this before you trust a merge:** a PR that lands via auto-merge armed with the default
-`GITHUB_TOKEN` does **not** fire the `push` trigger — GitHub suppresses workflow runs for
-events that token causes. The site then stays stale while every merge looks fine. A
-two-hourly `schedule` in `pages.yml` is the safety net; `workflow_dispatch` publishes
-immediately. Adding a `ROUTINE_PAT` repo secret makes merges publish instantly again.
+`.github/workflows/pages.yml` assembleert `site/` en `guides/` en publiceert na wijzigingen op
+`main`, via handmatige dispatch of de geplande vangnetrun. Controleer na merge de echte openbare
+URL; een groene linkcheck bewijst alleen de repositorystructuur, niet dat de nieuwste Pages-run
+al live staat.
 
-
-`.github/workflows/pages.yml` copies `site/` plus `guides/` into one artifact and deploys
-it on every push to `main` that touches either. It needs one thing done by hand, once:
-**Settings → Pages → Build and deployment → Source = "GitHub Actions"**. Until that is set,
-the build job still succeeds and the deploy step fails with a 404 saying exactly that.
-
-That click cannot be automated away — this was tested, not assumed.
-`actions/configure-pages@v5` with `enablement: true` fails with *"Create Pages site failed.
-Error: Resource not accessible by integration"*. A workflow's `GITHUB_TOKEN` can **deploy**
-to an existing Pages site but cannot **create** one, even when the workflow grants
-`pages: write`; creating a site needs repo-admin rights. Don't re-add `enablement` — it
-converts a clean "not enabled yet" deploy failure into a hard build failure.
+De repository moet bij GitHub Pages eenmalig **Settings → Pages → Build and deployment → GitHub
+Actions** hebben ingeschakeld. De workflow hoort die beheerdershandeling niet te omzeilen.

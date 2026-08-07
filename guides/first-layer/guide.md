@@ -1,180 +1,80 @@
-# First layer — the foundation everything else is built on
+# Eerste laag op de Bambu Lab A1-serie — diagnose zonder handmatige Z-offset
 
-**What this is:** the one layer that decides whether a print sticks or fails — how to read it,
-and the two dials (the nozzle-to-bed gap and the first-layer speed) that get it right, tonight.
+## Welk probleem lost dit op?
 
-**Watch it instead:** open [`index.html`](./index.html) in your browser — it animates this whole
-page in about 20 seconds, in side-view cross-section. (How to open it is the last line of this
-page.)
+Een print laat aan de plaat los, de lijnen sluiten niet aan of de onderrand wordt te breed. Deze
+workflow bepaalt met één kleine test of de oorzaak in plaat, profiel, nozzle of eerste-laagproces
+zit. Hij gebruikt de automatische metingen van de A1/A1 mini en schrijft geen handmatige
+Z-offset voor.
 
-## In bench terms
+Open [`index.html`](./index.html) voor de beslisroute in beeld.
 
-The first layer is the layer of glue every other layer stands on. Every wall, every bit of
-detail, every hour of print above it is only as solid as the layer touching the bed. Nail this
-one layer and roughly **90% of beginner print failures — the ones that won't stick, or curl up
-and pop off halfway — simply disappear.** It is the single highest-value thing to get right, and
-you can dial it in tonight with nothing but your printer and a clean bed.
+## Waarom dit voor jouw werkplaats telt
 
-First time you'll meet these words — one line each:
+Je gebruikt een Bambu Lab A1 en A1 mini met Bambu Studio; zie
+[`docs/workshop-profile.md`](../../docs/workshop-profile.md). Veel generieke eerste-laaggidsen
+zijn geschreven voor handmatig genivelleerde printers. Op de A1-serie begin je bij correcte
+profielen, een schoon contactvlak en de automatische controle vóór de print.
 
-- **nozzle-to-bed gap / Z-offset** — the tiny distance between the nozzle tip and the bed on the
-  first layer. "Z-offset" is the setting that fine-tunes it (Z is the up-down axis).
-- **squish** — the gentle flattening as the nozzle presses each line down onto the bed.
-- **elephant's foot** — a squashed-out bulge at the very bottom edge when the first layer is
-  pressed down too hard.
-- **adhesion** — how well the print grips (sticks to) the bed.
-- **brim** — a thin flat collar of plastic printed around the part's base for extra grip, peeled
-  off after.
-- **bed leveling** — setting the nozzle-to-bed gap the same at every corner so the whole first
-  layer squishes evenly.
-- **first-layer speed** — how fast the nozzle moves while laying that first layer (usually set
-  separately from the rest of the print).
+## Benodigdheden
 
-## The honest #1 fix first: a clean bed
+- de printer en plaat waarop het probleem werkelijk optreedt;
+- Bambu Studio met het juiste A1- of A1-mini-profiel, echte nozzlemaat en plaattype;
+- het gebruikte filament en bijbehorend profiel;
+- warm water, een klein beetje gewoon afwasmiddel en een schone, pluisvrije doek;
+- een vlak testvlak van ongeveer 30 × 30 mm en één laag hoog.
 
-Before any setting: **most "it won't stick" problems are a dirty bed, not a bad printer.** Skin
-oil from your fingers is invisible and it kills adhesion. So, first:
+## Stappenplan
 
-```
-Warm water + a drop of dish soap → rinse → dry.  (or: 90%+ IPA on a paper towel)
-```
+1. **Leg de uitgangssituatie vast.** Noteer printer, nozzle, plaat, filamentprofiel en waar op
+   het bed de fout zit. Maak een foto vóór je iets schoonmaakt of wijzigt.
+2. **Controleer de plaatkeuze.** Vergelijk de fysieke plaat met de geselecteerde plaat in Bambu
+   Studio. Controleer ook printer en nozzlemaat.
+3. **Reinig zonder nieuwe variabele.** Laat de plaat afkoelen, was het printvlak met warm water
+   en weinig gewoon afwasmiddel, spoel volledig en droog met een schone doek. Raak het vlak
+   daarna alleen aan de randen aan. Volg bij een gecoate plaat altijd de plaatinstructie als die
+   hiervan afwijkt.
+4. **Controleer de nozzle koud.** Verwijder zichtbaar materiaal aan de buitenkant zonder de
+   nozzle of plaat te beschadigen. Controleer hotendmontage en plaatligging volgens de
+   machinehandleiding.
+5. **Slice alleen het testvlak.** Gebruik dezelfde laaghoogte en hetzelfde filamentprofiel als
+   het mislukte onderdeel. Bekijk in Preview de eerste laag, brim en volgorde.
+6. **Laat de A1 zijn normale startcontroles uitvoeren.** Sla bed/nozzlekalibratie niet over voor
+   deze diagnoserun. Verander nog geen temperatuur, snelheid of flow.
+7. **Lees het resultaat.** Losse ronde banen en openingen wijzen op onvoldoende contact; diepe
+   groeven, een erg doorschijnend vlak of opgestuwde randen op te veel vervorming. Een egaal,
+   gesloten vlak is de referentie.
+8. **Verander daarna één ding.** Is reinigen al genoeg, bewaar dat als resultaat. Zo niet, test
+   bijvoorbeeld alleen een passend Bambu-filamentprofiel of alleen een lagere eerste-laagsnelheid
+   in een kopie van het procesprofiel. Pas geen internet-Z-offset toe.
 
-Then **stop touching the print surface with bare fingers** — handle the plate by its edges. Do
-this one thing and a surprising number of first-layer problems never happen.
+## Zo controleer je het resultaat
 
-> IPA = isopropyl alcohol, the "rubbing alcohol" cleaner; 90%+ evaporates clean without leaving
-> a film.
+De test is geslaagd als het vlak over de hele 30 × 30 mm gesloten en gelijkmatig is, tijdens de
+print niet wordt meegesleept en na afkoelen zonder beschadiging loskomt. Herhaal op dezelfde
+bedpositie om toeval uit te sluiten.
 
-## Steps
+## Veelgemaakte fouten
 
-Do one step, check what it says you should see, then move to the next.
+- Een A1 behandelen als een printer met vier handmatige bedknoppen.
+- Meerdere zaken tegelijk wijzigen: plaat reinigen, temperatuur verhogen én snelheid verlagen.
+- Het verkeerde plaattype of nozzleprofiel selecteren.
+- Een volledig onderdeel herprinten in plaats van één laag.
+- Een mislukte automatische meting proberen te “repareren” met een algemene Z-offset.
+- Een plaat heet aanraken of een schoonmaakmiddel gebruiken dat de coating niet verdraagt.
 
-### 1. Clean the bed
+## Wanneer vraag je Claude?
 
-Do the clean-bed step above first — warm water + a drop of dish soap, rinse, dry; then handle the
-plate by its edges only. A clean bed is the foundation of the foundation.
+- *"Vergelijk deze foto van mijn A1-eerste laag met de Preview en geef één volgende test."*
+- *"Controleer op deze screenshots printer-, nozzle-, plaat- en filamentprofiel."*
+- *"Maak een A/B-test waarbij alleen de eerste-laagsnelheid verandert."*
+- *"Welke waarneming onderscheidt vervuiling van een verkeerd plaatprofiel?"*
 
-### 2. Level the bed / set the Z-offset (the paper-drag method)
+## Bronnen en bewijsniveau
 
-Getting the gap the same at every corner is called **leveling**. The classic feeler is a plain
-sheet of paper slid under the nozzle at each corner:
-
-```
-Slide a sheet of paper under the nozzle at each corner.
-Adjust until you feel SLIGHT friction — the paper drags a little,
-but still slides.  Not free (too far).  Not pinned (too close).
-```
-
-That slight drag is the "just right" gap you saw in the animation. Set it the same at every
-corner (and the middle, if your printer asks).
-
-> Many printers do this automatically ("auto bed leveling" / a bed probe). If yours does, run its
-> routine — the paper-drag method is the manual version and a good sanity check either way.
-> A **bed probe** = a sensor that measures the gap for you automatically.
-
-### 3. THE ONE-VALUE EXPERIMENT: slow the first layer down
-
-This is the single change that fixes the most first layers. Drop the first-layer speed to about
-half your normal speed:
-
-```
-First layer speed: 20 mm/s   (down from a typical ~50 mm/s)
-```
-
-A slow first layer gives each line time to press onto the bed and bond, instead of being dragged
-loose. This setting lives under **Speed → First layer** (or "Initial layer speed", or similar) in
-every slicer — it exists in all of them, the name just varies.
-
-> ⚑ Tell me which slicer you use and I'll paste the exact click-by-click path here — the menu
-> names differ between slicers, and I'd rather paste your exact clicks than make you hunt.
-
-### 4. Print a one-layer test
-
-You only need to judge the *foundation*, so don't print a whole model. Slice a **20 mm square to a
-single layer height**, or start the first layer of a **20 mm cube** and cancel the print after
-layer 1.
-
-```
-20 mm square, one layer tall  (or: first layer of a 20 mm cube, then cancel)
-```
-
-Why: you're only reading the first layer, so print only the first layer — it's a 60-second test,
-not a lost hour.
-
-### 5. Read the squish (what you see)
-
-Take a close look at the test square. Match it to one of these three:
-
-- **TOO FAR** — separate round lines you can see between, gaps, maybe a corner already curling up.
-  Not enough squish; it won't stick.
-- **TOO CLOSE** — translucent or torn lines, ridges, very little plastic, and an **elephant's-foot**
-  bulge at the edges. Too much squish; starved of plastic — the little plastic that does escape
-  squeezes out sideways at the base, and that side-squeeze is the elephant's foot.
-- **JUST RIGHT** — the lines have merged into one smooth sheet with a uniform sheen, and it sticks
-  hard. This is the target.
-
-### 6. Adjust live with baby-steps (Z-offset)
-
-Most printers let you nudge the Z-offset **while the first layer is printing** ("baby-stepping"),
-so you can dial it in on the next test without re-leveling. Change it a hair at a time:
-
-```
-Too far (not sticking):  nudge nozzle DOWN 0.05 mm, retest
-Too close (scraping):    nudge nozzle UP 0.05 mm, retest
-```
-
-0.05 mm is tiny on purpose — the whole "just right" window is a fraction of a millimetre, so small
-nudges land it; big jumps overshoot.
-
-### 7. Bed temperature
-
-If a clean bed, a level gap, and a slow first layer still aren't quite enough, a warm bed helps
-the first layer grip. A rough starting point per material:
-
-```
-PLA bed:  ~60 °C      PETG bed:  ~70–80 °C     (check your filament's label)
-```
-
-> **Check this yourself.** These are hot surfaces and rough starting numbers only — the real value
-> is on your filament's label and box. Confirm it against your own spool before you print; don't
-> take a number from a guide (including this one) as gospel.
-
-### 8. A brim
-
-For small-footprint parts, a brim — a flat collar welded to the part's edge — gives more grip and
-peels off cleanly after:
-
-```
-Brim: 5 mm   (a flat collar welded to the part's edge — more grip, peels off after)
-```
-
-> ⚑ Both of these — bed temperature (step 7) and a brim (step 8) — live in every slicer, under
-> "Material"/"Filament" and "Build Plate Adhesion" (or similar). Tell me your slicer and I'll paste
-> the exact clicks.
-
-## Safety — check this yourself
-
-- **You** level the bed, **you** slice, **you** start the print, and **you** watch it. Claude
-  never sends print instructions (G-code) to your printer.
-- **Never leave a print running unattended** — nothing here is "safe to print unattended".
-- The **bed and the nozzle are hot enough to burn.** The bed temperatures above are hot surfaces;
-  confirm every temperature against your own filament and hot-end (the heated nozzle assembly the
-  filament melts in) before you print.
-
-## Sources
-
-- Simplify3D — *Print not sticking to the bed* — <https://www.simplify3d.com/resources/print-quality-troubleshooting/not-sticking-to-the-bed/>
-- Sovol — *Fix first-layer problems (easy steps guide)* — <https://www.sovol3d.com/blogs/news/fix-first-layer-problems-3d-printing-easy-steps-guide>
-- Raise3D — *3D printing speed* — <https://www.raise3d.com/blog/3d-printing-speed/>
-- Teaching Tech — *Calibration* — <https://teachingtechyt.github.io/calibration.html>
-
-**Verify:** you're done when your test square shows lines that have merged into one smooth,
-well-stuck sheet — no gaps, no torn ridges, no curling corner — and it takes a real tug to lift
-off the bed.
-
-## How to open the animation
-
-Double-click `guides/first-layer/index.html` — it opens in your web browser. Nothing is installed,
-and nothing goes online. Press **Play all** to watch it, or **Next step ▶** to walk through one
-idea at a time. (On GitHub, tap `index.html` → the **⋯** menu → *Download*, then open the
-downloaded file in any browser.)
+- Bambu Lab A1 introductie en automatische kalibratie:
+  <https://wiki.bambulab.com/en/a1/manual/intro-a1> — **Onderbouwd**, officiële bron.
+- Bambu Lab A1 mini introductie:
+  <https://wiki.bambulab.com/en/a1-mini/manual/intro-a1-mini> — **Onderbouwd**, officiële bron.
+- Testvolgorde, foto en één variabele per proef — **Praktijkadvies**.
+- De beste profielwijziging voor een specifieke plaat/filamentcombinatie — **Experiment**.

@@ -1,161 +1,153 @@
-# Print & test the tolerance coin — step by step
+# Speling meten met de parametrische testmunt
 
-> Goal: end up with **one number per printer + filament** — the clearance that
-> gives you the fit you want — written down and reusable forever.
->
-> New words are explained the first time they appear. Every command or menu path
-> is in its own block so you can copy it, never retype it.
+## Welk probleem lost dit op?
 
-Want to watch the idea move first? Open the explainer:
-[`guides/how-print-clearance-works/`](../../guides/how-print-clearance-works/).
+Deze route bepaalt welke radiale speling op een gekozen printer-, materiaal- en profielcombinatie
+een klem-, nauw schuivende of losse passing oplevert. Het resultaat is een vastgelegde
+ontwerpwaarde die later terug te voeren is op één fysieke proef.
 
----
+## Waarom is dit relevant voor jouw setup?
 
-## Part A — turn the model into a printable STL
+Je ontwerpt eigen onderdelen en gebruikt twee printers. Eenzelfde nominale maat kan op de ene
+printer of met een ander materiaal anders passen. Door printer, nozzle, filament en profiel in de
+resultatenlog te bewaren kan Claude later de relevante meetwaarde kiezen zonder te doen alsof één
+getal overal geldt.
 
-The design lives in a text file, `tolerance-test-coin.scad`. **OpenSCAD** (a free
-program that turns that text into a 3D shape) makes the printable **STL** (the
-standard 3D-model file your slicer reads).
+Lees voor de algemene werkplaatscontext
+[`docs/workshop-profile.md`](../../docs/workshop-profile.md). De visuele uitleg over radiale en
+diametrale speling staat in [`guides/speling/`](../../guides/speling/).
 
-**Step 1 — install OpenSCAD (once).**
-Download it from the official site and install like any other program:
+## Benodigde gereedschappen
 
+- [OpenSCAD](https://openscad.org/downloads.html);
+- Bambu Studio met het werkelijk gebruikte printer-, nozzle- en materiaalprofiel;
+- de gekozen printer en filamentrol;
+- bij voorkeur een schuifmaat voor diagnose, naast de noodzakelijke voeltest;
+- [`clearance-results.md`](./clearance-results.md) voor het duurzame resultaat.
+
+## Stapsgewijze workflow
+
+### 1. Leg de proefcondities vast
+
+Kies vooraf één combinatie en verander die tijdens de proef niet:
+
+- printer en nozzle;
+- filamentmerk, materiaal en kleur;
+- laaghoogte en relevante procesprofielrevisie;
+- nozzle- en bedtemperatuur;
+- waarde voor olifantsvoetcompensatie.
+
+Gebruik geen oude meetwaarde als de combinatie wezenlijk is gewijzigd. Maak in
+`clearance-results.md` alvast één rij aan, maar vul de passingen pas na de fysieke test in.
+
+### 2. Kies de meetreeks
+
+Open `tolerance-test-coin.scad`. De standaardreeks loopt van `0.10` tot `0.50` mm radiale speling
+in stappen van `0.05` mm. Pas alleen deze waarden aan als de gewenste passing buiten de reeks valt:
+
+```scad
+clear_min  = 0.10;
+clear_max  = 0.50;
+clear_step = 0.05;
 ```
-https://openscad.org/downloads.html
-```
 
-You should see an "OpenSCAD" application after installing.
+Laat `pin_d` gelijk binnen één proef. Anders verander je zowel de nominale maat als de speling en
+wordt het resultaat moeilijker te vergelijken.
 
-**Step 2 — open the model.**
-Launch **OpenSCAD**. Click **File ▸ Open**, and choose:
+### 3. Render en exporteer
 
-```
-projects/tolerance-test-coin/tolerance-test-coin.scad
-```
+Gebruik in OpenSCAD **F6** of **Design → Render**. Controleer in de console dat geen waarschuwing
+of fout verschijnt. Exporteer daarna via **File → Export → Export as STL**.
 
-You should see the model code on the left and a preview area on the right.
+De repositorybron is automatisch als manifold mesh gecontroleerd. Een eigen parameterwijziging is
+nieuwe afgeleide uitvoer en moet daarom opnieuw worden gerenderd en gecontroleerd.
 
-**Step 3 — render it.**
-Press **F6** (or menu **Design ▸ Render**). A round coin full of holes, plus 3
-little pins beside it, appears. Numbers (0.10, 0.15 …) are engraved under each
-hole — those are the **clearances** in millimetres.
+### 4. Controleer in Bambu Studio
 
-> **Clearance** = the air gap left between two parts so they fit. The number under
-> each hole is the gap **per side** (more on that in Part D).
+1. Kies het echte printer- en nozzleprofiel vóór het slicen.
+2. Importeer de STL en controleer dat munt en losse pennen als afzonderlijke volumes aanwezig zijn.
+3. Open **Quality → Precision → Elephant foot compensation** en noteer de actieve waarde. Neem niet
+   blind een algemeen getal over: deze instelling beïnvloedt precies de onderzijde die je meet.
+4. Slice en bekijk Preview laag voor laag. Controleer dat gaten open blijven, labels leesbaar zijn
+   en de pennen niet met de munt versmelten.
+5. Gebruik geen support in de meetgaten; supportresten zouden de passing veranderen.
 
-**Step 4 — export the STL.**
-Click **File ▸ Export ▸ Export as STL…**. Save it as:
+### 5. Print één gecontroleerde proef
 
-```
-tolerance-test-coin.stl
-```
+Start de print en beoordeel de eerste laag. Stop bij loslatende lijnen, sterke verbreding,
+materiaalophoping of een profiel dat niet bij printer/nozzle/materiaal hoort. Laat de onderdelen na
+de print volledig afkoelen voordat je meet; warme kunststof kan een andere indruk geven.
 
-Verify: you now have a `tolerance-test-coin.stl` file next to the `.scad`.
+### 6. Classificeer de passing
 
-> Want a different size or gap range? Change the values at the top of the `.scad`
-> (they're labelled `EDIT THESE`), press **F6** again, and export again. Or just
-> tell Claude what you want and it'll adjust the file for you.
+Gebruik steeds dezelfde losse pen en werk van klein naar groot. Forceer een te klein gat niet;
+beschadiging maakt een tweede beoordeling onbetrouwbaar.
 
----
-
-## Part B — slice and print
-
-**Slicer** = the program that turns an STL into printer instructions (**G-code**).
-PrusaSlicer, Bambu Studio, Cura — whichever you use.
-
-**Step 5 — load the STL.**
-Open your slicer and drag `tolerance-test-coin.stl` onto the plate.
-
-**Step 6 — turn ON elephant-foot compensation.** *(This matters — read it.)*
-The first layer of a print gets squished wider than the rest because the nozzle
-presses it into the hot bed. That bulge is called **elephant's foot**, and it makes
-the *bottom* of every hole and pin tighter than the top — which would lie to you
-about the fit. Your slicer can shrink the first layer to cancel it:
-
-- **PrusaSlicer:** *Print Settings ▸ Advanced ▸ Elephant foot compensation* → set
-  `0.2` mm.
-- **Bambu Studio:** *Quality ▸ Precision ▸ Elephant foot compensation* → set
-  `0.2` mm.
-- **Cura:** search settings for **Initial Layer Horizontal Expansion** → set
-  `-0.2` mm (negative shrinks it).
-
-**Step 7 — normal settings, then slice.**
-Use your everyday PLA profile and layer height (e.g. 0.2 mm). Click **Slice**. The
-whole thing prints in roughly 15–30 minutes.
-
-**Step 8 — print it.** *(Check this yourself.)*
-Send it to the printer, load your filament, **start the print, and stay with it** —
-watch the first layer go down cleanly. Claude never starts a print; that click is
-yours.
-
-Verify: you have a printed coin and 3 loose pins in your hand.
-
----
-
-## Part C — feel the fit and read your number
-
-Do this with the coin at room temperature (warm plastic reads looser).
-
-**Step 9 — try one pin in every hole.**
-Take one loose pin. Push it into each hole in turn, smallest number first. Feel
-which of these it is, and note it against the number engraved by that hole:
-
-| Feel | What it means | Name |
+| Waarneming | Classificatie | Ontwerpgebruik |
 |---|---|---|
-| Won't go / needs a hard push | too tight to use | **interference** |
-| Firm push, holds, no wobble | stays put on its own | **press fit** |
-| Slides in snug, no side-to-side play | guided but movable | **snug / push fit** |
-| Slides freely, tiny bit of play | moves easily | **sliding fit** |
-| Drops in, rattles | falls out | **loose fit** |
+| Gaat niet of alleen met buitensporige kracht | interferentie | onbruikbaar zonder bewuste pers-/nabewerking |
+| Stevige druk, blijft zonder merkbare speling zitten | klempassing | delen die bewust vast moeten blijven |
+| Schuift gecontroleerd zonder duidelijke zijdelingse speling | nauw schuivend | geleid maar demonteerbaar deel |
+| Schuift vrij met beperkte voelbare ruimte | schuivend | bewegend of makkelijk monteerbaar deel |
+| Valt erin en rammelt | los | snelle montage waar positionering niet kritisch is |
 
-**Step 10 — write your numbers down.**
-Open [`clearance-results.md`](./clearance-results.md) and fill in the row for this
-printer + filament:
-- the tightest gap that still **presses in and holds**,
-- the gap that **slides with no wobble**,
-- the gap that drops in **loose**.
+Herhaal een twijfelgeval minimaal drie keer en controleer of braamvorming of olifantsvoet alleen aan
+één zijde het oordeel bepaalt.
 
-That's the whole test.
+### 7. Schrijf het resultaat duurzaam weg
 
----
+Vul de gekozen rij in [`clearance-results.md`](./clearance-results.md) volledig in. De gegraveerde
+waarde is **per zijde**. Bij `0.20` is een gatdiameter dus `pen_d + 0.40` mm.
 
-## Part D — make it compound (this is the point)
+Een bericht in chat bewaart de meting niet automatisch. Vraag Claude desgewenst om de gemeten rij
+in het bestand te zetten, controleer de wijziging en zorg daarna voor back-up of publicatie volgens
+[`docs/claude-usage-guide.md`](../../docs/claude-usage-guide.md).
 
-**Step 11 — the per-side gotcha.**
-The number under each hole is the gap on **one side**. In a real two-part fit,
-*both* parts contribute, so the total slack between them is roughly **double** the
-engraved number. If your snug reading is `0.20`, a hole you design for a shaft
-should be `shaft_radius + 0.20` — not `+0.10`, and not `+0.40`. Getting this
-backwards is the classic "why is it twice as loose as I expected."
+### 8. Gebruik de juiste waarde in een ontwerp
 
-**Step 12 — turn your reading into a reusable constant.**
-In OpenSCAD you set the gap once and every hole in every future design uses it:
+Kies eerst het gewenste passingstype en daarna de rij die exact bij de productiecombinatie past.
+In OpenSCAD kan de gemeten radiale speling bijvoorbeeld één parameter worden:
 
-```
-clearance = 0.20;   // <-- YOUR snug number from step 10, per side
+```scad
+clearance = 0.20;  // gemeten waarde per zijde voor deze combinatie
 
 module shaft_hole(shaft_r, depth) {
     cylinder(h = depth, r = shaft_r + clearance);
 }
 ```
 
-Change printer or filament later? Change that one line.
+Bij Fusion 360 hoort dezelfde waarde in een benoemde gebruikersparameter, met printer, materiaal en
+meetdatum in de parameterbeschrijving of projectnotitie.
 
-**Step 13 — hand your numbers to Claude.**
-Tell Claude your press / snug / loose gaps for this printer + filament. Claude keeps
-them on file and drops the right one into every future design that has to fit
-together — servo horns for the arm, a battery lid, a box that actually closes.
+## Hoe verifieer je succes?
 
-Verify (the whole exercise worked): `clearance-results.md` has at least one filled
-row, and you can say out loud "on *this* printer in *this* filament, a snug fit is
-___ mm per side."
+De workflow is pas afgerond wanneer:
 
----
+- de STL zonder OpenSCAD-waarschuwingen rendert;
+- Bambu Studio de juiste printer-, nozzle- en materiaalcombinatie toont;
+- de geprinte munt en pennen onbeschadigd en volledig afgekoeld zijn;
+- minimaal klempassing, nauw schuivend en los zijn geclassificeerd, of expliciet is genoteerd dat
+  de reeks niet breed genoeg was;
+- `clearance-results.md` omstandigheden, waarden en datum bevat;
+- een afgeleide ontwerpmaat aantoonbaar het juiste passingstype en de juiste rij gebruikt.
 
-## The honest limit
+## Veelgemaakte fouten
 
-This gives you a **strong starting number for that printer + that filament** — not
-a universal constant. Fit also shifts with temperature, print speed, and part
-shape. Swap to a very different filament or print much hotter and re-run the coin.
-You still start far closer than a guess. (Full reasoning:
-[`ideas/tolerance-test-coin.md`](../../ideas/tolerance-test-coin.md), question 4.)
+- radiale speling verwarren met het totale diameterverschil;
+- twee printers of materialen onder één resultaat samenvoegen;
+- een compensatiewaarde overnemen zonder het actieve Bambu-profiel te controleren;
+- een braam of vervormde eerste laag als normale maat behandelen;
+- een te krap gat forceren en daarna opnieuw als meetgat gebruiken;
+- de waarde alleen in chat noemen en aannemen dat de repository daarmee is bijgewerkt;
+- een geldige manifold STL verwarren met een bewezen fysieke passing.
+
+## Wanneer vraag je Claude om hulp?
+
+- *“Controleer mijn ingevulde rij in `clearance-results.md`. Is duidelijk welke printer, nozzle,
+  materiaal- en profielcombinatie is getest?”*
+- *“Mijn reeks van 0,10–0,50 mm bevat geen nauw schuivende passing. Stel één nieuwe, smallere
+  parameterreeks voor zonder andere SCAD-maten te veranderen.”*
+- *“Gebruik voor dit deksel de gemeten klempassing van deze exacte printer- en materiaalrij. Laat de
+  berekening van radiale naar diametrale maat zien.”*
+- *“Vergelijk twee meetrijen en noem alleen verschillen die door de vastgelegde omstandigheden
+  worden ondersteund.”*

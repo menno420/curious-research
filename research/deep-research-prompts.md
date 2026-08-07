@@ -62,10 +62,12 @@ FORMAT, STRICTLY
 - Include a concrete number wherever one exists (voltage, current, pin count, timing, price).
 - Every card ends with two lines:
       SOURCE: <url>
-      CONFIDENCE: SOLID | COMMON | DISPUTED
-  SOLID = documented by the manufacturer or a datasheet. COMMON = widely reported by users but
-  not officially documented. DISPUTED = people genuinely disagree. Never dress a COMMON claim
-  up as SOLID.
+      CONFIDENCE: VERIFIED | SUPPORTED | PRACTICAL | NEEDS_CONFIRMATION | EXPERIMENTAL
+  VERIFIED = a primary source was opened and directly supports the exact claim. SUPPORTED = a
+  reliable secondary source or multiple independent sources support it. PRACTICAL = useful
+  maker advice whose result depends on the setup. NEEDS_CONFIRMATION = missing, conflicting or
+  uncheckable evidence. EXPERIMENTAL = a proposed test, with input, measurement and success
+  criterion. A manufacturer name or URL alone is not verification.
 - No filler. Never write "it depends" without saying what it depends on.
 
 THEN A FINAL SECTION: MYTHS AND OUTDATED ADVICE
@@ -114,11 +116,12 @@ FORMAT, STRICTLY
 - Include a concrete number wherever one exists (temperature, percentage, mm, grams).
 - Every card ends with two lines:
       SOURCE: <url>
-      CONFIDENCE: SOLID | COMMON | DISPUTED
-  SOLID = documented by Bambu Lab or another manufacturer. COMMON = widely reported by users
-  but not officially documented. DISPUTED = people genuinely disagree. Prefer the official
-  Bambu Lab wiki over YouTube and Reddit, and mark it COMMON when user reports are the only
-  source.
+      CONFIDENCE: VERIFIED | SUPPORTED | PRACTICAL | NEEDS_CONFIRMATION | EXPERIMENTAL
+  VERIFIED = the opened Bambu Lab documentation directly supports the exact claim. SUPPORTED =
+  a reliable secondary source or multiple independent sources support it. PRACTICAL = useful
+  maker advice whose result depends on printer, filament or profile. NEEDS_CONFIRMATION =
+  missing, conflicting or uncheckable evidence. EXPERIMENTAL = a proposed test, with input,
+  measurement and success criterion. Prefer Bambu Lab's own documentation to user reports.
 - No filler. Never write "it depends" without saying what it depends on.
 
 THEN A FINAL SECTION: MYTHS AND OUTDATED ADVICE
@@ -163,10 +166,12 @@ FORMAT, STRICTLY
 - Include a real API name, exact menu path, or number wherever one exists.
 - Every card ends with two lines:
       SOURCE: <url>
-      CONFIDENCE: SOLID | COMMON | DISPUTED
-  SOLID = documented by Autodesk. COMMON = widely reported by users but not officially
-  documented. DISPUTED = people genuinely disagree. Prefer Autodesk's own help and API
-  reference over third-party tutorials.
+      CONFIDENCE: VERIFIED | SUPPORTED | PRACTICAL | NEEDS_CONFIRMATION | EXPERIMENTAL
+  VERIFIED = the opened Autodesk documentation directly supports the exact claim. SUPPORTED =
+  a reliable secondary source or multiple independent sources support it. PRACTICAL = useful
+  workflow advice that may vary by version or machine. NEEDS_CONFIRMATION = missing,
+  conflicting or uncheckable evidence. EXPERIMENTAL = a proposed test, with input, measurement
+  and success criterion. Prefer Autodesk's current help and API reference.
 - No filler. Never write "it depends" without saying what it depends on.
 
 THEN A FINAL SECTION: MYTHS AND OUTDATED ADVICE
@@ -183,12 +188,11 @@ You are compiling a reference dossier for an experienced hobby maker. Research t
 use primary sources where they exist, and cite everything.
 
 WHO THIS IS FOR
-A Dutch hobby maker with a 6-DOF robot arm he assembled himself from a kit, running on six
-MG996R-class analog servos. The arm is already built, wired to a proper enclosed switching
-power supply through a distribution board, and moving under program control from a laptop —
-so he is well past first power-up and does not need beginner wiring advice. Strong mechanical
-and practical skills, low coding skills, works on Windows. Treat him as intelligent and
-technically minded, never as a beginner in general.
+A Dutch hobby maker with a self-built 6-DOF robot arm using six MG996R-class analog servos.
+The exact servo variant, controller, pin order, power system and present operational state are
+not confirmed. Do not invent them and do not prescribe a supply from a generic MG996R figure.
+He has strong mechanical and practical skills, low coding skills, and works on Windows. Treat
+him as intelligent and technically minded, never as a beginner in general.
 
 TOPIC
 Hobby servos and small robot arms, specifically MG996R-class analog servos stacked six deep.
@@ -210,11 +214,12 @@ FORMAT, STRICTLY
 - Include a concrete number wherever one exists (kg-cm, amps, degrees, milliseconds, euros).
 - Every card ends with two lines:
       SOURCE: <url>
-      CONFIDENCE: SOLID | COMMON | DISPUTED
-  SOLID = on a datasheet or from a measured bench test. COMMON = widely reported by users but
-  not officially documented. DISPUTED = people genuinely disagree. Manufacturer torque claims
-  for MG996R clones are frequently optimistic — say so where the evidence supports it, and
-  prefer measured tests to marketing copy.
+      CONFIDENCE: VERIFIED | SUPPORTED | PRACTICAL | NEEDS_CONFIRMATION | EXPERIMENTAL
+  VERIFIED = an opened primary datasheet or documented bench test directly supports the exact
+  claim for the identified servo. SUPPORTED = a reliable secondary source or multiple tests
+  support it. PRACTICAL = useful advice that depends on arm geometry or servo variant.
+  NEEDS_CONFIRMATION = missing, conflicting or uncheckable evidence. EXPERIMENTAL = a proposed
+  test, with input, measurement and success criterion. Treat unknown MG996R clones separately.
 - No filler. Never write "it depends" without saying what it depends on.
 
 THEN A FINAL SECTION: MYTHS AND OUTDATED ADVICE
@@ -257,9 +262,12 @@ FORMAT, STRICTLY
 - Include a concrete number wherever one exists (mm of kerf, wattage, mm/s, thickness).
 - Every card ends with two lines:
       SOURCE: <url>
-      CONFIDENCE: SOLID | COMMON | DISPUTED
-  SOLID = manufacturer documentation, a safety standard, or a materials datasheet. COMMON =
-  widely reported by users but not officially documented. DISPUTED = people genuinely disagree.
+      CONFIDENCE: VERIFIED | SUPPORTED | PRACTICAL | NEEDS_CONFIRMATION | EXPERIMENTAL
+  VERIFIED = an opened primary manual, standard, safety publication or materials datasheet
+  directly supports the exact claim. SUPPORTED = a reliable secondary source or multiple
+  independent sources support it. PRACTICAL = useful advice that depends on machine, lens or
+  material batch. NEEDS_CONFIRMATION = missing, conflicting or uncheckable evidence.
+  EXPERIMENTAL = a proposed test, with input, measurement and success criterion.
 - Distinguish clearly between CO2, diode and fibre lasers wherever the answer differs between
   them — do not give one number as though it covers all three.
 - No filler. Never write "it depends" without saying what it depends on.
@@ -305,9 +313,12 @@ FORMAT, STRICTLY
 - Include a concrete number wherever one exists (RPM, mm/min, depth in mm, chipload).
 - Every card ends with two lines:
       SOURCE: <url>
-      CONFIDENCE: SOLID | COMMON | DISPUTED
-  SOLID = manufacturer documentation, a tooling catalogue, or a machining reference. COMMON =
-  widely reported by users but not officially documented. DISPUTED = people genuinely disagree.
+      CONFIDENCE: VERIFIED | SUPPORTED | PRACTICAL | NEEDS_CONFIRMATION | EXPERIMENTAL
+  VERIFIED = opened machine or tooling documentation directly supports the exact claim and
+  scope. SUPPORTED = a reliable secondary source or multiple independent sources support it.
+  PRACTICAL = a useful starting method that depends on rigidity, tool and material.
+  NEEDS_CONFIRMATION = missing, conflicting or uncheckable evidence. EXPERIMENTAL = a proposed
+  test, with input, measurement and success criterion.
 - Be explicit whenever a number applies to a rigid industrial machine and NOT to a hobby
   router — that confusion is how cutters get broken.
 - No filler. Never write "it depends" without saying what it depends on.
@@ -323,10 +334,10 @@ broken and parts ruined. For each, say plainly what is true instead.
 
 1. Save the raw output to `research/dossiers/<topic>.md`, unedited, with the date and which
    tool produced it at the top.
-2. **Check the `SOLID` claims that matter.** A deep-research tool will confidently mislabel
-   things. Anything touching safety — power, fumes, materials that must not be cut, laser
-   class — gets verified against a primary source before it reaches him.
+2. **Re-grade every extracted claim.** A research tool can confidently mislabel things. Use
+   [`../docs/knowledge-policy.md`](../docs/knowledge-policy.md); an output label is only input.
+   Anything touching safety — power, fumes, prohibited materials, laser class or load — gets
+   checked against a suitable primary source before it reaches the maker.
 3. Rewrite as Dutch cards in `site/kennis.html`. **Cut, do not translate.**
-4. Where two sources genuinely disagree, mark the card `BETWIST` and say so rather than
-   silently picking a side. He would rather know something is contested than be handed a
-   confident guess.
+4. Where sources genuinely disagree, mark the card `Nog bevestigen` and show the disagreement
+   rather than silently picking a side. He would rather see uncertainty than a confident guess.

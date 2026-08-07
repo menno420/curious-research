@@ -6,11 +6,10 @@
 # every PR pending forever, so the name is load-bearing even though the
 # old substrate-kit machinery it was built for is gone.
 #
-# What it actually does now: walks every Markdown and HTML file in the
-# repo and fails if a relative link points at a file that does not
-# exist. That is the failure this repo is genuinely prone to — guides
-# link to each other and to docs/, and a moved or deleted file turns
-# into a dead link the maker clicks on and hits a 404.
+# What it actually does now: checks relative Markdown/HTML links and renders
+# every maintained OpenSCAD model (including meaningful parameter branches) to
+# a manifold STL. Broken navigation and silently invalid printable geometry are
+# the two repository failures this gate is designed to stop.
 name: substrate-gate
 on:
   pull_request:
@@ -23,3 +22,9 @@ jobs:
       - uses: actions/checkout@v5
       - name: relative links resolve
         run: python3 .github/scripts/check_links.py
+      - name: install OpenSCAD
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes openscad
+      - name: OpenSCAD models render as manifold meshes
+        run: bash .github/scripts/check_openscad.sh

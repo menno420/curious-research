@@ -1,52 +1,63 @@
-# Guides — your growing visual textbook
+# Gidsen — uitvoerbaar naast de machine
 
-Welcome. This folder is the heart of the gift: every time something here gets explained, it gets
-explained *visually* — a self-contained **animated HTML explainer** you open in a browser (no
-internet needed), plus a plain-language **step-by-step companion** you can read instead. Over time
-they pile up into a textbook that's entirely about *your* bench.
+Elke actieve gids heeft:
 
-## 👉 Begin hier / Start with this one
+- `index.html` — een zelfstandige Nederlandse procesuitleg in de browser;
+- `guide.md` — benodigdheden, stappen, succescontrole, fouten, Claude-vragen en bewijsstatus.
 
-**[`begin-hier/`](./begin-hier/) — de rondleiding in het Nederlands.** Twee minuten: wat dit is,
-wat je er vanavond mee kunt, en hoe je binnenkomt. **Open deze als eerste.**
-Praktisch erbij: **[`windows-gereedschap/`](./windows-gereedschap/)** — welke gratis programma's
-handig zijn op je Windows-laptop, met directe downloadlinks.
+Hardware- en eigenaarfeiten worden niet in gidsen beheerd. De canonieke bron is
+[`docs/workshop-profile.md`](../docs/workshop-profile.md); het format staat in
+[`docs/teaching-style.md`](../docs/teaching-style.md).
 
-*(English original: **[`start-here/`](./start-here/)** — the two-minute welcome tour and a guided
-first 30 minutes.)*
+## Start en Claude
 
-> **Note for Claude:** the guides below are still in English. The maker reads Dutch — summarise
-> or re-explain in Dutch whenever he opens one, and write every **new** guide in Dutch
-> (`CLAUDE.md` §0).
-
-## How each guide works
-
-Open the `index.html` and press **Play** (or **Replay**) — it animates the idea in a few seconds,
-with captions under every step and a "what you just watched" recap at the end. Prefer to read? The
-`guide.md` next to it has the same lesson as numbered steps. The bar every guide meets:
-[`../docs/teaching-style.md`](../docs/teaching-style.md).
-
-## The shelf so far
-
-| Guide | What it shows |
+| Gids | Doel |
 |---|---|
-| [`begin-hier/`](./begin-hier/) | 🇳🇱 **Open deze eerst.** Nederlandse rondleiding: wat dit is, wat je vanavond kunt doen, hoe je binnenkomt, en waarom bewaren anders is dan chatten. |
-| [`windows-gereedschap/`](./windows-gereedschap/) | 🇳🇱 Welke gratis programma's je op je Windows-laptop wilt (slicer, Arduino IDE, OpenSCAD), met directe downloadlinks — en wat je juist **niet** hoeft te installeren. |
-| [`bambu-studio/`](./bambu-studio/) | 🇳🇱 **Lees deze vóór de printgidsen.** Wat de A1 / A1 mini zelf afstellen vóór elke print, welke gidsen hier daardoor niet meer over hem gaan, en wat er dan nog wél van hem is. |
-| [`fusion-python/`](./fusion-python/) | 🇳🇱 **Hij vroeg hier zelf om.** Hoe je een Python-script in Fusion 360 laadt en draait — met een werkend voorbeeld, de mm/cm-valkuil, en waarom dit net zo goed werkt voor laser- en freeswerk. |
-| [`vulling/`](./vulling/) | 🇳🇱 Wat er ín een print zit, hoeveel procent je echt nodig hebt, en waarom een wand erbij meer doet dan de vulling opschroeven — met het proefje 10 % tegen 30 % dat je op de keukenweegschaal naleest. *(Vertaling van `infill/`.)* |
-| [`speling/`](./speling/) | 🇳🇱 Waarom twee geprinte delen op precies dezelfde maat vastlassen, waarom de ruimte **per kant** telt en dus dubbel meetelt, de ladder klem → nauw → glijdend → los, en hoe de olifantenvoet de onderkant van een gat vernauwt. *(Vertaling van `how-print-clearance-works/`.)* |
-| [`arm-werkgebied/`](./arm-werkgebied/) | 🇳🇱 Het veilige hoekbereik van elk gewricht met de hand opmeten, en de begrenzer die een te groot commando tegenhoudt vóórdat de servo beweegt. **Let op:** dit gaat over het gereedschap hier, niet over de arm zelf — die beweegt allang. *(Vertaling van `arm-envelope-explained/`.)* |
-| [`start-here/`](./start-here/) | The English original of the welcome tour, plus a guided first 30 minutes. |
-| [`how-a-pr-flows/`](./how-a-pr-flows/) | The one loop everything runs on: branch → PR → gate → merge, animated — plus your first PR in 3 minutes. |
-| [`what-can-claude-see/`](./what-can-claude-see/) | What Claude can do with a photo, an error, or a screenshot — something goes in, a plain-language diagnosis comes out (with three real maker examples). |
-| [`retraction-vs-stringing/`](./retraction-vs-stringing/) | Why prints grow fine hairs (stringing) and how retraction stops it — animated cutaway of the hot end, ending in a "print this tower and read it" experiment. |
-| [`how-print-clearance-works/`](./how-print-clearance-works/) | What "clearance" is — the air gap that makes two printed parts fit — why it counts per side (so it doubles), the press→snug→sliding→loose ladder, and how elephant's foot skews the bottom. Pairs with the `projects/tolerance-test-coin/` build. |
-| [`temperature-tower/`](./temperature-tower/) | How one tall test print sweeps the nozzle temperature from hot to cool to reveal the cleanest setting — reading stringing, sagging bridges, and layer adhesion band by band. |
-| [`arm-envelope-explained/`](./arm-envelope-explained/) | A robot joint's safe angle range (its "envelope"), why an uncalibrated command slams a joint into the desk, and how a software clamp catches a bad command before the servo moves; animated 2-joint arm + measure-your-servos guide; seeds the `arm/` calibration template. |
-| [`first-layer/`](./first-layer/) | The #1 beginner failure point, in side-view cross-section: how the nozzle-to-bed gap (too far / too close / just right) and first-layer speed decide whether a print sticks or pops off — ending in a clean-bed + slow-first-layer experiment you can run tonight. |
-| [`part-cooling/`](./part-cooling/) | How the cooling fan % decides whether overhangs droop, bridges sag, and small points go blobby — and why PLA loves max fan while PETG wants less; ending in a fan 0/50/100 % overhang test you read by hand. |
-| [`infill/`](./infill/) | What's inside a print, what % to actually use, and why walls beat infill — an animated cutaway of density, patterns, and the top-layer job, ending in a 10 % vs 30 % vs +1-wall experiment you weigh and squeeze by hand. |
-| [`lithophane-night-light/`](./lithophane-night-light/) | Turn a photo into a glowing backlit print: how thickness becomes brightness (thick = dark, thin = bright), why you print it standing upright, and the full photo → web tool → slice → print workflow with exact settings. |
+| [`begin-hier/`](./begin-hier/) | Eerste contextcontrole, goede vraag en duurzame kennisworkflow |
+| [`what-can-claude-see/`](./what-can-claude-see/) | Van foto/fouttekst naar observaties, hypotheses en één meetbare test |
+| [`windows-gereedschap/`](./windows-gereedschap/) | Windows-hulpmiddelen; controleer actuele downloads vóór installatie |
 
-*(New guides are added by the PR that creates them — an unindexed guide is a lost guide.)*
+## Bambu Lab A1 en A1 mini
+
+| Gids | Doel |
+|---|---|
+| [`bambu-studio/`](./bambu-studio/) | Van foutbeeld naar een kleine A/B-test in Bambu Studio |
+| [`first-layer/`](./first-layer/) | Plaat/profiel/nozzle controleren zonder generieke handmatige Z-offset |
+| [`retraction-vs-stringing/`](./retraction-vs-stringing/) | Vocht, temperatuur en retraction één voor één scheiden |
+| [`temperature-tower/`](./temperature-tower/) | Controleren dat temperatuur werkelijk verandert en resultaat per functie scoren |
+| [`part-cooling/`](./part-cooling/) | Overhangvorm én laaghechting vergelijken |
+| [`vulling/`](./vulling/) | Wanddikte, infill en gewicht met dezelfde testgeometrie vergelijken |
+| [`speling/`](./speling/) | Passing meten in plaats van een universele tolerantie overnemen |
+| [`lithophane-night-light/`](./lithophane-night-light/) | Foto → proefstrook → backlighttest → gemeten Fusion-frame |
+
+## Fusion en productie
+
+| Gids | Doel |
+|---|---|
+| [`fusion-python/`](./fusion-python/) | Een Python-script in de huidige Fusion-interface maken, uitvoeren en controleren |
+| [`lasersnijden-van-fusion-naar-onderdeel/`](./lasersnijden-van-fusion-naar-onderdeel/) | Fusion-schets → DXF → schaalcheck → kerf-/passingcoupon → snede |
+| [`cnc-van-fusion-naar-eerste-snee/`](./cnc-van-fusion-naar-eerste-snee/) | Model → Setup/WCS → toolpaths → simulatie → air cut → eerste snede |
+
+## Arduino en robotarm
+
+| Gids | Doel |
+|---|---|
+| [`arduino-zonder-blokkeren/`](./arduino-zonder-blokkeren/) | Meerdere taken responsief houden met onafhankelijke `millis()`-timers |
+| [`arm-werkgebied/`](./arm-werkgebied/) | Gemeten hoekbereik vastleggen en claims over een softwareclamp begrenzen |
+| [`arm-herhaalbaarheid-meten/`](./arm-herhaalbaarheid-meten/) | A→B→A-spreiding meten en één wijziging tegelijk vergelijken |
+
+## Compatibele oude paden
+
+Deze mappen blijven bestaan zodat bestaande links niet breken, maar verwijzen naar één actuele
+Nederlandse bron:
+
+| Oud pad | Actuele bron |
+|---|---|
+| [`start-here/`](./start-here/) | `begin-hier/` |
+| [`infill/`](./infill/) | `vulling/` |
+| [`how-print-clearance-works/`](./how-print-clearance-works/) | `speling/` |
+| [`arm-envelope-explained/`](./arm-envelope-explained/) | `arm-werkgebied/` |
+| [`how-a-pr-flows/`](./how-a-pr-flows/) | optionele ontwikkelaarsnotitie; voor normaal gebruik `begin-hier/` |
+
+Voeg een nieuwe gids alleen toe als bestaande kennis niet op één huidige plek kan worden
+verbeterd. Indexeer hem hier in dezelfde wijziging.

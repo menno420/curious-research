@@ -2,19 +2,20 @@
 //  pen_holder.scad  --  compliant (floating) pen holder for the plotter arm
 //  Part of: curious-research / projects/arm-pen-plotter
 // ----------------------------------------------------------------------------
-//  OWNER RENDERS THIS LOCALLY. OpenSCAD is a verified wall in the build
-//  environment that generates these files -- there is no openscad/slicer here,
-//  so this ships as .scad SOURCE ONLY. You open it in OpenSCAD, press F6, then
-//  File > Export > STL, and slice it on your own machine. About a minute.
-//  (Same rule as projects/tolerance-test-coin -- see docs/CAPABILITIES.md.)
+//  RENDER STATUS (2026-08-07)
+//  OpenSCAD 2021.01 rendered both the default gravity/horn configuration and
+//  the spring/flat branch to simple manifold STL meshes without warnings.
+//  Physical dimensions, fit, strength, slicing and print behaviour are still
+//  unverified. The .scad remains the master; regenerate the STL after changing
+//  measured parameters.
 //
 //  SAFETY (repo rule): Claude designed this file. YOU slice it, YOU load the
 //  filament, YOU start the print and watch it. Nothing here is "safe to print
 //  unattended".
 // ----------------------------------------------------------------------------
 //  WHAT THIS IS  --  and why it "floats"
-//  A carriage that clips onto the arm's end (a common 9g-servo horn, or any
-//  flat mount) and holds a pen in a sleeve that can SLIDE UP AND DOWN a few
+//  A carriage that bolts to a MEASURED arm-end interface (the included two-hole
+//  pattern is only a placeholder) and holds a pen in a sleeve that can slide a few
 //  millimetres against gravity (and, optionally, a light printed spring).
 //
 //  Why bother? A hobby arm can never hold the pen at a perfectly constant
@@ -40,17 +41,17 @@
 
 /* ============================  EDIT THESE  =============================== */
 
-pen_d        = 9.0;    // pen barrel diameter (mm). A Sharpie is ~9; a Bic ~8;
-                       // measure YOUR pen with calipers and set it here.
+pen_d        = 9.0;    // PLACEHOLDER pen barrel diameter (mm). Measure the pen.
 pen_clear    = 0.4;    // clearance so the pen slides freely in the sleeve (mm,
                        // per side). Use your tolerance-test-coin number if you
-                       // have one; 0.4 is a safe loose-ish start.
+                       // have one; 0.4 is an experimental start, not a guarantee.
 grip_screw_d = 3.2;    // clearance hole for the side thumb-screw that pinches
                        // the pen at the right height (M3 = 3.2). Set 0 to omit.
 
 travel       = 8.0;    // how far the pen sleeve can float up/down (mm).
 sleeve_len   = 34.0;   // length of the pen sleeve (mm) -- longer = steadier pen.
-wall         = 2.4;    // wall thickness everywhere (mm). >=2.0 prints strong.
+wall         = 2.4;    // PLACEHOLDER wall thickness (mm); validate for material,
+                       // orientation and the measured pen load.
 
 float_mode   = "gravity";  // "gravity" or "spring"  (see notes above)
 
@@ -61,12 +62,11 @@ spring_th    = 1.0;    // flexure thickness (mm). Thinner = softer push. Keep
 spring_w     = 6.0;    // flexure width (mm)
 
 // --- the mount that clips to the arm end ---------------------------------
-mount_mode   = "horn"; // "horn" = holes for a generic 9g servo horn (2 screws)
+mount_mode   = "horn"; // "horn" = editable two-hole PLACEHOLDER pattern
                        // "flat" = a plain flat tab with two M3 holes you drill
                        //          into whatever bracket you already have.
-horn_screw_d = 2.2;    // servo-horn screw clearance (M2 self-tapper ~2.2 mm)
-horn_span    = 16.0;   // centre-to-centre of the two horn screws (mm) -- measure
-                       // YOUR horn; 16 is typical for a 9g single-arm horn.
+horn_screw_d = 2.2;    // PLACEHOLDER clearance; measure screw and print a coupon
+horn_span    = 16.0;   // PLACEHOLDER centre distance (mm); measure the real horn
 mount_th     = 3.0;    // mount plate thickness (mm)
 
 $fn          = 64;     // roundness of circles -- higher = smoother, slower

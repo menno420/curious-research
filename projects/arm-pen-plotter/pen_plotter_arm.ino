@@ -5,15 +5,18 @@
 //  WHAT THIS DOES
 //  Listens on the USB serial line for two simple text commands from the laptop
 //  (from teach_and_replay.py) and drives the six arm servos. It ALSO clamps
-//  every angle on-board against per-joint limits it was handed at startup --
-//  so even if the laptop side had a bug, a bad number still cannot reach a
-//  servo. That is "defense in depth": two independent guards, laptop AND board.
+//  every normal command on-board against numeric per-joint limits received
+//  from the laptop. This is a second numeric guard, not collision detection;
+//  setup() still writes before those limits exist.
 //
 //  THE TWO COMMANDS (plain text, one per line, ending in newline '\n'):
-//    L,<i>,<min>,<max>   Set the safe limits for joint <i> (0..5), in degrees.
+//    L,<i>,<min>,<max>   Set measured limits for joint <i> (0..5), in degrees.
 //                        The laptop sends these six lines at handshake, before
-//                        any motion. Until a joint has received its limits, it
-//                        will NOT move (its "ready" flag is false).
+//                        controlled S commands. Until a joint has received its
+//                        limits, S commands are refused. IMPORTANT: setup()
+//                        still attaches every servo and writes 90 degrees once;
+//                        a board reset can therefore cause startup movement
+//                        before this handshake. Read the project README.
 //    S,<i>,<angle>       Move joint <i> to <angle> degrees. The board clamps
 //                        <angle> to that joint's [min,max] before writing it.
 //
@@ -25,33 +28,32 @@
 //
 //    SERVO POWER IS A SEPARATE, EXTERNAL SUPPLY. NEVER THE ARDUINO'S 5 V PIN.
 //
-//    * Use a dedicated 5-6 V supply (a battery pack or a bench PSU) sized for
-//      the STALL current of all six servos at once -- a stalling servo gulps
+//    * Use a dedicated supply within the ACTUAL servo model's voltage range,
+//      sized for representative peak load -- a stalling servo draws
 //      far more current than the Arduino's onboard regulator can give. Powering
-//      servos from the Arduino 5 V pin will brown out the board (it resets or
-//      acts drunk) or fry it.
+//      servos from the Arduino 5 V pin can cause voltage drop, resets, damage
+//      or unpredictable behaviour.
 //
-//      DO THE ARITHMETIC FOR YOUR OWN SERVOS. On an MG996R-class arm (the
-//      common 6-DOF aluminium kit) each servo is quoted at ~1.4 A official and
-//      up to ~2.5 A stalled at 6 V -- so six of them stalled together is on the
-//      order of 15 A, not the 2 A a phone charger gives you. In practice they
-//      never all stall at once, but the supply has to survive the moment two or
-//      three do. A 6 V supply in the 10 A class is the usual answer for this
-//      arm. A 5 V 2 A USB brick is NOT: it will sag, the servos will twitch,
-//      and you will chase a "software bug" that is really a power problem.
+//      SIZE THIS FOR THE ACTUAL SERVOS. "MG996R-class" does not identify an
+//      exact manufacturer or electrical specification. Record the real model,
+//      use its primary datasheet where available, and measure current under a
+//      supervised representative load. The combined peak/stall current and a
+//      suitable supply rating have not yet been verified for this arm.
 //    * SHARED GROUND: the servo supply's ground (-) MUST connect to the
-//      Arduino's GND. Without a shared ground the signal wires have no common
-//      reference and the servos twitch randomly.
+//      controller GND in the conventional wiring shown. Without a shared
+//      reference the control signal is not reliably defined; do not diagnose
+//      every twitch as a ground fault without measuring.
 //    * FUSE the servo supply's positive lead. Size the fuse to YOUR servos and
 //      YOUR supply -- above the current the arm actually draws while moving,
-//      below what the supply can deliver, so a jam blows the fuse instead of
-//      cooking a servo. For six MG996R on a 10 A supply that lands around 10 A.
-//      A fuse sized for 9 g micro servos (3-5 A) will nuisance-blow on this
-//      arm; a fuse far above the supply's rating protects nothing. CHECK THIS
-//      YOURSELF before first power-up -- see CLAUDE.md section 2.
+//      below what the wiring and supply can safely deliver. Select fuse type
+//      and rating from the measured load, wire capacity and exact supply; this
+//      repository does not yet contain enough verified data to prescribe one.
+//      CHECK THIS YOURSELF before first power-up -- see CLAUDE.md section 2.
 //    * A REACHABLE POWER SWITCH on the servo supply, within arm's reach, so you
 //      can cut motor power instantly WITHOUT unplugging the USB.
-//    * Servo signal wires go to the Arduino PWM pins below. Servo + (red) goes
+//    * The six pin numbers below are legacy placeholders, not a verified map
+//      of the owned controller or physical axes. Confirm board, pin support,
+//      physical joint order and direction before power. Servo + (red) goes
 //      to the EXTERNAL supply +, servo - (brown/black) to the shared ground.
 //
 //         Arduino GND  ------+------------------  Servo supply (-)
@@ -60,12 +62,12 @@
 //
 //         Servo supply (+) --[FUSE]--[SWITCH]--  each servo (+)
 //
-//         Arduino pin 3  ------------------------  base       servo signal
-//         Arduino pin 5  ------------------------  shoulder   servo signal
-//         Arduino pin 6  ------------------------  elbow      servo signal
-//         Arduino pin 9  ------------------------  wrist_tilt servo signal
-//         Arduino pin 10 ------------------------  wrist_rot  servo signal
-//         Arduino pin 11 ------------------------  gripper    servo signal
+//         Controller pin 3  ---------------------  software joint index 0
+//         Controller pin 5  ---------------------  software joint index 1
+//         Controller pin 6  ---------------------  software joint index 2
+//         Controller pin 9  ---------------------  software joint index 3
+//         Controller pin 10 ---------------------  software joint index 4
+//         Controller pin 11 ---------------------  software joint index 5
 //
 //    CHECK THIS YOURSELF: the fuse, the shared ground, and the reachable switch
 //    are load/​power items -- verify them on your own bench before energizing.
@@ -75,8 +77,8 @@
 
 #include <Servo.h>
 
-// Number of joints, in the SAME order the laptop uses (index 0..5):
-//   0 base   1 shoulder   2 elbow   3 wrist_tilt   4 wrist_rotate   5 gripper
+// Six legacy software indices, in the SAME order the laptop uses (0..5).
+// Their physical axis names and controller mapping still need confirmation.
 const int NUM_JOINTS = 6;
 
 // Signal pins for each joint, index-aligned with the order above.
@@ -84,10 +86,10 @@ const int SERVO_PINS[NUM_JOINTS] = { 3, 5, 6, 9, 10, 11 };
 
 Servo servos[NUM_JOINTS];
 
-// Per-joint safe limits, in degrees. Filled by the "L" handshake command.
-// Sensible fallbacks (90..90 = a single safe pose) mean a joint that has NOT
-// yet been given real limits can only hold one angle -- it cannot sweep into
-// something until the laptop teaches it the measured envelope.
+// Per-joint measured limits, in degrees. Filled by the "L" handshake command.
+// Fallbacks (90..90) block later S commands from sweeping before limits arrive.
+// They do NOT prove that 90 degrees is safe for this arm: setup() commands that
+// angle once when each servo is attached.
 int jointMin[NUM_JOINTS];
 int jointMax[NUM_JOINTS];
 bool jointReady[NUM_JOINTS];   // true once this joint has received its limits
@@ -109,11 +111,14 @@ void setup() {
 
   for (int i = 0; i < NUM_JOINTS; i++) {
     servos[i].attach(SERVO_PINS[i]);
-    // Start every joint locked to a single safe angle until real limits arrive.
+    // Known startup limitation: attaching and writing 90 may move the physical
+    // joint before measured limits arrive. "Neutral" is a protocol default,
+    // not a verified safe pose for this arm. Keep servo power off during reset
+    // and read the supervised startup procedure in the README.
     jointMin[i] = 90;
     jointMax[i] = 90;
     jointReady[i] = false;
-    servos[i].write(90);   // neutral hold; harmless with min==max==90
+    servos[i].write(90);
   }
 
   Serial.println("READY pen_plotter_arm -- send L limits, then S moves.");
@@ -172,23 +177,23 @@ void handleLine(char *line) {
         return;
       }
       if (!jointReady[idx]) {
-        // No measured limits yet -> refuse to move. This is the on-board
-        // equivalent of the laptop's "no calibration, no motion" rule.
+        // No measured limits yet -> refuse this controlled S command. This
+        // does not undo the one 90-degree command issued in setup().
         Serial.print("ERR S joint ");
         Serial.print(idx);
         Serial.println(" has no limits yet (send L first)");
         return;
       }
       // DEFENSE IN DEPTH: clamp on-board too, regardless of what the laptop sent.
-      int safe = clampAngle(angle, jointMin[idx], jointMax[idx]);
-      servos[idx].write(safe);
-      if (safe != angle) {
+      int bounded = clampAngle(angle, jointMin[idx], jointMax[idx]);
+      servos[idx].write(bounded);
+      if (bounded != angle) {
         Serial.print("CLAMP S,");
-        Serial.print(idx); Serial.print(","); Serial.print(safe);
+        Serial.print(idx); Serial.print(","); Serial.print(bounded);
         Serial.print(" (asked "); Serial.print(angle); Serial.println(")");
       } else {
         Serial.print("OK S,");
-        Serial.print(idx); Serial.print(","); Serial.println(safe);
+        Serial.print(idx); Serial.print(","); Serial.println(bounded);
       }
     } else {
       Serial.println("ERR S parse");
