@@ -59,8 +59,13 @@ python3 -m http.server --directory /tmp/preview 8000
 ## Publishing
 
 `.github/workflows/pages.yml` copies `site/` plus `guides/` into one artifact and deploys
-it on every push to `main` that touches either. Nothing has to be switched on by hand — the
-build job runs `actions/configure-pages` with `enablement: true`, which turns Pages on for
-the repo using the workflow's own token and is a no-op once it is on. The manual equivalent,
-if that ever fails, is **Settings → Pages → Build and deployment → Source = "GitHub
-Actions"**.
+it on every push to `main` that touches either. It needs one thing done by hand, once:
+**Settings → Pages → Build and deployment → Source = "GitHub Actions"**. Until that is set,
+the build job still succeeds and the deploy step fails with a 404 saying exactly that.
+
+That click cannot be automated away — this was tested, not assumed.
+`actions/configure-pages@v5` with `enablement: true` fails with *"Create Pages site failed.
+Error: Resource not accessible by integration"*. A workflow's `GITHUB_TOKEN` can **deploy**
+to an existing Pages site but cannot **create** one, even when the workflow grants
+`pages: write`; creating a site needs repo-admin rights. Don't re-add `enablement` — it
+converts a clean "not enabled yet" deploy failure into a hard build failure.
