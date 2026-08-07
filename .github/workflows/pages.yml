@@ -30,6 +30,24 @@ on:
       - "site/**"
       - "guides/**"
       - ".github/workflows/pages.yml"
+  # SAFETY NET -- do not remove without reading this.
+  #
+  # The push trigger above does NOT fire for PRs that land via GitHub's
+  # auto-merge when auto-merge was armed with the default GITHUB_TOKEN.
+  # GitHub suppresses workflow runs for events triggered by that token, to
+  # stop workflows triggering themselves forever. Measured 2026-08-07: five
+  # PRs merged in a row, zero pages runs, a live site stale by half a day
+  # while every merge looked successful.
+  #
+  # So this schedule guarantees the site catches up on its own. Publishing
+  # is idempotent and the whole run takes seconds.
+  #
+  # To make it instant again: add a repo secret named ROUTINE_PAT holding a
+  # personal access token with Contents + Pull requests write.
+  # auto-merge-enabler.yml already prefers it over GITHUB_TOKEN, and a merge
+  # performed by a real user's token DOES trigger the push above.
+  schedule:
+    - cron: "17 */2 * * *"   # every two hours, off the hour to avoid the rush
   workflow_dispatch:
 
 permissions:
