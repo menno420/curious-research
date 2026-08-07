@@ -71,5 +71,18 @@ questions and ideas, Claude turns them into experiments, designs, and — the ho
 | [`site/`](site/) | The public read-only website ([live](https://menno420.github.io/curious-research/)) — plain HTML/CSS, no build step |
 | [`arm/`](arm/) | The robot-arm lane — the calibration template every motion routine clamps to |
 | [`research/possibility-dossier.md`](research/possibility-dossier.md) | What the bench + Claude can actually do together, with honest ✅/🧪/🚫 marks |
+| [`research/dossiers/`](research/dossiers/) | **Grounded, cited research per topic** — read these before answering from memory. Raw and unedited on purpose; see the note below |
+| [`research/deep-research-prompts.md`](research/deep-research-prompts.md) | How to grow those dossiers: six complete prompts, and what to do when the answers come back |
+
+> **About `research/dossiers/`.** Six topics — Arduino, Bambu printing, Fusion 360, servos,
+> laser cutting, CNC milling — each answered by a deep-research run, saved **exactly as
+> received**. Most topics have two independent reports (`<topic>.md` and
+> `<topic>-gemini.md`); where they disagree, that disagreement is the useful part.
+>
+> They are **agent-facing raw material, not pages for him**. They are unedited on purpose,
+> which means they still carry each tool's citation artifacts — invisible marker characters
+> in one, `start_span`/`end_span` in the other. **Strip both before any text reaches
+> `site/kennis.html`**, and cut to Dutch card size rather than translating. The full
+> procedure is step 2–4 of `research/deep-research-prompts.md`.
 
 *This repo is public — it carries interests and projects, never personal data.*
