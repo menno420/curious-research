@@ -58,6 +58,13 @@ python3 -m http.server --directory /tmp/preview 8000
 
 ## Publishing
 
+**Know this before you trust a merge:** a PR that lands via auto-merge armed with the default
+`GITHUB_TOKEN` does **not** fire the `push` trigger — GitHub suppresses workflow runs for
+events that token causes. The site then stays stale while every merge looks fine. A
+two-hourly `schedule` in `pages.yml` is the safety net; `workflow_dispatch` publishes
+immediately. Adding a `ROUTINE_PAT` repo secret makes merges publish instantly again.
+
+
 `.github/workflows/pages.yml` copies `site/` plus `guides/` into one artifact and deploys
 it on every push to `main` that touches either. It needs one thing done by hand, once:
 **Settings → Pages → Build and deployment → Source = "GitHub Actions"**. Until that is set,
