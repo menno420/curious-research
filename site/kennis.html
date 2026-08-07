@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naslag — korte antwoorden, per onderwerp</title>
+<meta name="description" content="Compacte, nagekeken antwoorden over Arduino, 3D-printen, Fusion 360, servo's, lasersnijden en frezen. Bladeren in kleine stukjes.">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+<style>
+  /* ---------- alleen voor deze pagina ---------- */
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:24px 0 8px; }
+  .tab {
+    font:600 14px system-ui; padding:9px 15px; border-radius:999px; cursor:pointer;
+    border:2px solid var(--line); background:var(--card); color:var(--ink);
+  }
+  .tab[aria-selected="true"] {
+    border-color:var(--accent); background:var(--accent-soft); color:var(--accent);
+  }
+  .tab .telling { opacity:.6; font-weight:500; }
+
+  .onderwerp-kop { text-align:center; color:var(--muted); margin:14px auto 22px; max-width:36em; }
+
+  .sectie-blok { margin-bottom:12px; }
+  .sectie-knop {
+    width:100%; text-align:left; display:flex; align-items:center; gap:10px;
+    font:700 15px system-ui; padding:14px 16px; border-radius:12px; cursor:pointer;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    box-shadow:var(--shadow);
+  }
+  .sectie-knop:hover { border-color:var(--accent); }
+  .sectie-knop .chev { margin-left:auto; color:var(--muted); transition:transform .2s ease; }
+  .sectie-knop[aria-expanded="true"] .chev { transform:rotate(90deg); }
+  .sectie-knop .aantal {
+    font:600 12px system-ui; color:var(--muted); background:var(--bg);
+    padding:2px 8px; border-radius:999px;
+  }
+
+  .kaarten { display:grid; gap:10px; padding:10px 0 4px; grid-template-columns:1fr; }
+  @media (min-width:700px) { .kaarten { grid-template-columns:1fr 1fr; } }
+
+  .weetje {
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; box-shadow:var(--shadow);
+  }
+  .weetje h4 { margin:0 0 6px; font-size:.98rem; color:var(--accent); line-height:1.35; }
+  .weetje p { margin:0 0 10px; font-size:.93rem; color:var(--ink); }
+  .weetje .voet { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .zeker {
+    font:700 10px system-ui; letter-spacing:.04em; padding:3px 8px; border-radius:999px;
+  }
+  .zeker.solid  { background:var(--ok-soft);     color:var(--ok); }
+  .zeker.common { background:var(--warm-soft);   color:var(--warm); }
+  .zeker.betwist{ background:var(--accent-soft); color:var(--accent); }
+  .weetje .bron { font-size:.82rem; color:var(--muted); }
+  .weetje .bron a { color:var(--muted); }
+
+  .leeg {
+    background:var(--card); border:1px dashed var(--line); border-radius:12px;
+    padding:22px 18px; text-align:center; color:var(--muted); box-shadow:none;
+  }
+  .leeg b { color:var(--accent); }
+
+  .zoek { display:flex; justify-content:center; margin:0 0 6px; }
+  .zoek input {
+    width:100%; max-width:420px; font:15px system-ui; padding:10px 14px;
+    border-radius:10px; border:2px solid var(--line); background:var(--card);
+    color:var(--ink);
+  }
+  .zoek input:focus { outline:none; border-color:var(--accent); }
+  .geenhit { text-align:center; color:var(--muted); padding:20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="kicker">Naslag</p>
+  <h1>Korte antwoorden, per onderwerp</h1>
+  <p class="lead">Geen lappen tekst. Kies een onderwerp, klap een stukje open, lees drie zinnen
+  en klap het weer dicht. Bij elk antwoord staat <b>hoe zeker het is</b> en waar het vandaan
+  komt.</p>
+</header>
+
+<div class="zoek">
+  <input type="search" id="zoek" placeholder="Zoek in alle onderwerpen…" aria-label="Zoeken">
+</div>
+
+<div class="tabs" id="tabs" role="tablist"></div>
+<p class="onderwerp-kop" id="onderwerpKop"></p>
+
+<div id="inhoud"></div>
+
+<div class="doos" style="margin-top:34px">
+  <h2>Hoe je dit leest</h2>
+  <p>Bij elk antwoord staat een kleurtje:</p>
+  <p>
+    <span class="zeker solid">ZEKER</span> — staat zo in de handleiding of op het datablad.<br>
+    <span class="zeker common">MEESTAL</span> — veel mensen melden het, maar het staat nergens officieel.<br>
+    <span class="zeker betwist">BETWIST</span> — hier zijn de meningen over verdeeld.
+  </p>
+  <p>Dat onderscheid staat er met opzet. Je mag weten wanneer iets hard is en wanneer het
+  ervaring van anderen is.</p>
+</div>
+
+<div class="doos">
+  <h2>Mis je iets?</h2>
+  <p>Deze naslag groeit. Staat jouw vraag er niet bij, vraag het gewoon — en zeg erbij dat het
+  hier mag komen te staan:</p>
+  <p><code>Zet het antwoord hierop ook in de naslag op de site</code></p>
+</div>
+
+<footer>
+  <p><a href="index.html">← terug naar alle gidsen</a></p>
+</footer>
+
+</div>
+
+<script>
+/* ===========================================================================
+   DE INHOUD. Dit is het enige stuk dat je hoeft aan te passen om iets toe te
+   voegen -- geen bouwstap, geen framework, gewoon deze lijst uitbreiden.
+
+   Per weetje:
+     v      = de vraag (de kop van het kaartje)
+     a      = het antwoord, kort. Drie zinnen is genoeg.
+     zeker  = 'solid' | 'common' | 'betwist'
+     bron   = link naar waar het vandaan komt (mag weg als er geen is)
+
+   Onderzoek dat nog binnenkomt hoort in research/dossiers/ -- de prompts
+   daarvoor staan in research/deep-research-prompts.md. Daarna hier inkorten
+   naar kaartjes: vertalen is niet genoeg, het moet ook korter.
+   =========================================================================== */
+const KENNIS = {
+
+  arm: {
+    naam: 'Robotarm', icoon: '🦾',
+    intro: 'Over de zes servo\'s in je arm, en wat ze wel en niet kunnen.',
+    secties: [
+      { titel: 'Wat een MG996R is', kaarten: [
+        { v:'Hoeveel kracht heeft één servo?',
+          a:'Ongeveer 9,4 kg·cm bij 4,8 volt, en zo\'n 11 kg·cm bij 6 volt. Dat betekent: 9,4 kilo op één centimeter van de as, of ruwweg 1 kilo op 10 centimeter. Aan het eind van een uitgestrekte arm blijft daar dus veel minder van over dan het getal doet vermoeden.',
+          zeker:'solid', bron:'https://components101.com/motors/mg996r-servo-motor-datasheet' },
+        { v:'Hoeveel stroom trekt hij?',
+          a:'Rond 1,4 ampère volgens de fabrikant, en tot zo\'n 2,5 ampère als hij vastloopt. Zes stuks samen vastgelopen zit dus in de orde van 15 ampère. Daarom is een aparte voeding geen overdreven voorzichtigheid maar gewoon nodig.',
+          zeker:'solid', bron:'https://components101.com/motors/mg996r-servo-motor-datasheet' },
+        { v:'Kan een servo vertellen waar hij staat?',
+          a:'Nee. Een gewone analoge servo neemt wél een hoek aan, maar geeft niets terug. Je weet dus altijd wat je hebt gevraagd, nooit wat er echt gebeurd is. Dat is de reden dat je de arm met de hand moet opmeten en dat "leren" bij ons werkt door stapjes te sturen en op te schrijven.',
+          zeker:'solid' },
+        { v:'Hoe nauwkeurig is zo\'n arm nou echt?',
+          a:'Reken op enkele millimeters aan het uiteinde, niet op tienden. Elk gewricht heeft speling en een dode zone, en die tellen bij zes gewrichten op. Terugkeren naar een aangeleerd punt gaat wél veel beter dan een uitgerekend punt raken — daarom werken opnemen-en-afspelen goed en uitrekenen slecht.',
+          zeker:'common' }
+      ]},
+      { titel: 'Stroom en bedrading', kaarten: [
+        { v:'Waarom niet gewoon de 5V van de Arduino?',
+          a:'Die pin komt uit een klein regelaartje dat een paar honderd milliampère aankan. Eén servo die even doortrekt is al te veel. Het bordje zakt in, herstart, of gaat stuk — en het gedrag lijkt sprekend op een softwarefout, dus je zoekt in de verkeerde hoek.',
+          zeker:'solid' },
+        { v:'Wat is "gedeelde massa" en waarom moet dat?',
+          a:'De min van je servovoeding moet aan de GND van de Arduino. Het stuursignaal is een spanning ten opzichte van massa; hebben beide kanten een andere massa, dan is er geen gemeenschappelijk nulpunt en gaan de servo\'s willekeurig trillen. Eén draadje, en het probleem is weg.',
+          zeker:'solid' },
+        { v:'Hoe herken ik dat de voeding tekortschiet?',
+          a:'Servo\'s die trillen of tikken zonder opdracht, een Arduino die spontaan herstart, of bewegingen die anders uitpakken naarmate er meer gewrichten tegelijk lopen. Dat patroon — erger naarmate er meer beweegt — wijst bijna altijd op stroom, niet op code.',
+          zeker:'common' }
+      ]},
+      { titel: 'Beweging', kaarten: [
+        { v:'Waarom schokt de arm bij servo.write()?',
+          a:'Omdat er geen snelheidsinstelling bestaat. write(140) betekent "sta NU op 140 graden", en de servo geeft vol gas tot hij er is. Twee snelheden: alles of niets. Soepel bewegen moet dus uit je code komen, niet uit de servo.',
+          zeker:'solid' },
+        { v:'Hoe vaak moet ik een nieuwe hoek sturen?',
+          a:'Vijftig keer per seconde, dus elke 20 milliseconden. Dat is het tempo waarop een analoge servo luistert. Vaker sturen verandert niets — hij kijkt er niet naar. Veel langzamer en je gaat de losse stapjes zien.',
+          zeker:'solid' },
+        { v:'Waarom is soepel bewegen langzamer?',
+          a:'Omdat optrekken en afremmen tijd kosten. Zet je de snelheidslimiet hoog genoeg, dan is er geen tijd meer om op te bouwen en lijkt netjes rekenen weer op knallen. Vloeiendheid is dus een ruil tegen snelheid, geen instelling die je gratis wint.',
+          zeker:'solid' }
+      ]}
+    ]
+  },
+
+  printen: {
+    naam: '3D-printen', icoon: '🖨️',
+    intro: 'Over je A1 mini en je A1 met AMS Lite — en vooral: wat ze al zelf doen.',
+    secties: [
+      { titel: 'Wat de printer zelf doet', kaarten: [
+        { v:'Wat stelt de A1 zelf af?',
+          a:'Vóór elke print meet hij of het bed scheef staat, zoekt hij de goede nozzlehoogte, meet hij hoe de printer trilt, en meet hij hoe het plastic uit de nozzle komt. Bij andere printers zijn dat vier klussen die je met de hand en met testprintjes doet.',
+          zeker:'solid', bron:'https://wiki.bambulab.com/en/a1-mini/manual/intro-a1-mini' },
+        { v:'Heeft mijn A1 die lasermeting?',
+          a:'Nee. De LiDAR die de eerste laag scant zit op de duurdere modellen. De A1 doet het met een krachtsensor: hij duwt en voelt de tegendruk. Werkt prima — maar uitleg over "mijn Bambu scant de eerste laag" gaat niet over jouw machine.',
+          zeker:'solid', bron:'https://wiki.bambulab.com/en/a1/manual/intro-a1' },
+        { v:'Wat moet ik dan nog wél zelf doen?',
+          a:'Alles wat een keuze is in plaats van een meting: hoe dik je wanden worden, hoeveel vulling, hoeveel speling twee onderdelen nodig hebben, hoe je iets op het bed legt. Plus de temperatuur bij filament zonder profiel. Daar gaat geen sensor over.',
+          zeker:'solid' }
+      ]},
+      { titel: 'Als er iets misgaat', kaarten: [
+        { v:'Mijn eerste laag hecht niet — waar kijk ik eerst?',
+          a:'Niet naar instellingen. Eerst: is het bed schoon (vet van vingers verpest zowel de hechting als de meting), is de nozzle schoon (een klodder oud plastic drukt tegen het bed en verpest de meting), en zitten de schroefjes van de hotend vast. Die laatste is een bekende bij de A1-serie.',
+          zeker:'common', bron:'https://www.adpindustries.com/blog/bambu-lab-first-layer-calibration-guide/' },
+        { v:'Kan ik de eerste laag alsnog bijstellen?',
+          a:'Ja, tijdens het printen. Vind je hem net te plat of net te los, dan kun je de hoogte live bijsturen op het schermpje van de printer. Werk in kleine stapjes — een paar honderdste millimeter is al goed te zien.',
+          zeker:'solid' }
+      ]},
+      { titel: 'De AMS Lite', kaarten: [
+        { v:'Waarom komt er zoveel afval uit bij meerdere kleuren?',
+          a:'Er zit maar één nozzle in. Bij elke kleurwissel moet het oude plastic er eerst uit voordat de nieuwe kleur zuiver is, en dat wordt een hoopje naast je print. Dat is geen storing maar natuurkunde.',
+          zeker:'solid' },
+        { v:'Hoe hou ik dat afval klein?',
+          a:'Door bij het ontwerpen te denken in hoogtes in plaats van in vlakken. Een model waarbij elke kleur zijn eigen stuk hoogte heeft, wisselt een paar keer. Een model dat per laag vier keer wisselt kan meer weggooien dan de print zelf weegt.',
+          zeker:'common' }
+      ]}
+    ]
+  },
+
+  fusion: {
+    naam: 'Fusion 360', icoon: '✏️',
+    intro: 'Wat je nog niet doet in het programma waar je alles al in tekent.',
+    secties: [
+      { titel: 'Scripten', kaarten: [
+        { v:'Waar zet ik een Python-script neer?',
+          a:'Tab UTILITIES → paneel ADD-INS → Scripts and Add-Ins, of gewoon Shift+S. Dan + → Create script or add-in → Script + Python → Create. Daarna "Edit in code editor", code erin plakken, opslaan, en terug in Fusion op Run.',
+          zeker:'solid', bron:'https://help.autodesk.com/view/fusion360/ENU/?guid=SLD-MANAGE-SCRIPTS-ADD-INS' },
+        { v:'Wat is het verschil tussen een script en een add-in?',
+          a:'Een script draait één keer en is daarna klaar. Een add-in blijft draaien zolang Fusion open staat en kan bijvoorbeeld een knop toevoegen. Voor "maak dit voor me" wil je een script.',
+          zeker:'solid', bron:'https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/WritingDebugging_UM.htm' },
+        { v:'Mijn object is tien keer te groot — wat nu?',
+          a:'Dan zit je in de bekendste valkuil: de Fusion-API rekent van binnen in centimeters, niet in millimeters. Zeg je 10, dan bedoelt Fusion 10 cm. Vermenigvuldig elke maat met 0,1 en het klopt weer. Je doet niets fout — dat is deze regel.',
+          zeker:'solid' }
+      ]}
+    ]
+  },
+
+  arduino: {
+    naam: 'Arduino', icoon: '🔌',
+    intro: 'Nog aan het vullen — het diepe onderzoek voor dit onderwerp loopt.',
+    secties: [
+      { titel: 'Timing', kaarten: [
+        { v:'Waarom is delay() vaak een probleem?',
+          a:'Omdat delay() alles stilzet. Tijdens die pauze kan je programma geen knop lezen, geen seriële poort afhandelen en geen tweede ding aansturen. Met millis() kijk je in plaats daarvan hoe laat het is en ga je door — dan kunnen er meerdere dingen tegelijk lopen.',
+          zeker:'solid' }
+      ]}
+    ]
+  },
+
+  laser: {
+    naam: 'Lasersnijden', icoon: '🔥',
+    intro: 'Nog leeg — het diepe onderzoek voor dit onderwerp moet nog gedraaid worden.',
+    secties: []
+  },
+
+  frezen: {
+    naam: 'Frezen', icoon: '🪚',
+    intro: 'Nog leeg — het diepe onderzoek voor dit onderwerp moet nog gedraaid worden.',
+    secties: []
+  }
+};
+
+/* ===========================================================================
+   Vanaf hier is het alleen nog opbouwen en filteren.
+   =========================================================================== */
+(function () {
+  const tabs = document.getElementById('tabs');
+  const inhoud = document.getElementById('inhoud');
+  const kop = document.getElementById('onderwerpKop');
+  const zoek = document.getElementById('zoek');
+
+  const SLEUTELS = Object.keys(KENNIS);
+  let actief = SLEUTELS[0];
+
+  function telKaarten(o) {
+    return o.secties.reduce((n, s) => n + s.kaarten.length, 0);
+  }
+
+  const ZEKER_TEKST = { solid:'ZEKER', common:'MEESTAL', betwist:'BETWIST' };
+  const ZEKER_KLASSE = { solid:'solid', common:'common', betwist:'betwist' };
+
+  function bouwTabs() {
+    tabs.innerHTML = '';
+    SLEUTELS.forEach(k => {
+      const o = KENNIS[k];
+      const b = document.createElement('button');
+      b.className = 'tab';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(k === actief));
+      b.innerHTML = o.icoon + ' ' + o.naam +
+        ' <span class="telling">' + telKaarten(o) + '</span>';
+      b.addEventListener('click', () => { actief = k; zoek.value = ''; teken(); });
+      tabs.appendChild(b);
+    });
+  }
+
+  function kaartje(w) {
+    const d = document.createElement('div');
+    d.className = 'weetje';
+    const bron = w.bron
+      ? '<span class="bron">· <a href="' + w.bron + '" target="_blank" rel="noopener">bron</a></span>'
+      : '';
+    d.innerHTML =
+      '<h4>' + w.v + '</h4><p>' + w.a + '</p>' +
+      '<div class="voet"><span class="zeker ' + ZEKER_KLASSE[w.zeker] + '">' +
+      ZEKER_TEKST[w.zeker] + '</span>' + bron + '</div>';
+    return d;
+  }
+
+  function tekenSecties(secties, altijdOpen) {
+    inhoud.innerHTML = '';
+    if (!secties.length) {
+      const l = document.createElement('div');
+      l.className = 'leeg';
+      l.innerHTML = '<b>Hier staat nog niets.</b><br>Dit onderwerp wacht nog op onderzoek. ' +
+        'Vraag Claude er gerust naar — en zeg erbij dat het antwoord hier mag komen te staan.';
+      inhoud.appendChild(l);
+      return;
+    }
+    secties.forEach((s, i) => {
+      const blok = document.createElement('div');
+      blok.className = 'sectie-blok';
+
+      const knop = document.createElement('button');
+      knop.className = 'sectie-knop';
+      const open = altijdOpen || i === 0;      // eerste sectie staat open, rest dicht
+      knop.setAttribute('aria-expanded', String(open));
+      knop.innerHTML = '<span>' + s.titel + '</span>' +
+        '<span class="aantal">' + s.kaarten.length + '</span>' +
+        '<span class="chev">›</span>';
+
+      const rek = document.createElement('div');
+      rek.className = 'kaarten';
+      rek.style.display = open ? 'grid' : 'none';
+      s.kaarten.forEach(w => rek.appendChild(kaartje(w)));
+
+      knop.addEventListener('click', () => {
+        const nu = knop.getAttribute('aria-expanded') === 'true';
+        knop.setAttribute('aria-expanded', String(!nu));
+        rek.style.display = nu ? 'none' : 'grid';
+      });
+
+      blok.appendChild(knop);
+      blok.appendChild(rek);
+      inhoud.appendChild(blok);
+    });
+  }
+
+  function teken() {
+    bouwTabs();
+    const o = KENNIS[actief];
+    kop.textContent = o.intro;
+    tekenSecties(o.secties, false);
+  }
+
+  function zoeken(term) {
+    const t = term.trim().toLowerCase();
+    if (!t) { teken(); return; }
+    kop.textContent = 'Zoekresultaten in alle onderwerpen';
+    tabs.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', 'false'));
+
+    const treffers = [];
+    SLEUTELS.forEach(k => {
+      const o = KENNIS[k];
+      o.secties.forEach(s => {
+        const raak = s.kaarten.filter(w =>
+          (w.v + ' ' + w.a).toLowerCase().includes(t));
+        if (raak.length) {
+          treffers.push({ titel: o.icoon + ' ' + o.naam + ' — ' + s.titel, kaarten: raak });
+        }
+      });
+    });
+
+    if (!treffers.length) {
+      inhoud.innerHTML = '<p class="geenhit">Niets gevonden voor “' + term +
+        '”. Vraag het gewoon aan Claude — en zeg erbij dat het hier mag komen te staan.</p>';
+      return;
+    }
+    tekenSecties(treffers, true);
+  }
+
+  zoek.addEventListener('input', () => zoeken(zoek.value));
+  teken();
+})();
+</script>
+</body>
+</html>
