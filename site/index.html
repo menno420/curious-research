@@ -12,7 +12,7 @@
 <header>
   <p class="kicker">Voor jouw werkplaats</p>
   <h1>Van ontwerp naar onderdeel, met een test ertussen</h1>
-  <p class="lead">Nederlandse, uitvoerbare routes voor jouw printers, Fusion 360, Arduino en robotarm. Elke gids zegt wat je nodig hebt, welke stappen je uitvoert en hoe je controleert of het werkt.</p>
+  <p class="lead">Nederlandse, uitvoerbare routes voor jouw printers, Fusion 360, Arduino en robotarm. Gebruik dezelfde openbare context in Claude of ChatGPT en controleer iedere oplossing met een test.</p>
 </header>
 
 <a class="hero" href="guides/begin-hier/index.html">
@@ -23,6 +23,11 @@
 <a class="hero" href="kennis.html" style="border-color:var(--ok)">
   <span class="flag">📚</span><h2 style="color:var(--ok)">Kennisbank — met zichtbaar bewijsniveau</h2>
   <p>Zoek een kort antwoord en zie meteen of het geverifieerd, onderbouwd, praktijkadvies, nog te bevestigen of experimenteel is.</p><span class="go" style="color:var(--ok)">Open de kennisbank →</span>
+</a>
+
+<a class="hero" href="github-en-ai.html" style="border-color:var(--warm)">
+  <span class="flag">🔗</span><h2 style="color:var(--warm)">GitHub + AI — deel dezelfde werkplaatscontext</h2>
+  <p>Kopieer het actuele werkplaatsprofiel naar Claude of ChatGPT en begrijp waarom de repository één controleerbare bron blijft. Geen eigen GitHub-account nodig.</p><span class="go" style="color:var(--warm)">Geef de context aan een AI →</span>
 </a>
 
 <section><h2 class="sectie">🖨️ Bambu Lab A1 en A1 mini</h2><p class="sectie-uitleg">Begin bij het juiste machine-, nozzle- en materiaalprofiel. Gebruik Preview en een kleine A/B-test voordat je een hele print opnieuw start.</p><div class="rek">
@@ -50,27 +55,28 @@
 <section><h2 class="sectie">🦾 6-DOF-robotarm</h2><p class="sectie-uitleg">Softwarelimieten helpen alleen binnen de route die ze gebruikt. Startup, echte servovariant, voeding, montage en obstakels moeten afzonderlijk worden gecontroleerd.</p><div class="rek">
   <a class="kaart" href="guides/arm-werkgebied/index.html"><span class="icoon">📐</span><h3>Gewrichtslimieten meten</h3><p>Meet min en max met marge en begrijp wat een softwareclamp wel en niet bewijst.</p><span class="merk nl">Veiligheidsbasis</span></a>
   <a class="kaart" href="guides/arm-herhaalbaarheid-meten/index.html"><span class="icoon">🎯</span><h3>Herhaalbaarheid meten</h3><p>Maak de spreiding van A → B → A zichtbaar en vergelijk wijzigingen met één variabele tegelijk.</p><span class="merk nl">Testworkflow</span></a>
-  <a class="kaart" href="projecten.html#penplotter"><span class="icoon">✍️</span><h3>Penplotter: eerst de startupcheck</h3><p>Lees het hele project en de bekende 90°-startupbeperking voordat je naar de broncode gaat.</p><span class="merk open">Nog bevestigen</span></a>
+  <a class="kaart" href="projecten.html#penplotter"><span class="icoon">✍️</span><h3>Penplotter: vergelijk met de werkende controller</h3><p>De arm is al gebruikt; leg de bestaande configuratie vast vóór je de sketch met 90°-startup beoordeelt.</p><span class="merk open">Sketch nog bevestigen</span></a>
   <a class="kaart" href="projecten.html#soepele-arm"><span class="icoon">🌊</span><h3>Soepele beweging</h3><p>Vergelijk directe doelen, lineaire stapjes en een S-curve onder dezelfde testvoorwaarden.</p><span class="merk nl">Experiment</span></a>
 </div></section>
 
 <section><h2 class="sectie">🛠️ Bouwprojecten</h2><p class="sectie-uitleg">Lees eerst de gebruikersroute. Broncode en ontwerpbestanden komen pas na onderdelen, stappen en testcriterium.</p><div class="rek">
   <a class="kaart" href="projecten.html#pasmunt"><span class="icoon">🪙</span><h3>Pasmunt</h3><p>Meet schuif- en perspassing voor jouw printer en materiaal.</p><span class="merk nl">Bouwroute</span></a>
   <a class="kaart" href="projecten.html#filamentweger"><span class="icoon">⚖️</span><h3>Filamentweger</h3><p>Kalibreer een loadcell voor een praktische voorraadcontrole.</p><span class="merk nl">Bouwroute</span></a>
-  <a class="kaart" href="projecten.html#penplotter"><span class="icoon">✍️</span><h3>Arm-penplotter</h3><p>Leer waypoints en teken een lijn, met de bekende startupbeperking zichtbaar.</p><span class="merk open">Startup nog bevestigen</span></a>
+  <a class="kaart" href="projecten.html#penplotter"><span class="icoon">✍️</span><h3>Arm-penplotter</h3><p>Leer waypoints en teken een lijn nadat de repositorysketch met de bestaande controllerroute is vergeleken.</p><span class="merk open">Sketch nog bevestigen</span></a>
   <a class="kaart" href="projecten.html#soepele-arm"><span class="icoon">🌊</span><h3>Soepele armbeweging</h3><p>Plan gewrichten synchroon en meet het effect van een S-curve.</p><span class="merk nl">Bouwroute</span></a>
   <a class="kaart" href="projecten.html#gereedschap"><span class="icoon">🧲</span><h3>Verwisselbaar gereedschap</h3><p>Maak één polsinterface voor magneet, grijper en toekomstige tools.</p><span class="merk nl">Bouwroute</span></a>
 </div></section>
 
-<section><h2 class="sectie">💬 Claude als werkplaatsassistent</h2><p class="sectie-uitleg">Claude kent de repositorycontext alleen als je de map of projectkennis beschikbaar maakt. Waardevolle chatuitkomsten worden pas duurzame kennis nadat je ze test, controleert en als bestand opslaat.</p><div class="rek">
-  <a class="kaart" href="guides/begin-hier/index.html"><span class="icoon">🧭</span><h3>Eerste gebruik</h3><p>Controleer de bekende hardware, ontbrekende gegevens en eerste echte vraag.</p><span class="merk nl">Claude Pro</span></a>
+<section><h2 class="sectie">💬 AI als werkplaatsassistent</h2><p class="sectie-uitleg">Claude en ChatGPT kennen deze werkplaats alleen als je de openbare context deelt en zij die werkelijk lezen. Waardevolle chatuitkomsten worden pas duurzame kennis na test, controle en een repositorywijziging.</p><div class="rek">
+  <a class="kaart" href="guides/begin-hier/index.html"><span class="icoon">🧭</span><h3>Eerste gebruik via website + chat</h3><p>Deel profiel en relevante pagina, controleer de bekende hardware en stel een meetbare eerste vraag.</p><span class="merk nl">Geen account nodig</span></a>
+  <a class="kaart" href="github-en-ai.html"><span class="icoon">🔗</span><h3>Waarom GitHub met AI werkt</h3><p>Gebruik één actuele bron in verschillende chats zonder automatisch geheugen te beloven.</p><span class="merk nl">Claude + ChatGPT</span></a>
   <a class="kaart" href="guides/what-can-claude-see/index.html"><span class="icoon">📷</span><h3>Van foto of fouttekst naar test</h3><p>Scheid zichtbare observaties, hypotheses en ontbrekende context vóór je een instelling wijzigt.</p><span class="merk nl">Diagnose</span></a>
-  <a class="kaart" href="guides/windows-gereedschap/index.html"><span class="icoon">🪟</span><h3>Windows-gereedschap per taak</h3><p>Installeer alleen wat een concrete Fusion-, Arduino- of repositorytaak nodig heeft en verifieer de installatie.</p><span class="merk nl">Werkplek</span></a>
-  <a class="kaart" href="https://github.com/menno420/curious-research/blob/main/docs/claude-usage-guide.md"><span class="icoon">🗂️</span><h3>Volledige Windows-installatie</h3><p>Download, installeer Claude Code, start in de juiste map en leg bevestigde kennis duurzaam vast.</p><span class="merk nl">Handleiding</span></a>
+  <a class="kaart" href="guides/windows-gereedschap/index.html"><span class="icoon">🪟</span><h3>Windows-gereedschap per taak</h3><p>Installeer pas lokale software wanneer een Fusion-, Arduino- of repositorytaak die echt nodig heeft.</p><span class="merk open">Later optioneel</span></a>
+  <a class="kaart" href="https://github.com/menno420/curious-research/blob/main/docs/claude-usage-guide.md"><span class="icoon">🗂️</span><h3>Volledige AI-gebruiksgids</h3><p>Begin via website en chat; lees ook hoe projectuploads en een latere lokale repositoryroute werken.</p><span class="merk nl">Handleiding</span></a>
 </div></section>
 
 <div class="doos"><h2>Een goede vraag bevat een onderdeel en een resultaat</h2><p><strong>Goed:</strong> <code>Mijn A1-print trekt bij de linkerhoek los. Maak een test met één variabele en vertel wat ik in Preview moet controleren.</code></p><p><strong>Te breed:</strong> <code>Leg 3D-printen uit.</code></p></div>
-<div class="doos"><h2>Belangrijk: chat is geen automatisch geheugen</h2><p>Claude kan bestanden lezen en wijzigingen voorstellen wanneer de repository beschikbaar is. Een antwoord in chat werkt de map niet vanzelf bij. Bewaar alleen geteste resultaten, noteer omstandigheden en maak een back-up of publiceer de wijziging met GitHub.</p></div>
+<div class="doos"><h2>Belangrijk: dezelfde bron is geen automatisch geheugen</h2><p>Geef het profiel en de relevante pagina aan Claude of ChatGPT. Laat bevestigen dat de bron werkelijk is geopend. Een antwoord in chat werkt GitHub niet vanzelf bij; alleen geteste en gecontroleerde resultaten horen via een repositorywijziging terug in de gedeelde bron.</p></div>
 
 <footer><p>Bronbestanden en wijzigingsgeschiedenis staan op <a href="https://github.com/menno420/curious-research">GitHub</a>. De HTML-gidsen blijven ook lokaal in een browser bruikbaar.</p></footer>
 </div></body></html>

@@ -7,8 +7,10 @@ arm-specifieke meetgegevens die de bewegingsprojecten nodig hebben.
 ## Wat is bevestigd?
 
 - Een zelfgebouwde 6-DOF-robotarm met zes `MG996R`-klasse hobbyservo's.
-- De arm is door de maker zelf gebouwd; huidige controller, pinvolgorde en operationele toestand
-  zijn nog niet opnieuw bevestigd.
+- De arm is door de maker zelf gebouwd en is volgens de maker al met een controller gebruikt
+  (bevestigd 2026-08-07).
+- Exact controllermodel, werkende firmware/sketch, pinvolgorde en huidig startupgedrag zijn nog
+  niet schriftelijk vastgelegd.
 - De exacte servovariant, voeding, verdeling, zekeringwaarden en externe positieterugmelding zijn
   nog niet schriftelijk bevestigd.
 - De bestaande softwarelabels `base`, `shoulder`, `elbow`, `wrist_tilt`, `wrist_rotate` en
@@ -20,6 +22,24 @@ onderzoek staat in [`research/dossiers/servos.md`](../research/dossiers/servos.m
 [`research/dossiers/servos-gemini.md`](../research/dossiers/servos-gemini.md); claims die
 hieruit worden overgenomen krijgen opnieuw een label volgens
 [`docs/knowledge-policy.md`](../docs/knowledge-policy.md).
+
+## Gebruik de bestaande controller als werkende referentie
+
+De arm is dus geen onbeproefd stuk hardware. Wat nog niet bewezen is, is of de **meegeleverde
+repositorysketches** passen bij de controllerconfiguratie waarmee de arm al heeft gewerkt.
+Bewaar en documenteer daarom eerst de werkende situatie voordat je alternatieve firmware
+uploadt:
+
+1. fotografeer merk en type van controller en voeding;
+2. bewaar de werkende sketch/firmware met versienummer of datum;
+3. noteer signaalpin, draairichting en fysiek gewricht per kanaal;
+4. noteer wat de arm bij inschakelen en reset werkelijk doet;
+5. leg de bekende homepositie en limieten vast;
+6. wijzig daarna één onderdeel tegelijk en vergelijk met deze basislijn.
+
+Een werkende controller bewijst dat de arm eerder bestuurd kon worden. Hij bewijst niet dat een
+andere sketch dezelfde pinnen, pulsbreedtes, homewaarden of startupvolgorde gebruikt. Dit is
+waarom de documentatie waarschuwt zonder voor te stellen de arm opnieuw te ontwerpen.
 
 ## Wat lost kalibratie op?
 

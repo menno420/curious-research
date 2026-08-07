@@ -17,8 +17,9 @@
   *waarom* een stap nodig is en beschrijf wat hij daarna hoort te zien, meten of horen.
 - **Doel:** betere keuzes, betrouwbaardere werkstukken, systematisch storingen vinden en de
   verbinding leggen tussen ontwerp → productie → meten → verbeteren.
-- **AI-gebruik:** hij gebruikt Claude al voor projecten en krijgt Claude Pro. Deze repository
-  moet de vaste projectcontext leveren; een los gesprek is niet de enige bewaarplek.
+- **AI-gebruik:** hij gebruikt Claude voor projecten en krijgt Claude Pro; dezelfde openbare
+  context moet ook bruikbaar zijn in ChatGPT of een andere assistent. Een los gesprek is niet
+  de bewaarplek voor bevestigde werkplaatskennis.
 
 ## Hardware
 
@@ -37,8 +38,9 @@ zijn onder meer materiaalprofiel, oriëntatie, wanden, vulling, support, passing
 
 ### Robotarm
 
-- **Bouw:** zelfgebouwde 6-DOF-robotarm. De huidige controller, pinvolgorde en operationele
-  toestand zijn nog niet opnieuw met de maker bevestigd.
+- **Bouw en gebruik:** zelfgebouwde 6-DOF-robotarm. De maker heeft bevestigd dat de arm al met
+  een controller is gebruikt (2026-08-07). Exact controllermodel, gebruikte firmware/sketch,
+  pinvolgorde en huidig startupgedrag zijn nog niet schriftelijk vastgelegd.
 - **Aandrijving:** zes `MG996R`-klasse hobbyservo's. Het precieze fabrikaat en de interne
   elektronica zijn niet bevestigd; klonen onder dezelfde naam kunnen afwijken.
 - **Voeding:** type, spanning, stroomcapaciteit, bedrading, verdeelwijze en zekeringwaarden zijn
@@ -87,7 +89,7 @@ voor printen en 2D voor laser en CNC. STL, 3MF, DXF en G-code zijn dan afgeleide
 bestaande tekstgebaseerde OpenSCAD-projecten houden hun `.scad`-bestand als eigen master; zet ze
 niet stilzwijgend om of kopieer feiten tussen beide ontwerpbronnen.
 
-## Instructies voor Claude
+## Instructies voor Claude, ChatGPT en andere assistenten
 
 1. **Lees eerst dit profiel**, daarna de relevante gids en het bijbehorende dossier onder
    `research/dossiers/`.
@@ -121,7 +123,8 @@ Deze lege plekken zijn bewust zichtbaar. Zij mogen niet stilzwijgend worden inge
 - beschikbare frezen en gebruikelijke plaatmaterialen;
 - precieze Arduino-borden en sensoren op voorraad;
 - fabrikant/variant van de zes servo's en gemeten voeding- en stroomwaarden;
-- controller, pinvolgorde, huidige operationele toestand en aanwezige voedingsopbouw van de arm;
+- exact controllermodel, werkende firmware/sketch, pinvolgorde, startupgedrag en aanwezige
+  voedingsopbouw van de arm;
 - werkelijk gemeten min/midden/max per armgewricht.
 
 Wanneer de maker een van deze feiten bevestigt, werk dan **dit bestand** bij met datum en bron.

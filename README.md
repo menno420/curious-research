@@ -3,19 +3,17 @@
 > ## Een werkplaatsassistent als cadeau 🎁
 >
 > Deze map is gemaakt voor jouw Bambu-printers, Fusion 360-werk, Arduino-projecten en
-> 6-DOF-robotarm. Start Claude vanuit deze map en het hoeft die basiscontext niet bij iedere vraag
-> opnieuw te raden.
+> 6-DOF-robotarm. De website maakt de kennis leesbaar; het openbare werkplaatsprofiel geeft
+> Claude of ChatGPT steeds dezelfde gecontroleerde basiscontext.
 
 ## Begin hier
 
-1. Open [de Nederlandse rondleiding](guides/begin-hier/guide.md).
-2. Volg eenmalig [Claude gebruiken met deze repository](docs/claude-usage-guide.md) op je
-   Windows-pc en Claude Pro-account.
-3. Bekijk op de werkbank de
-   [website met gidsen, projecten en naslag](https://menno420.github.io/curious-research/).
+1. Open de [website met gidsen, projecten en naslag](https://menno420.github.io/curious-research/).
+2. Kies **GitHub + AI** en kopieer de actuele werkplaatscontext naar Claude of ChatGPT.
+3. Gebruik [de Nederlandse rondleiding](guides/begin-hier/guide.md) voor een eerste echte vraag.
+4. Lees indien nodig [AI gebruiken met deze werkplaatskennis](docs/claude-usage-guide.md).
 
-Een eigen GitHub-account is niet nodig om de map eerst te downloaden en lokaal met Claude Code
-te gebruiken.
+Een eigen GitHub-account, clone of lokale AI-installatie is voor deze eerste route niet nodig.
 
 ## Wat Claude al over de werkplaats weet
 
@@ -57,18 +55,18 @@ Gebruik daarvoor [de beeld-naar-testgids](guides/what-can-claude-see/guide.md).
 
 ## Chat is niet hetzelfde als duurzaam geheugen
 
-Claude kan de repository lezen wanneer je Claude Code in deze map start of de relevante
-bestanden aan een Claude Project toevoegt. Een chatantwoord werkt de repository niet automatisch
+Claude of ChatGPT kan de openbare context gebruiken als de assistent de gedeelde URL werkelijk
+opent, of als je de tekst plakt of uploadt. Een chatantwoord werkt de repository niet automatisch
 bij. Waardevolle kennis wordt pas duurzaam als je:
 
 1. de voorgestelde proef zelf uitvoert;
 2. het resultaat en de omstandigheden controleert;
-3. Claude vraagt het in het juiste bestaande bestand te zetten;
+3. laat bepalen in welk bestaand bestand het thuishoort;
 4. de wijziging naleest;
 5. de map back-upt of later via GitHub publiceert.
 
-Lokale automatische notities van Claude zijn geen online back-up en geen vervanging voor de
-bestanden in deze map.
+GitHub is hierbij de gedeelde bron, niet automatisch AI-geheugen. Lees
+[waarom GitHub handig is voor samenwerken met AI](docs/git-for-makers.md).
 
 ## De belangrijkste routes
 
@@ -82,6 +80,7 @@ bestanden in deze map.
 | Robotarm | [Bevestigde context en startupgedrag](arm/README.md) |
 | Bouwprojecten | [Nederlandse projectroutes](site/projecten.html) |
 | Korte antwoorden | [Kennisbank met bewijslabels](site/kennis.html) |
+| Dezelfde context voor Claude en ChatGPT | [GitHub + AI](site/github-en-ai.html) |
 
 ## Hoe vertrouwen zichtbaar blijft
 

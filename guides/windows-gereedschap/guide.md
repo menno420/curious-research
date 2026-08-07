@@ -11,23 +11,26 @@ Open [`index.html`](./index.html) voor de keuzehulp.
 ## Waarom dit voor jouw werkplaats telt
 
 Windows, Bambu Studio, Fusion 360 Personal Use en Arduino IDE horen bij het werkplaatsprofiel.
-Claude Code is de aanbevolen manier om de hele map als context te gebruiken. OpenSCAD en lokale
-Python zijn alleen nodig voor specifieke bestaande projecten.
+Voor vragen is website + Claude/ChatGPT nu de hoofdroute; daarvoor hoeft niets lokaal te worden
+gecloned. Claude Code, OpenSCAD en lokale Python zijn alleen nodig voor een latere concrete taak.
 
 ## Benodigdheden
 
 - Windows-pc en internet voor installatie;
 - rechten om programma's op die pc te installeren;
-- de uitgepakte repositorymap;
+- voor lokale bestanden: een later gedownloade of geclonede repositorymap;
 - het concrete bestand of project dat je als volgende wilt gebruiken.
 
 ## Stappenplan
 
-### 1. Claude Code — voor vragen met de hele map als context
+### 1. Website + chat — voor de huidige vragenroute
 
-Volg één keer [`docs/claude-usage-guide.md`](../../docs/claude-usage-guide.md). Daar staat de
-actuele WinGet-opdracht, login met Claude Pro, start vanuit de juiste map en contextcontrole. Houd
-installatie-instructies op die ene plek om drift te voorkomen.
+Open <https://menno420.github.io/curious-research/github-en-ai.html>, kopieer het profiel en
+gebruik het in Claude of ChatGPT. Hiervoor is geen lokale installatie nodig.
+
+Claude Code komt pas aan bod wanneer de maker de volledige repository lokaal wil gebruiken of
+zelf bestanden wil laten wijzigen. De optionele Windows-route blijft centraal in
+[`docs/claude-usage-guide.md`](../../docs/claude-usage-guide.md).
 
 ### 2. Bambu Studio — voor A1 en A1 mini
 
@@ -88,12 +91,12 @@ Installeer per sessie maar één programma en bewijs één keten, bijvoorbeeld:
 - STL openen → slicen → Preview;
 - `.ino` verifiëren → uploaden → Serial-banner;
 - `.scad` renderen → STL-maat controleren;
-- Claude Code starten → werkplaatscontext correct laten samenvatten.
+- websitecontext delen → AI noemt bevestigde context en verzint ontbrekende hardware niet.
 
 ## Veelgemaakte fouten
 
 - Alle hulpmiddelen installeren voordat er een concrete taak is.
-- Claude vanuit `Downloads` starten in plaats van uit de uitgepakte repositorymap.
+- een clone of Claude Code installeren terwijl website + chat de huidige taak al afdekt.
 - Een Arduino-board of COM-poort raden.
 - Denken dat Fusion-scripts de lokale Python-installatie gebruiken.
 - Een lokaal gewijzigd bestand als online back-up behandelen.
