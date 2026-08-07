@@ -5,25 +5,42 @@ the arm in this lane.
 
 ## What this arm actually is (known as of 2026-08-07)
 
-A **6-DOF aluminium robot-arm kit, assembled from parts** — the widely-cloned "6DOF Robot
-Mechanical Arm Kit" pattern sold under many names. The specifics that change how we design
-for it:
+A **6-DOF robot-arm kit, assembled from parts** — the widely-cloned "6DOF Robot Mechanical
+Arm Kit" pattern sold under many names, on **MG996R-class standard servos**.
 
 | | |
 |---|---|
 | **Servos** | **6 × MG996R** analog, ~55 g each, 180° nominal |
 | **Torque** | ~9.4 kg·cm at 4.8 V, ~11 kg·cm at 6 V |
 | **Current** | ~1.4 A quoted official, **up to ~2.5 A stalled at 6 V, each** |
-| **Structure** | 2 mm aluminium brackets, cup bearings at the joints |
+| **Structure** | metal brackets, cup bearings at the joints |
 | **Joint 6** | the gripper/claw is one of the six — not a spare channel |
-| **NOT included** | no controller board, no power supply, no wiring |
 
-Three consequences that are easy to get wrong:
+### It is already built, wired and moving — start from there
 
-1. **Power is the whole ballgame.** Six MG996R stalled together is on the order of **15 A**.
-   They never all stall at once, but the supply must survive two or three doing it. A **6 V
-   supply in the 10 A class** is the usual answer; a 5 V 2 A USB brick is not, and its sag
-   looks exactly like a software bug. Full arithmetic in
+**This is the single most important thing for any session to know.** The arm is not a box of
+parts waiting for a first power-up. It has been assembled, wired and driven under program
+control from a laptop over USB. Observed on the bench:
+
+- an **enclosed switching power supply** — the metal-cased kind with a cooling fan, mains in
+  one end and a **screw-terminal block** out the other. Real bench power, correctly separate
+  from the controller, exactly as §2 requires.
+- a small **power-distribution board** with screw terminals between the supply and the servos;
+- a **driver/controller board** with the servo leads converging on it;
+- a laptop on USB, driving the arm.
+
+So **do not** write him a "how to power your arm" or "how to make it move the first time"
+guide. He is past both. He solved the hard electrical problem before this repo said a word
+about it. Pitch everything at what comes *after* first motion: repeatability, envelope limits,
+useful work. Ask before assuming anything about board models or supply ratings — the exact
+parts have not been confirmed in writing, only seen.
+
+### Three things that are easy to get wrong
+
+1. **Power sizing, if it ever gets rebuilt.** Six MG996R stalled together is on the order of
+   **15 A**. They never all stall at once, but the supply must survive two or three doing it.
+   A **6 V supply in the 10 A class** is the usual answer; a 5 V 2 A USB brick is not, and its
+   sag looks exactly like a software bug. Full arithmetic in
    [`projects/arm-pen-plotter/pen_plotter_arm.ino`](../projects/arm-pen-plotter/pen_plotter_arm.ino).
 2. **Analog servos cannot report their position.** You cannot backdrive a joint by hand and
    read the angle out. This is *why* teach mode in

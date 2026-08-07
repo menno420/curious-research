@@ -63,9 +63,11 @@ the ritual (arm-print-removal, explain-my-slicer).
 
 **`arm/`** — `README.md` plus `calibration.example.json`, a 6-servo `min`/`max`/`center`
 template with every value still `PLACEHOLDER`. The hardware is now identified (2026-08-07):
-a 6-DOF aluminium kit on **6 × MG996R** analog servos, no controller or PSU included. What
-that implies for power sizing, the absence of position feedback, and the already-occupied
-gripper channel is written up in `arm/README.md` — read it before designing any arm work. The measured file belongs **in** the repo
+a 6-DOF kit on **6 × MG996R** analog servos — and, importantly, **already assembled, wired
+and moving under program control from a laptop**, on a proper enclosed switching supply with
+a distribution board. He is well past first power-up; do not pitch arm work at beginners'
+wiring. What that means, plus the absence of position feedback and the already-occupied
+gripper channel, is written up in `arm/README.md` — read it before designing any arm work. The measured file belongs **in** the repo
 once it exists (servo angles are numbers, not personal data) and it is the clamp target
 every motion routine points at. It does not exist yet.
 
@@ -109,8 +111,9 @@ Four things nobody but the owner can answer. Each unblocks concrete work.
    it does something visible on the bench); **L** is the passive humidity logger. Either
    answer flips the idea to `build` and a project follows.
 3. **The arm calibration measurement.** `arm/calibration.json` does not exist, and until it
-   does, `projects/arm-pen-plotter/teach_and_replay.py` refuses to start by design. The
-   measurement is a genuinely good first hands-on task: follow
+   does, `projects/arm-pen-plotter/teach_and_replay.py` refuses to start by design. This is
+   now the ONLY thing standing between a working arm and the repo's arm projects — the
+   hardware side is already done (see `arm/README.md`). Follow
    `guides/arm-envelope-explained/`, copy `arm/calibration.example.json` to
    `arm/calibration.json`, fill in the measured min/max/center for each of the six servos,
    commit it. This unblocks the whole arm lane.
