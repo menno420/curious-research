@@ -171,6 +171,30 @@ h2.sectie {
 .doos li { margin-bottom: 8px; }
 .doos li:last-child { margin-bottom: 0; }
 
+.startopdracht {
+  display: block;
+  margin: 14px 0;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  border-radius: 10px;
+  color: var(--ink);
+  font: .94rem/1.55 ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+.actieknop {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 9px 13px;
+  border: 2px solid var(--accent);
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff !important;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.actieknop:hover, .actieknop:focus-visible { box-shadow: var(--shadow-lift); }
+
 code {
   font: .9em ui-monospace, "Cascadia Code", Consolas, monospace;
   background: var(--accent-soft);
@@ -191,5 +215,5 @@ footer {
 footer a { color: var(--accent); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .kaart, .hero { transition: box-shadow .18s ease, border-color .18s ease; }
+  .kaart, .hero, .actieknop { transition: box-shadow .18s ease, border-color .18s ease; }
 }

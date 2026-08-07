@@ -31,13 +31,20 @@
   de relevante link of tekst aan de AI waarmee je op dat moment praat.</p>
 </header>
 
+<div class="doos" style="margin-top:20px">
+  <h2>Naam van deze kennisbank</h2>
+  <p>De repository heet
+    <a href="https://github.com/menno420/curious-research"><code>menno420/curious-research</code></a>.
+    Noem die naam wanneer je Claude of ChatGPT vraagt om deze werkplaatskennis te gebruiken.</p>
+</div>
+
 <div class="stappen">
   <div class="stap"><b>1 · Geef de context</b><p>Kopieer het actuele werkplaatsprofiel of de directe link met de knoppen hieronder.</p></div>
   <div class="stap"><b>2 · Geef het probleem</b><p>Deel daarna de URL van één gids of project en beschrijf wat je ziet, meet en wilt bereiken.</p></div>
   <div class="stap"><b>3 · Test en bewaar</b><p>Test één wijziging. Laat een bevestigd resultaat daarna gecontroleerd in de repository zetten.</p></div>
 </div>
 
-<div class="doos">
+<div class="doos" id="starten">
   <h2>Start een gesprek</h2>
   <p>De eerste knop kopieert een opdracht met de directe URL van het canonieke profiel. Kan de
   gekozen AI die URL niet openen, gebruik dan de tweede knop en plak de profieltekst zelf.</p>
@@ -118,10 +125,12 @@
   const status = document.getElementById('kopieStatus');
   let profielTekst = '';
 
-  const opdracht = 'Open en lees eerst ' + profielUrl + '\n' +
-    'Gebruik dit als werkplaatscontext voor mijn volgende vraag. Noem feiten en aannames apart. ' +
+  const opdracht = 'Gebruik de openbare GitHub-repository menno420/curious-research als kennisbank voor mijn werkplaats.\n' +
+    'Open en lees eerst het werkplaatsprofiel: ' + profielUrl + '\n' +
+    'Gebruik dit als context voor mijn volgende vraag. Noem bevestigde feiten en aannames apart. ' +
     'Als je de URL niet werkelijk kunt openen, zeg dat dan direct en vraag mij de tekst te plakken. ' +
-    'Antwoord standaard in het Nederlands en verzin geen ontbrekende hardware.';
+    'Antwoord standaard in het Nederlands, geef uitvoerbare stappen, leg uit waarom ze ertoe doen ' +
+    'en sluit af met een zichtbare of meetbare controle. Verzin geen ontbrekende hardware.';
 
   async function kopieer(tekst, melding) {
     try {
