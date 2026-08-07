@@ -53,7 +53,7 @@ eigenschap van deze arm.
 |---|---|
 | [`teach_and_replay.py`](./teach_and_replay.py) | Laptoptool voor joggen, waypoints bewaren en begrensd terugspelen. |
 | [`pen_plotter_arm.ino`](./pen_plotter_arm.ino) | Arduino-ontvanger; begrenst gecontroleerde `S`-opdrachten na de limietenhandshake. Bevat de hierboven beschreven startupbeperking. |
-| [`pen_holder.scad`](./pen_holder.scad) | Parametrische bron voor de zwevende penhouder. |
+| [`pen_holder.scad`](./pen_holder.scad) | Parametrische bron; standaard- en alternatieve tak renderen manifold, fysieke passing nog meten. |
 | [`index.html`](./index.html) | Vereenvoudigde animatie van teach-and-replay; geen veiligheidsbewijs. |
 
 ## Bouwstappen

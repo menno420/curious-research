@@ -2,11 +2,12 @@
 //  pen_holder.scad  --  compliant (floating) pen holder for the plotter arm
 //  Part of: curious-research / projects/arm-pen-plotter
 // ----------------------------------------------------------------------------
-//  OWNER RENDERS THIS LOCALLY. OpenSCAD was not available in the environment
-//  that generated these files, so geometry and fit remain unverified here,
-//  so this ships as .scad SOURCE ONLY. You open it in OpenSCAD, press F6, then
-//  File > Export > STL, and slice it on your own machine. About a minute.
-//  (Same rule as projects/tolerance-test-coin -- see docs/CAPABILITIES.md.)
+//  RENDER STATUS (2026-08-07)
+//  OpenSCAD 2021.01 rendered both the default gravity/horn configuration and
+//  the spring/flat branch to simple manifold STL meshes without warnings.
+//  Physical dimensions, fit, strength, slicing and print behaviour are still
+//  unverified. The .scad remains the master; regenerate the STL after changing
+//  measured parameters.
 //
 //  SAFETY (repo rule): Claude designed this file. YOU slice it, YOU load the
 //  filament, YOU start the print and watch it. Nothing here is "safe to print

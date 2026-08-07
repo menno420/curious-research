@@ -25,14 +25,17 @@ een dun teststuk valideren en daarna alleen boven die interface ontwerpen.
 
 | Bestand | Functie | Status |
 |---|---|---|
-| [`mount_standard.scad`](mount_standard.scad) | gedeelde plaat en montageparameters | nog meten en renderen |
-| [`magnet_tool.scad`](magnet_tool.scad) | passieve magneethouder op de plaat | experiment; pasvorm en houdkracht testen |
-| [`gripper.scad`](gripper.scad) | actieve tandheugelgrijper | experiment; geometrie is niet gevalideerd |
+| [`mount_standard.scad`](mount_standard.scad) | gedeelde plaat en montageparameters | manifold render geverifieerd; maten nog meten |
+| [`magnet_tool.scad`](magnet_tool.scad) | passieve magneethouder op de plaat | manifold render geverifieerd; passing en houdkracht testen |
+| [`gripper.scad`](gripper.scad) | actieve tandheugelgrijper | manifold render geverifieerd; mechanica blijft experiment |
 | [`gripper_test.ino`](gripper_test.ino) | automatische banktest met één losse servo | beweegt direct na startup; eerst waarden controleren |
 | [`index.html`](index.html) | Nederlandse visuele uitleg | lokaal in een browser te openen |
 
-OpenSCAD was tijdens deze repositorybewerking niet beschikbaar. De SCAD-bestanden zijn dus
-niet gerenderd, op manifold-geometrie gecontroleerd, gesliced of proefgepast.
+Op 2026-08-07 zijn de standaardconfiguraties en relevante alternatieve parameterpaden met
+OpenSCAD 2021.01 naar STL gerenderd. Alle gecontroleerde exports zijn eenvoudige manifold meshes
+zonder waarschuwingen. Bij de grijper is een nul-dikteverbinding tussen tand en tandvoet gevonden
+en met een kleine modellerings-overlap hersteld. Dit bewijst alleen geldige brongeometrie: er is
+niets gesliced, geprint, proefgepast of belast.
 
 ## Benodigde onderdelen en gereedschappen
 
@@ -83,8 +86,8 @@ tandvormen. Beide moeten aan het echte onderdeel worden gemeten. Een modelnaam o
 “MG996R-klasse” bewijst niet dat behuizing, spline, hoorn of elektrisch gedrag gelijk is.
 
 1. Controleer en wijzig alle servo-, tandwiel-, geleiding- en spelingsparameters.
-2. Render de onderdelen en draai tandheugels en pignon met de hand. Geen enkel deel mag
-   klemmen of uit de geleiding lopen.
+2. Render de onderdelen opnieuw na iedere maatwijziging. De bron rendert manifold, maar alleen een
+   fysieke proef kan aantonen of tandheugels en pignon zonder klemmen of uitlopen bewegen.
 3. Bevestig het pignon mechanisch aan een passende servohoorn; vertrouw niet op een kale
    perspassing op de spline.
 4. Test één servo op de werkbank, los van de arm. `gripper_test.ino` schrijft bij startup
@@ -134,7 +137,10 @@ geen belastingsspecificatie.
   ingestelde middenpuls tijdens `setup()`; daarna volgt automatische beweging.
 - **Nog bevestigen:** alle mechanische maten, geschikte servovoeding, houdkracht en
   botsingsvrije armroute.
-- **Experiment:** beide toolontwerpen totdat ze zijn gerenderd, proefgeprint en gemeten.
+- **Geverifieerd in OpenSCAD 2021.01:** de onderhouden parameterpaden exporteren zonder
+  waarschuwingen naar eenvoudige manifold STL-meshes.
+- **Experiment:** beide toolontwerpen totdat ze met de gemeten onderdelen zijn proefgeprint,
+  gemonteerd en belast.
 
 Voor de startupbeperking van de bestaande zesassige penplottersketch, zie
 [`projects/arm-pen-plotter/README.md`](../arm-pen-plotter/README.md).

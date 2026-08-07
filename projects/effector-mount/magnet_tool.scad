@@ -18,9 +18,10 @@
 //   3. Press F5 to preview, F6 to render, then export/slice and print.
 //   4. Press-fit the magnet into the cup (fit + glue note in the README).
 //
-// NO RENDERER HERE — authored with no OpenSCAD installed, so this has NOT been
-//   rendered or sliced. You render (F6), slice, load, start, and watch. Any
-//   "it lifts fine" is YOUR call to verify.
+// RENDER STATUS (2026-08-07)
+//   OpenSCAD 2021.01 rendered the default parameter set to a simple manifold
+//   STL mesh without warnings. The dimensions are still placeholders; fit,
+//   retention, strength, slicing, printing and payload remain unverified.
 //
 // SAFETY (arm rails + lifting)
 //   No motion code lives here. This passive model cannot guarantee arm startup

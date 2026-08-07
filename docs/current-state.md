@@ -98,6 +98,18 @@ daarna automatisch te bewegen. Negentig graden is geen bewezen gezamenlijke star
 Zie [`../arm/README.md`](../arm/README.md) en gebruik geen powered armproject voordat startup,
 pinvolgorde en homewaarden op de echte arm onder toezicht zijn opgelost en vastgelegd.
 
+### OpenSCAD-modellen
+
+Op 2026-08-07 zijn alle huidige `.scad`-bronnen met OpenSCAD 2021.01 gerenderd. De controle omvat
+de standaardconfiguraties en relevante alternatieve parameterpaden die in
+`.github/scripts/check_openscad.sh` staan. Alle exports zijn eenvoudige manifold STL-meshes zonder
+waarschuwingen. De grijper had aanvankelijk nul-diktecontact tussen tanden en tandvoet; een
+expliciete overlap in de bron heeft dat meshprobleem opgelost.
+
+Deze status bewijst syntactisch en geometrisch renderbare bron, niet de fysieke maatvoering,
+sterkte, passing, tandingreep, slicing of printkwaliteit. Er worden daarom geen gegenereerde STL's
+als bewezen onderdelen gepubliceerd. De parametrische `.scad`-bestanden blijven de master.
+
 ## Projectarchitectuur
 
 De maker landt vanuit de site op [`../site/projecten.html`](../site/projecten.html), niet direct
@@ -164,6 +176,7 @@ Voer minimaal uit:
 ```bash
 python3 .github/scripts/check_links.py
 python3 -m py_compile projects/arm-pen-plotter/teach_and_replay.py
+bash .github/scripts/check_openscad.sh
 ```
 
 Controleer daarnaast:
@@ -175,6 +188,10 @@ Controleer daarnaast:
 - geen claim “geen kalibratie = geen fysieke beweging”;
 - geen claim dat chat, Claude Projects of lokale auto-memory de repository automatisch bijwerkt;
 - links en navigatie vanaf `site/index.html`, `site/projecten.html` en `guides/README.md`.
+
+De verplichte `substrate-gate` installeert OpenSCAD en voert de rendercontrole bij iedere PR en
+push naar `main` opnieuw uit. Arduino-sketches kunnen pas betrouwbaar tegen een boardprofiel worden
+gecompileerd nadat het exacte board en de benodigde libraries zijn vastgelegd.
 
 ## Vragen die alleen de maker kan sluiten
 

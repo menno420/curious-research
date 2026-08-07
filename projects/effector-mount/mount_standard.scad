@@ -21,11 +21,11 @@
 //      magnet_tool.scad) that includes it. The bare plate is only handy as a
 //      quick "does my horn fit?" test print.
 //
-// NO RENDERER HERE
-//   This was written in a container with no OpenSCAD installed, so it has NOT
-//   been rendered or sliced. You are the one who opens it, renders (F6), slices,
-//   loads, starts, and watches every print. Treat any "it'll fit / it'll hold"
-//   as YOUR call to check.
+// RENDER STATUS (2026-08-07)
+//   OpenSCAD 2021.01 rendered the default plate and the no-hub/no-notch branch
+//   to simple manifold STL meshes without warnings. This validates the source
+//   geometry only. The placeholder dimensions, physical fit, strength, slicing
+//   and print behaviour remain unverified.
 //
 // SAFETY (arm rails)
 //   This file makes ONLY the passive mounting interface — there is no motion

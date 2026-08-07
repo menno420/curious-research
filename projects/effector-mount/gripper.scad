@@ -27,10 +27,12 @@
 //      pinion, watch both racks slide opposite ways, jaws move together, nothing
 //      binds. Nudge  mesh_tweak  if the teeth jam or the gap is sloppy.
 //
-// NO RENDERER HERE
-//   Written in a container with NO OpenSCAD installed — this file has NOT been
-//   rendered, sliced, or test-fitted. YOU open it, render (F6), slice, load,
-//   start, and watch every print. Every "it meshes / it grips" is YOUR call.
+// RENDER STATUS (2026-08-07)
+//   OpenSCAD 2021.01 rendered the MG996R/open and MG90S/closed parameter branches
+//   to simple manifold STL meshes without warnings. A small modelling overlap
+//   now joins each simplified tooth to its root body and removes zero-thickness
+//   edges. Dimensions, gear mesh, slicing, printing, strength and grip remain
+//   unverified experiments.
 //
 // HONEST ABOUT THE GEAR TEETH
 //   This file is SELF-CONTAINED — it does NOT depend on a gear library, so the
@@ -120,6 +122,9 @@ mesh_tweak   = 0.0;     // fine nudge of both racks toward/away from the pinion
                         // (mm, +tighter). Start at 0; adjust after the hand-check
                         // if the teeth jam (raise clearance / lower this) or the
                         // gap is sloppy (raise this).
+tooth_overlap = 0.20;   // modelling overlap (mm) between each tooth and its
+                        // root body. This prevents zero-thickness contact edges
+                        // in the exported mesh; it is not gear-mesh clearance.
 
 // -- RACKS + TRAVEL ------------------------------------------------------------
 rack_len    = 34.0;     // length of each toothed bar (mm). Must comfortably fit
@@ -166,11 +171,14 @@ function tooth_height()   = addendum() + dedendum();             // root -> tip
 function tooth_base_w()   = circ_pitch() * 0.50;                 // wide at the root
 function tooth_tip_w()    = circ_pitch() * 0.30;                 // narrower at tip
 
-// One simplified tooth, drawn in 2D pointing +Y, its ROOT line on y = 0.
+// One simplified tooth, drawn in 2D pointing +Y. The root reference is y = 0;
+// its base extends slightly below that line to make a real volumetric union.
 module tooth_2d() {
+    assert(tooth_overlap > 0 && tooth_overlap < dedendum(),
+           "tooth_overlap must be positive and smaller than the dedendum.");
     polygon([
-        [-tooth_base_w()/2, 0],
-        [ tooth_base_w()/2, 0],
+        [-tooth_base_w()/2, -tooth_overlap],
+        [ tooth_base_w()/2, -tooth_overlap],
         [ tooth_tip_w()/2,  tooth_height()],
         [-tooth_tip_w()/2,  tooth_height()],
     ]);
