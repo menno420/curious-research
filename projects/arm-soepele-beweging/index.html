@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soepele beweging — waarom je arm schokt, en hoe je dat stopt</title>
+<style>
+  :root {
+    --bg:#fafaf7; --ink:#1c1e21; --muted:#6b7280; --card:#ffffff;
+    --line:#d1d5db; --accent:#7c3aed; --accent-soft:#ede9fe;
+    --ok:#16a34a; --ok-soft:#dcfce7; --warm:#e0912f; --warm-soft:#fdf0dc;
+    --bad:#dc2626; --grid:#e5e7eb; --shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --ink:#e5e7eb; --muted:#9ca3af; --card:#1b1f26;
+      --line:#374151; --accent:#a78bfa; --accent-soft:#2e1065;
+      --ok:#4ade80; --ok-soft:#14532d; --warm:#eab308; --warm-soft:#422006;
+      --bad:#f87171; --grid:#2b3240; --shadow:0 2px 10px rgba(0,0,0,.5); }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px 16px 48px; background:var(--bg); color:var(--ink);
+         font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+         display:flex; flex-direction:column; align-items:center; }
+  h1 { font-size:1.3rem; margin:.2em 0 .3em; text-align:center; max-width:22em; }
+  .sub { color:var(--muted); margin:0 0 20px; text-align:center; max-width:38em; }
+  .stage { background:var(--card); border-radius:14px; box-shadow:var(--shadow);
+           padding:16px; width:100%; max-width:860px; }
+  svg { width:100%; height:auto; display:block; }
+
+  .naam { font:700 12px system-ui; }
+  .klein { font:10px system-ui; fill:var(--muted); }
+  .as { stroke:var(--grid); stroke-width:1.5; }
+  .boog { fill:none; stroke:var(--line); stroke-width:3; stroke-linecap:round; }
+  .spil { fill:var(--muted); }
+  .arm { stroke-width:9; stroke-linecap:round; fill:none; }
+  .doel { stroke-dasharray:3 4; stroke-width:2; fill:none; opacity:.55; }
+
+  .controls { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+  button { font:600 14px system-ui; padding:9px 16px; border-radius:9px; cursor:pointer;
+           border:2px solid var(--accent); background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--accent); }
+  button:disabled { opacity:.4; cursor:default; }
+
+  .schuif { display:flex; align-items:center; gap:12px; justify-content:center;
+            margin-top:14px; flex-wrap:wrap; color:var(--muted); font-size:.92rem; }
+  input[type=range] { accent-color:var(--accent); width:200px; }
+  .waarde { font:700 14px ui-monospace, Consolas, monospace; color:var(--accent);
+            min-width:5.5em; text-align:left; }
+
+  .uitleg { max-width:700px; margin:24px auto 0; }
+  .kaart { background:var(--card); border-radius:12px; box-shadow:var(--shadow);
+           padding:16px 18px; margin-bottom:12px; border-left:5px solid var(--line); }
+  .kaart.rood { border-left-color:var(--bad); }
+  .kaart.oranje { border-left-color:var(--warm); }
+  .kaart.groen { border-left-color:var(--ok); }
+  .kaart h2 { font-size:1rem; margin:0 0 6px; }
+  .kaart p { margin:0 0 8px; }
+  .kaart p:last-child { margin-bottom:0; }
+  code { font:.88em ui-monospace, Consolas, monospace; background:var(--accent-soft);
+         color:var(--accent); padding:2px 6px; border-radius:5px; }
+  .denk { background:var(--accent-soft); border-radius:12px; padding:16px 18px;
+          max-width:700px; margin:20px auto 0; }
+  .denk h2 { font-size:1rem; margin:0 0 8px; color:var(--accent); }
+  .denk p { margin:0 0 8px; }
+  .denk p:last-child { margin-bottom:0; }
+  @media (prefers-reduced-motion: reduce) { .arm { transition:none; } }
+</style>
+</head>
+<body>
+
+<h1>Waarom je arm schokt — en hoe je dat stopt</h1>
+<p class="sub">Drie keer exact dezelfde beweging, van A naar B. Alleen de manier waarop de
+hoeken verstuurd worden verschilt. Druk op <b>Speel af</b> en kijk vooral naar de
+snelheidsgrafiek onderin.</p>
+
+<div class="stage">
+<svg id="scene" viewBox="0 0 840 470" role="img"
+     aria-label="Drie armen maken dezelfde beweging: knallen, gelijke stapjes, en een s-bocht. Daaronder hun snelheid in de tijd."></svg>
+
+<div class="controls">
+  <button id="play">▶ Speel af</button>
+  <button id="reset" class="ghost">↻ Opnieuw</button>
+</div>
+
+<div class="schuif">
+  <label for="snelheid">Snelheidslimiet</label>
+  <input type="range" id="snelheid" min="20" max="300" step="10" value="60">
+  <span class="waarde" id="snelheidUit">60 gr/s</span>
+</div>
+</div>
+
+<div class="uitleg">
+
+  <div class="kaart rood">
+    <h2>1 · <code>servo.write(140)</code> — knallen</h2>
+    <p>Er bestaat geen snelheidsinstelling op een hobbyservo. <code>write(140)</code> betekent
+    letterlijk <b>"sta NU op 140 graden"</b>. De servo geeft vol gas tot hij er is en staat
+    dan stil. Twee snelheden: alles of niets.</p>
+    <p>In de grafiek is dat de rode blokhaak — meteen op zijn hoogst, dan pats terug naar nul.
+    Dat is precies het schokken dat je in het echt ziet.</p>
+  </div>
+
+  <div class="kaart oranje">
+    <h2>2 · Gelijke stapjes — al veel beter, maar nog niet af</h2>
+    <p>Stuur je in plaats daarvan elke 20 milliseconden een doel dat een klein stukje verder
+    ligt, dan jaagt de servo steeds iets vlakbij na en beweegt hij rustig. Dit is de grote
+    stap vooruit.</p>
+    <p>Maar kijk naar de oranje lijn: die springt aan het <b>begin</b> in één keer omhoog en
+    aan het <b>eind</b> in één keer omlaag. Dat zijn nog steeds twee schokjes, alleen kleiner.
+    Je voelt ze als een tikje bij vertrek en aankomst.</p>
+  </div>
+
+  <div class="kaart groen">
+    <h2>3 · De S-bocht — optrekken en afremmen</h2>
+    <p>Nu verdelen we de beweging níet in gelijke stapjes. Aan het begin kleine stapjes, in
+    het midden grote, aan het eind weer kleine. De groene lijn is daardoor een heuvel in
+    plaats van een blok: de snelheid <b>bouwt op en zakt weg</b>.</p>
+    <p>Eén regel rekenwerk doet dat: <code>3t² − 2t³</code>. Je stopt er de voortgang in
+    (0 = net begonnen, 1 = klaar) en er komt een voortgang uit die traag start en traag
+    eindigt.</p>
+  </div>
+
+</div>
+
+<div class="denk">
+  <h2>Draai eens aan de knop</h2>
+  <p>Zet de schuif op <b>300 gr/s</b> en speel af. Zie je dat de groene en oranje lijnen bijna
+  op de rode gaan lijken? Bij hoge snelheid <em>is</em> netjes rekenen bijna hetzelfde als
+  knallen — er is simpelweg geen tijd meer om op te trekken. Vloeiendheid kost tijd. Dat is
+  geen instelling die je kunt winnen, dat is de ruil.</p>
+  <p>En een echte vraag waar we het antwoord niet van weten voor jouw arm: de schouder tilt
+  het hele gewicht op, de basis draait alleen maar rond. <b>Zouden die twee wel dezelfde
+  snelheidslimiet moeten hebben?</b> Omhoog bewegen is zwaar, omlaag helpt de zwaartekracht
+  mee. Eén limiet per gewricht in plaats van één voor de hele arm is een paar regels code —
+  en je hebt de arm om het uit te proberen.</p>
+</div>
+
+<script>
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+  const scene = document.getElementById('scene');
+
+  const MODES = [
+    { id:'knal',    naam:'servo.write()',   onder:'knallen',            kleur:'var(--bad)'  },
+    { id:'lineair', naam:'gelijke stapjes', onder:'lineair',            kleur:'var(--warm)' },
+    { id:'sbocht',  naam:'s-bocht',         onder:'optrekken/afremmen', kleur:'var(--ok)'   }
+  ];
+
+  const HOEK_A = -150, HOEK_B = -30;   // graden; 0 = rechts, negatief = omhoog
+
+  // ---- de wiskunde --------------------------------------------------------
+  // Elke functie geeft de voortgang (0..1) op tijdstip t (0..1).
+  // write() rent op volle servosnelheid en is dus al klaar terwijl de anderen
+  // nog maar net begonnen zijn.
+  const KNAL_DEEL = 0.16;
+  const POS = {
+    knal:    t => Math.min(1, t / KNAL_DEEL),
+    lineair: t => t,
+    sbocht:  t => t * t * (3 - 2 * t)
+  };
+  // Snelheid = hoe snel de positie verandert (de afgeleide).
+  const VEL = {
+    knal:    t => (t <= KNAL_DEEL ? 1 / KNAL_DEEL : 0),
+    lineair: t => 1,
+    sbocht:  t => 6 * t * (1 - t)
+  };
+  const VMAX = 1 / KNAL_DEEL;
+
+  function el(name, attrs) {
+    const n = document.createElementNS(NS, name);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+  function txt(name, attrs, tekst) {
+    const n = el(name, attrs); n.textContent = tekst; return n;
+  }
+  function punt(cx, cy, hoek, r) {
+    const rad = hoek * Math.PI / 180;
+    return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r];
+  }
+
+  // ---- layout: breed = drie naast elkaar, smal = drie onder elkaar --------
+  let L = null;   // huidige maten
+  const lijnen = {};
+
+  function maakLayout() {
+    const smal = (scene.clientWidth || window.innerWidth) < 560;
+    if (smal) {
+      return {
+        smal, vb:[0, 0, 420, 900], R:62, tekst:15, klein:12,
+        panelen: [{cx:210, cy:95}, {cx:210, cy:290}, {cx:210, cy:485}],
+        graf: { x0:52, x1:396, yTop:660, yBot:840, kop:625 }
+      };
+    }
+    return {
+      smal, vb:[0, 0, 840, 470], R:78, tekst:13, klein:11,
+      panelen: [{cx:150, cy:180}, {cx:420, cy:180}, {cx:690, cy:180}],
+      graf: { x0:60, x1:800, yTop:322, yBot:440, kop:292 }
+    };
+  }
+
+  function teken() {
+    L = maakLayout();
+    scene.setAttribute('viewBox', L.vb.join(' '));
+    while (scene.firstChild) scene.removeChild(scene.firstChild);
+
+    // -- de drie armpjes --
+    MODES.forEach((m, i) => {
+      const { cx, cy } = L.panelen[i];
+      const [ax, ay] = punt(cx, cy, HOEK_A, L.R);
+      const [bx, by] = punt(cx, cy, HOEK_B, L.R);
+
+      scene.appendChild(el('path', { class:'boog',
+        d:`M ${ax} ${ay} A ${L.R} ${L.R} 0 0 1 ${bx} ${by}` }));
+      scene.appendChild(el('circle', { cx:ax, cy:ay, r:5, fill:'var(--muted)' }));
+      scene.appendChild(el('circle', { cx:bx, cy:by, r:5, fill:'var(--muted)' }));
+      scene.appendChild(txt('text', { class:'klein', x:ax - 10, y:ay - 10,
+        'text-anchor':'end', style:`font-size:${L.klein}px` }, 'A'));
+      scene.appendChild(txt('text', { class:'klein', x:bx + 10, y:by - 10,
+        style:`font-size:${L.klein}px` }, 'B'));
+
+      const arm = el('line', { class:'arm', id:'arm_' + m.id,
+        x1:cx, y1:cy, x2:ax, y2:ay, stroke:m.kleur });
+      scene.appendChild(arm);
+      scene.appendChild(el('circle', { class:'spil', cx:cx, cy:cy, r:8 }));
+
+      scene.appendChild(txt('text', { class:'naam', x:cx, y:cy + 40,
+        'text-anchor':'middle', fill:m.kleur, style:`font-size:${L.tekst}px` }, m.naam));
+      scene.appendChild(txt('text', { class:'klein', x:cx, y:cy + 58,
+        'text-anchor':'middle', style:`font-size:${L.klein}px` }, m.onder));
+    });
+
+    // -- de snelheidsgrafiek --
+    const G = L.graf;
+    scene.appendChild(txt('text', { class:'naam', x:G.x0, y:G.kop,
+      fill:'var(--ink)', style:`font-size:${L.tekst}px` }, 'Snelheid tijdens de beweging'));
+    scene.appendChild(txt('text', { class:'klein', x:G.x0, y:G.kop + 16,
+      style:`font-size:${L.klein}px` }, 'hoe hard de servo op dat moment draait'));
+
+    scene.appendChild(el('line', { class:'as', x1:G.x0, y1:G.yBot, x2:G.x1, y2:G.yBot }));
+    scene.appendChild(el('line', { class:'as', x1:G.x0, y1:G.yTop, x2:G.x0, y2:G.yBot }));
+    scene.appendChild(txt('text', { class:'klein', x:G.x0 - 8, y:G.yTop + 6,
+      'text-anchor':'end', style:`font-size:${L.klein}px` }, 'snel'));
+    scene.appendChild(txt('text', { class:'klein', x:G.x0 - 8, y:G.yBot + 4,
+      'text-anchor':'end', style:`font-size:${L.klein}px` }, 'stil'));
+    scene.appendChild(txt('text', { class:'klein', x:G.x0, y:G.yBot + 18,
+      style:`font-size:${L.klein}px` }, 'start'));
+    scene.appendChild(txt('text', { class:'klein', x:G.x1, y:G.yBot + 18,
+      'text-anchor':'end', style:`font-size:${L.klein}px` }, 'klaar'));
+
+    MODES.forEach(m => {
+      const pl = el('polyline', { id:'v_' + m.id, fill:'none', stroke:m.kleur,
+        'stroke-width': m.id === 'sbocht' ? 3.5 : 3, 'stroke-linejoin':'round' });
+      scene.appendChild(pl);
+      lijnen[m.id] = pl;
+    });
+  }
+
+  const vx = t => L.graf.x0 + (L.graf.x1 - L.graf.x0) * t;
+  const vy = v => L.graf.yBot - (v / VMAX) * (L.graf.yBot - L.graf.yTop);
+
+  function zetArm(id, voortgang) {
+    const i = MODES.findIndex(x => x.id === id);
+    const { cx, cy } = L.panelen[i];
+    const hoek = HOEK_A + (HOEK_B - HOEK_A) * voortgang;
+    const [x, y] = punt(cx, cy, hoek, L.R);
+    const arm = document.getElementById('arm_' + id);
+    arm.setAttribute('x2', x);
+    arm.setAttribute('y2', y);
+  }
+
+  function tekenTot(tNu) {
+    for (const id in VEL) {
+      const pts = [];
+      const N = 90;
+      for (let i = 0; i <= N; i++) {
+        const t = (i / N) * tNu;
+        pts.push(vx(t).toFixed(1) + ',' + vy(VEL[id](t)).toFixed(1));
+      }
+      lijnen[id].setAttribute('points', pts.join(' '));
+    }
+  }
+
+  // ---- afspelen -----------------------------------------------------------
+  const playBtn = document.getElementById('play');
+  const resetBtn = document.getElementById('reset');
+  const schuif = document.getElementById('snelheid');
+  const schuifUit = document.getElementById('snelheidUit');
+
+  let rafId = null, t0 = null, huidigeT = 0;
+
+  function duurMs() {
+    // De arm draait 120 graden. Bij de gekozen limiet in graden per seconde
+    // duurt dat 120 / limiet seconden -- precies de som uit de sketch.
+    return (120 / Number(schuif.value)) * 1000;
+  }
+
+  function toonStand(t) {
+    huidigeT = t;
+    for (const id in POS) zetArm(id, POS[id](t));
+    tekenTot(t);
+  }
+
+  function reset() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null; t0 = null; huidigeT = 0;
+    for (const id in POS) zetArm(id, 0);
+    for (const id in lijnen) lijnen[id].setAttribute('points', '');
+    playBtn.disabled = false;
+    playBtn.textContent = '▶ Speel af';
+  }
+
+  function stap(now) {
+    if (t0 === null) t0 = now;
+    const t = Math.min(1, (now - t0) / duurMs());
+    toonStand(t);
+    if (t < 1) {
+      rafId = requestAnimationFrame(stap);
+    } else {
+      rafId = null;
+      playBtn.disabled = false;
+      playBtn.textContent = '▶ Nog een keer';
+    }
+  }
+
+  playBtn.addEventListener('click', () => {
+    reset();
+    playBtn.disabled = true;
+    playBtn.textContent = 'bezig…';
+    rafId = requestAnimationFrame(stap);
+  });
+  resetBtn.addEventListener('click', reset);
+  schuif.addEventListener('input', () => {
+    schuifUit.textContent = schuif.value + ' gr/s';
+    reset();
+  });
+
+  // Bij draaien van de telefoon opnieuw indelen, zonder de stand kwijt te raken.
+  let hertekenTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(hertekenTimer);
+    hertekenTimer = setTimeout(() => {
+      const wasSmal = L.smal;
+      const nuSmal = (scene.clientWidth || window.innerWidth) < 560;
+      if (wasSmal === nuSmal) return;      // zelfde indeling, niets te doen
+      teken();
+      toonStand(huidigeT);
+    }, 150);
+  });
+
+  teken();
+  reset();
+})();
+</script>
+</body>
+</html>

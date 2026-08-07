@@ -41,7 +41,7 @@ excellent session. Neither is the failure mode; manufacturing busywork is.
 The nine English guides predate the Dutch rule. They stay as they are — **summarise them in
 Dutch when he opens one.** Every new guide is written in Dutch.
 
-**4 buildable projects** in `projects/`:
+**5 buildable projects** in `projects/`:
 
 - `tolerance-test-coin/` — parametric OpenSCAD clearance coin, print-and-measure guide,
   results template. Ships `.scad` source only; he renders the STL himself.
@@ -50,6 +50,13 @@ Dutch when he opens one.** Every new guide is written in Dutch.
   sketch that clamps on-board too, a printable floating pen holder, and an animated explainer.
 - `spool-weight-scale/` — an HX711 load-cell "how much filament is left?" gauge, honest about
   what a cheap load cell can and cannot tell you.
+- `arm-soepele-beweging/` — **Dutch**. Why the arm moves in bursts (`servo.write()` has no
+  speed input — it means "be there now") and the three layers that fix it: stream nearby
+  targets at 50 Hz, coordinate all joints to one duration, and ease in/out with `3t²−2t³`.
+  A clamped non-blocking Arduino sketch whose joint limits start deliberately narrow
+  (85–95°) so it is safe to run before calibration, plus an animated explainer comparing
+  slam / linear / S-curve with a live velocity graph. Leaves an open question for him:
+  should the shoulder and the base share one speed limit?
 - `effector-mount/` — swappable arm tooling on one standard printable interface: the mount
   plate, a passive magnet tool, and a single-servo rack-and-pinion 2-finger gripper.
 
