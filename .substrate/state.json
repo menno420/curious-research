@@ -54,10 +54,10 @@
   },
   "review_log": [],
   "session_anchor": {
-    "branch": "main",
-    "epoch": 1783938036.359135,
-    "head": "f3e1cfdddb372a276fd76970de2f3b674b89b4e6",
-    "ts": "2026-07-13T10:20:36+00:00"
+    "branch": "claude/repo-review-suggestions-t8pg5p",
+    "epoch": 1786086388.886952,
+    "head": "7ff9c26fe066c3c86f7eb87570b0604730ca40d3",
+    "ts": "2026-08-07T07:06:28+00:00"
   },
   "session_count": 0,
   "slot_values": {
