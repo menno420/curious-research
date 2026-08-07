@@ -10,9 +10,11 @@
 #   /                            -> site/index.html   (the Dutch shelf)
 #   /guides/<naam>/index.html    -> the animated guide, unchanged
 #
-# ONE-TIME SETUP by the owner, or nothing publishes:
+# The build job enables Pages itself via actions/configure-pages, so
+# there is no setting to find by hand. If that ever stops working the
+# manual equivalent is:
 #   Settings -> Pages -> Build and deployment -> Source = "GitHub Actions"
-# The site then lands at https://menno420.github.io/curious-research/
+# The site lands at https://menno420.github.io/curious-research/
 name: pages
 on:
   push:
@@ -38,6 +40,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      # Turns Pages on for this repo if it is not on already, using the
+      # workflow's own token, so nobody has to find the setting by hand.
+      # Idempotent: once Pages is enabled this step just reads the config
+      # back. If it ever fails, the fallback is the manual switch at
+      # Settings -> Pages -> Build and deployment -> Source = GitHub Actions.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: assemble the site
         run: |
           mkdir -p _site
