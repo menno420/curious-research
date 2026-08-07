@@ -3,3 +3,7 @@
 # reads it to design clamped motion, reviewers read it to confirm a motion PR
 # stays inside the envelope, and six servos' min/max/center angles are just
 # numbers, not personal data. Do not add it here.
+
+# Lokale Python-controles mogen geen cachebestanden aan het cadeau toevoegen.
+__pycache__/
+*.py[cod]
