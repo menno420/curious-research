@@ -59,6 +59,8 @@ python3 -m http.server --directory /tmp/preview 8000
 ## Publishing
 
 `.github/workflows/pages.yml` copies `site/` plus `guides/` into one artifact and deploys
-it on every push to `main` that touches either. It needs one thing done by hand, once:
-**Settings → Pages → Build and deployment → Source = "GitHub Actions"**. Until that is set,
-the workflow runs and the deploy step fails.
+it on every push to `main` that touches either. Nothing has to be switched on by hand — the
+build job runs `actions/configure-pages` with `enablement: true`, which turns Pages on for
+the repo using the workflow's own token and is a no-op once it is on. The manual equivalent,
+if that ever fails, is **Settings → Pages → Build and deployment → Source = "GitHub
+Actions"**.
